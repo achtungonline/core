@@ -1,0 +1,20 @@
+{
+  "name": "core",
+  "version": "0.1.0",
+  "description": "Core functionality shared between client and server. Basically all the logic.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/achtungonline/core.git"
+  },
+  "author": [{
+    "name": "Lucas Wiener",
+    "email": "lucas@wiener.se"
+  }, {
+    "name": "Mathias Lindblom",
+    "email": "ommatte@gmail.com"
+  }],
+  "bugs": {
+    "url": "https://github.com/achtungonline/core/issues"
+  },
+  "homepage": "https://github.com/achtungonline/core"
+}
