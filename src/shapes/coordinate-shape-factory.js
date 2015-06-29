@@ -14,17 +14,17 @@ module.exports = function CoordinateShapeFactory() {
         coordinateShape.centerY = y + shape.boundingBox.height / 2;
         return coordinateShape;
     }
-    
+
     return {
         create: createCoordShape,
         createCircle: function(radius, x, y) {
-            createCoordShape(shapeFactory.createCircle(radius), x, y);
+            return createCoordShape(shapeFactory.createCircle(radius), x, y);
         },
         createRectangle: function(width, height, x, y) {
-            createCoordShape(shapeFactory.createRectangle(width, height), x, y);
+            return createCoordShape(shapeFactory.createRectangle(width, height), x, y);
         },
         createSquare: function(size, x, y) {
-            createCoordShape(shapeFactory.createSquare(size), x, y);
+            return createCoordShape(shapeFactory.createSquare(size), x, y);
         }
     }
 };

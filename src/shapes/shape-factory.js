@@ -30,6 +30,7 @@ module.exports = function ShapeFactory() {
     function createCircle(radius) {
         var shape = createCircleShape(radius * 2, radius * 2);
         shape.radius = radius;
+        return shape;
     }
 
     return {
