@@ -8,7 +8,7 @@ module.exports = function MapFactory() {
 
 	function createRectangle(width, height) {
 		var rectangle = shapeFactory.createRectangle(width, height);
-		var shapes = [coordShapeFactory.create(0, 0, rectangle)];
+		var shapes = [coordShapeFactory.create(rectangle, 0, 0)];
 		return Map(shapes);
 	}
 
