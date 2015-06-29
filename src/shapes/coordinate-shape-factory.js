@@ -1,4 +1,4 @@
-var clone = require("./util/clone.js");
+var clone = require("./../util/clone.js");
 
 module.exports = function CoordinateShapeFactory() {
     return {

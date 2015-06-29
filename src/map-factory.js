@@ -1,5 +1,5 @@
-var CoordinateShapeFactory = require("./coordinate-shape-factory.js");
-var ShapeFactory = require("./shape-factory.js");
+var CoordinateShapeFactory = require("./shapes/coordinate-shape-factory.js");
+var ShapeFactory = require("./shapes/shape-factory.js");
 var Map = require("./map.js");
 
 module.exports = function MapFactory() {
