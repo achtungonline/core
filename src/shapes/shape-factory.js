@@ -1,12 +1,10 @@
 module.exports = function ShapeFactory() {
-    function createShape(type) {
+    function createShape(type, boundingWidth, boundingHeight) {
         return {
-            type: type
+            type: type,
+            boundingBox: createBoundingBox(boundingWidth, boundingHeight)
         };
     }
-
-    var createRectangleShape = createShape.bind(null, "rectangle");
-    var createCircleShape = createShape.bind(null, "circle");
 
     function createBoundingBox(width, height) {
         return {
@@ -15,11 +13,13 @@ module.exports = function ShapeFactory() {
         };
     }
 
-    function createRectangle (width, height) {
-        var shape = createRectangleShape();
+    var createRectangleShape = createShape.bind(null, "rectangle");
+    var createCircleShape = createShape.bind(null, "circle");
+
+    function createRectangle(width, height) {
+        var shape = createRectangleShape(width, height);
         shape.width = width;
         shape.height = height;
-        shape.boundingBox = createBoundingBox(width, height);
         return shape;
     }
 
@@ -28,11 +28,8 @@ module.exports = function ShapeFactory() {
     }
 
     function createCircle(radius) {
-        return {
-            type: "circle",
-            radius: radius,
-            boundingBox: createBoundingBox(radius * 2, radius * 2)
-        };
+        var shape = createCircleShape(radius * 2, radius * 2);
+        shape.radius = radius;
     }
 
     return {
