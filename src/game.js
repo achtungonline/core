@@ -1,6 +1,7 @@
 
-module.exports = function Game(map) {
+module.exports = function Game(map, players) {
 	return {
-		map: map
+		map: map,
+        players: players
 	};
 };
