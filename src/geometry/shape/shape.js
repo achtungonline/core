@@ -9,15 +9,13 @@
  * @constructor
  */
 module.exports = function Shape(type, boundingWidth, boundingHeight, x, y, area) {
-    var shape = {};
-
-    function setCoordinates(x, y) {
-        shape.x = x;
-        shape.y = y;
-        shape.maxX = x + shape.boundingBox.width;
-        shape.maxY = y + shape.boundingBox.height;
-        shape.centerX = x + shape.boundingBox.width / 2;
-        shape.centerY = y + shape.boundingBox.height / 2;
+    function setCoordinates(target, boundingBox, x, y) {
+        target.x = x;
+        target.y = y;
+        target.maxX = x + boundingBox.width;
+        target.maxY = y + boundingBox.height;
+        target.centerX = x + boundingBox.width / 2;
+        target.centerY = y + boundingBox.height / 2;
     }
 
     function createBoundingBox(width, height) {
@@ -27,13 +25,19 @@ module.exports = function Shape(type, boundingWidth, boundingHeight, x, y, area)
         };
     }
 
+    function isDefined(value) {
+        return value !== undefined && value !== null;
+    }
+
+    var shape = {};
     shape.type = type;
     shape.boundingBox = createBoundingBox(boundingWidth, boundingHeight);
     shape.area = area;
-    if (x !== undefined && y !== undefined) {
+
+    if (isDefined(x) && isDefined(y)) {
         // only set the coordinate parameters if x and y are provided
-        setCoordinates(x, y);
+        setCoordinates(shape, shape.boundingBox, x, y);
     }
 
     return shape;
-}
+};
