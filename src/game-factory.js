@@ -1,4 +1,4 @@
-var frameProvider = require("./frame-provider");
+var nextFrameProvider = require("./next-frame-provider");
 var MapFactory = require("./map-factory.js");
 var ShapeFactory = require("./geometry/shape-factory.js");
 var Game = require("./game.js");
@@ -19,7 +19,7 @@ module.exports = function GameFactory() {
                 Player("id2", Worm(shapeFactory.createCircle(wormRadius, 400, 400)))
             ];
 
-            return Game(frameProvider, map, players);
+            return Game(nextFrameProvider, map, players);
         }
     };
 };
