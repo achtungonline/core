@@ -1,5 +1,7 @@
-module.exports = function Worm(head) {
+module.exports = function Worm(head, direction, speed) {
     return {
-        head: head
+        head: head,
+        direction: direction,
+        speed: speed
     };
 }
