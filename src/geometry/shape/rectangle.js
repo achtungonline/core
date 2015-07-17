@@ -1,10 +1,14 @@
 var Shape = require("./shape.js");
 
-module.exports = function Rectangle(width, height, x, y) {
+var rectangleShape = module.exports = {};
+
+rectangleShape.type = "rectangle";
+
+rectangleShape.Rectangle = function(width, height, x, y) {
     var area = width * height;
-    var shape = Shape("rectangle", width, height, x, y, area);
+    var shape = Shape(rectangleShape.type, width, height, x, y, area);
 
     shape.width = width;
     shape.height = height;
     return shape;
-}
+};

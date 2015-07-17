@@ -1,5 +1,5 @@
-var Circle = require("./shape/circle.js");
-var Rectangle = require("./shape/rectangle.js");
+var Circle = require("./shape/circle.js").Circle;
+var Rectangle = require("./shape/rectangle.js").Rectangle;
 
 module.exports = function ShapeFactory() {
 
