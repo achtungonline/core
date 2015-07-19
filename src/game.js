@@ -1,17 +1,20 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function Game(nextFrameProvider, shapeHandler, map, players) {
-    var eventEmitter = new EventEmitter();
+module.exports = function Game(nextUpdateHandler, shapeHandler, map, players) {
     var previousTime;
+    var eventEmitter = new EventEmitter();
 
     function start() {
         previousTime = Date.now();
+
         update();
     }
 
     function update() {
+
         var currentTime = Date.now();
         var deltaTime = (currentTime - previousTime) / 1000; //Delta time is in seconds.
+        previousTime = currentTime;
 
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
@@ -21,19 +24,20 @@ module.exports = function Game(nextFrameProvider, shapeHandler, map, players) {
             });
         });
 
-        eventEmitter.emit("updated");
-
-        nextFrameProvider(function onNextFrame() {
-            update();
-        });
-
-        previousTime = currentTime;
+        finalizeUpdate();
     }
 
-	return {
-		map: map,
+    function finalizeUpdate() {
+        eventEmitter.emit("updated");
+        nextUpdateHandler(function nextUpdate() {
+            update();
+        });
+    }
+
+    return {
+        map: map,
         players: players,
         start: start,
         on: eventEmitter.on.bind(eventEmitter)
-	};
+    };
 };
