@@ -1,16 +1,17 @@
 var ShapeHandler = require("./geometry/shape-handler.js");
 var MapFactory = require("./map-factory.js");
 var ShapeFactory = require("./geometry/shape-factory.js");
+var UpdateHandler = require("./update/update-handler.js");
 var Game = require("./game.js");
-var Player = require("./player.js");
-var Worm = require("./worm.js");
+var Player = require("./player/player.js");
+var Worm = require("./player/worm.js");
 
 module.exports = function GameFactory() {
     var mapFactory = MapFactory();
     var shapeFactory = ShapeFactory();
     var shapeHandler = ShapeHandler();
 
-    function create(nextUpdateHandler) {
+    function create(updateHandler) {
         var wormRadius = 10;
 
         var map = mapFactory.createSquare(800);
@@ -19,15 +20,15 @@ module.exports = function GameFactory() {
             Player("id2", Worm(shapeFactory.createCircle(wormRadius, 400, 400), 0, 20))
         ];
 
-        return Game(nextUpdateHandler, shapeHandler, map, players);
+        return Game(updateHandler, map, players);
     }
 
     return {
         create: function() {
-            return create(function (callback){ callback() });
+            return create(UpdateHandler(function (callback){ callback() }));
         },
-        createLocal: function (nextUpdateHandler) {
-            return create(nextUpdateHandler);
+        createLocal: function (updateHandler) {
+            return create(updateHandler);
         }
     };
 };
