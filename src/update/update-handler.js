@@ -1,6 +1,9 @@
 var EventEmitter = require("events").EventEmitter;
 var updater = require("./updater.js");
 
+var EVENT_UPDATED = "updated";
+var events = [EVENT_UPDATED];
+
 module.exports = function UpdateHandler(shapeHandler, updateFinishedHandler) {
     var eventEmitter = new EventEmitter();
     var previousTime;
@@ -29,13 +32,14 @@ module.exports = function UpdateHandler(shapeHandler, updateFinishedHandler) {
     }
 
     function finalizeUpdate(players) {
-        eventEmitter.emit("updated");
+        eventEmitter.emit(EVENT_UPDATED);
         updateFinishedHandler(function nextUpdate() {
             update(players);
         });
     }
 
     return {
+        events: events,
         init: init,
         update: update,
         on: eventEmitter.on.bind(eventEmitter)
