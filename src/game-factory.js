@@ -6,12 +6,13 @@ var Game = require("./game.js");
 var Player = require("./player/player.js");
 var Worm = require("./player/worm.js");
 
-module.exports = function GameFactory() {
+module.exports = function GameFactory(nextFrameProvider) {
     var mapFactory = MapFactory();
     var shapeFactory = ShapeFactory();
     var shapeHandler = ShapeHandler();
+    var updateHandler = UpdateHandler(shapeHandler, nextFrameProvider);
 
-    function create(updateHandler) {
+    function create() {
         var wormRadius = 10;
 
         var map = mapFactory.createSquare(800);
@@ -24,11 +25,6 @@ module.exports = function GameFactory() {
     }
 
     return {
-        create: function() {
-            return create(UpdateHandler(function (callback){ callback() }));
-        },
-        createLocal: function (updateHandler) {
-            return create(updateHandler);
-        }
+        create: create
     };
 };
