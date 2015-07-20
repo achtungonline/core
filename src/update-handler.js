@@ -37,7 +37,9 @@ module.exports = function UpdateHandler(requestUpdateTick, playerHandler) {
 
         var deltaTime = updatePrevTimeAndGetDeltaTime();
 
-        playerHandler.update(deltaTime, players);
+        players.forEach(function (player) {
+            playerHandler.updatePlayer(deltaTime, player);
+        });
 
         eventEmitter.emit(EVENT_UPDATED);
 

@@ -3,6 +3,7 @@ var MapFactory = require("./map-factory.js");
 var ShapeFactory = require("./geometry/shape-factory.js");
 var UpdateHandler = require("./update-handler.js");
 var PlayerHandler = require("./player/player-handler.js");
+var WormHandler = require("./player/worm-handler.js");
 var Game = require("./game.js");
 var Player = require("./player/player.js");
 var Worm = require("./player/worm.js");
@@ -21,7 +22,8 @@ module.exports = function GameFactory(requestUpdateTick) {
             Player("id2", Worm(shapeFactory.createCircle(wormRadius, 400, 400), 0, 20))
         ];
 
-        var playerHandler = PlayerHandler(shapeHandler);
+        var wormHandler = WormHandler(shapeHandler);
+        var playerHandler = PlayerHandler(wormHandler);
         var updateHandler = UpdateHandler(requestUpdateTick, playerHandler);
 
         return Game(updateHandler, map, players);
