@@ -7,6 +7,7 @@ var WormHandler = require("./player/worm-handler.js");
 var Game = require("./game.js");
 var Player = require("./player/player.js");
 var Worm = require("./player/worm.js");
+var clone = require("./util/clone.js");
 
 module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
@@ -22,7 +23,7 @@ module.exports = function GameFactory(requestUpdateTick) {
             Player("id2", Worm(shapeFactory.createCircle(wormRadius, 400, 400), 0, 20))
         ];
 
-        var wormHandler = WormHandler(shapeHandler);
+        var wormHandler = WormHandler(shapeHandler, clone);
         var playerHandler = PlayerHandler(wormHandler);
         var updateHandler = UpdateHandler(requestUpdateTick, playerHandler);
 
