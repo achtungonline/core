@@ -10,18 +10,17 @@ module.exports = function Game(updateHandler, map, players) {
     });
 
     function start() {
-        updateHandler.init();
-        updateHandler.update(players);
+        updateHandler.start(players);
     }
 
-    function on(event) {
+    function on(event, listener) {
         var eventEmitter = eventEmitters[event];
 
         if (!eventEmitter) {
             throw new Error("Invalid event: " + event);
         }
 
-        eventEmitter.on.apply(eventEmitter, arguments);
+        eventEmitter.on(event, listener);
     }
 
     return {

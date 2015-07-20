@@ -6,11 +6,11 @@ var Game = require("./game.js");
 var Player = require("./player/player.js");
 var Worm = require("./player/worm.js");
 
-module.exports = function GameFactory(nextFrameProvider) {
+module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
     var shapeFactory = ShapeFactory();
     var shapeHandler = ShapeHandler();
-    var updateHandler = UpdateHandler(shapeHandler, nextFrameProvider);
+    var updateHandler = UpdateHandler(shapeHandler, requestUpdateTick);
 
     function create() {
         var wormRadius = 10;
