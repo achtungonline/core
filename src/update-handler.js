@@ -1,10 +1,9 @@
 var EventEmitter = require("events").EventEmitter;
-var updater = require("./updater.js");
 
 var EVENT_UPDATED = "updated";
 var events = [EVENT_UPDATED];
 
-module.exports = function UpdateHandler(shapeHandler, requestUpdateTick) {
+module.exports = function UpdateHandler(requestUpdateTick, playerHandler) {
     var eventEmitter = new EventEmitter();
     var previousTime;
 
@@ -38,7 +37,7 @@ module.exports = function UpdateHandler(shapeHandler, requestUpdateTick) {
 
         var deltaTime = updatePrevTimeAndGetDeltaTime();
 
-        updater.players(deltaTime, players, shapeHandler);
+        playerHandler.update(deltaTime, players);
 
         eventEmitter.emit(EVENT_UPDATED);
 
