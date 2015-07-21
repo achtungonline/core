@@ -3,7 +3,7 @@ var EventEmitter = require("events").EventEmitter;
 var EVENT_UPDATED = "updated";
 var events = [EVENT_UPDATED];
 
-module.exports = function UpdateHandler(requestUpdateTick, playerHandler) {
+module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
     var eventEmitter = new EventEmitter();
     var previousTime;
 
