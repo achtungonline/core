@@ -23,10 +23,15 @@ module.exports = function Game(updateHandler, map, players) {
         eventEmitter.on(event, listener);
     }
 
+    function setPlayerSteering(player, steering) {
+        updateHandler.setPlayerSteering(player, steering);
+    }
+
     return {
         map: map,
         players: players,
         start: start,
-        on: on
+        on: on,
+
     };
 };

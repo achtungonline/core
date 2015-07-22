@@ -7,13 +7,17 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
     var eventEmitter = new EventEmitter();
     var previousTime;
 
-    function getCurrentTime() {
-        return Date.now();
+    function setPlayerSteering(player, steering) {
+        playerHandler.setPlayerSteering(player)
     }
 
     function start(players) {
         previousTime = getCurrentTime();
         update(players);
+    }
+
+    function getCurrentTime() {
+        return Date.now();
     }
 
     function update(players) {
@@ -28,7 +32,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
                 deltaTime = 1 / DELTA_TIME_DIVIDER; //1 msec.
             }
 
-            console.log(currentTime - previousTime);
+            //console.log(currentTime - previousTime);
 
             previousTime = currentTime;
 
@@ -51,6 +55,8 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
     return {
         events: events,
         start: start,
-        on: eventEmitter.on.bind(eventEmitter)
+        on: eventEmitter.on.bind(eventEmitter),
+        setPlayerSteering: setPlayerSteering
+
     }
 }

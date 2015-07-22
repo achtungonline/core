@@ -5,7 +5,7 @@ var UpdateManager = require("./update-manager.js");
 var PlayerHandler = require("./player/player-handler.js");
 var WormHandler = require("./player/worm-handler.js");
 var Game = require("./game.js");
-var Player = require("./player/player.js");
+var Player = require("./player/player.js").Player;
 var Worm = require("./player/worm.js");
 var clone = require("./util/clone.js");
 
