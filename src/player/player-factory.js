@@ -10,7 +10,7 @@ module.exports = function PlayerFactory(idGenerator) {
     var shapeFactory = ShapeFactory();
 
     function create() {
-        return Player(idGenerator(), Worm(shapeFactory.createCircle(WORM_RADIUS, 0, 0), 0, WORM_SPEED));
+        return Player(idGenerator(), Worm(idGenerator(), shapeFactory.createCircle(WORM_RADIUS, 0, 0), 0, WORM_SPEED));
     }
 
     function createPlayers(numberOfPlayers) {
@@ -24,5 +24,5 @@ module.exports = function PlayerFactory(idGenerator) {
     return {
         create: create,
         createPlayers: createPlayers
-    }
-}
+    };
+};

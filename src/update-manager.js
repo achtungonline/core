@@ -32,8 +32,6 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
                 deltaTime = 1 / DELTA_TIME_DIVIDER; //1 msec.
             }
 
-            //console.log(currentTime - previousTime);
-
             previousTime = currentTime;
 
             return deltaTime;
