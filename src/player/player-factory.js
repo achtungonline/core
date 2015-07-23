@@ -24,5 +24,5 @@ module.exports = function PlayerFactory(idGenerator) {
     return {
         create: create,
         createPlayers: createPlayers
-    };
-};
+    }
+}

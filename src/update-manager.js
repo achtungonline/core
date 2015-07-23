@@ -1,4 +1,5 @@
 var EventEmitter = require("events").EventEmitter;
+var ShapeHandler = require("./geometry/shape-handler.js");
 
 var EVENT_UPDATED = "updated";
 var events = [EVENT_UPDATED];
@@ -8,7 +9,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
     var previousTime;
 
     function setPlayerSteering(player, steering) {
-        playerHandler.setSteering(player, steering)
+        playerHandler.setSteering(player, steering);
     }
 
     function start(players) {
@@ -55,6 +56,5 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
         start: start,
         on: eventEmitter.on.bind(eventEmitter),
         setPlayerSteering: setPlayerSteering
-
     }
 }
