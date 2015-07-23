@@ -14,7 +14,7 @@ module.exports = function PlayerHandler(wormHandler) {
         });
     }
 
-    function setSteering(steering, player) {
+    function setSteering(player, steering) {
         player.steering = steering;
     }
 

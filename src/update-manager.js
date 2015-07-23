@@ -8,7 +8,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
     var previousTime;
 
     function setPlayerSteering(player, steering) {
-        playerHandler.setPlayerSteering(player)
+        playerHandler.setSteering(player, steering)
     }
 
     function start(players) {

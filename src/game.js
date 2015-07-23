@@ -32,6 +32,6 @@ module.exports = function Game(updateHandler, map, players) {
         players: players,
         start: start,
         on: on,
-
+        setPlayerSteering: setPlayerSteering
     };
 };
