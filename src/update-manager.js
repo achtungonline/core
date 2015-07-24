@@ -2,26 +2,48 @@ var EventEmitter = require("events").EventEmitter;
 var ShapeHandler = require("./geometry/shape-handler.js");
 
 var EVENT_UPDATED = "updated";
-var events = [EVENT_UPDATED];
+var EVENT_GAME_OVER = "gameOver";
+var events = [EVENT_UPDATED, EVENT_GAME_OVER];
 
 module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
+    var run;
     var eventEmitter = new EventEmitter();
     var previousTime;
+
+    playerHandler.on("playerDied", function onPlayerDied(players, player) {
+        var numAlivePlayers = 0;
+
+        players.forEach(function (player) {
+            if (player.worms.length > 0) {
+                numAlivePlayers++;
+            }
+        });
+
+        if (numAlivePlayers === 1) {
+            eventEmitter.emit(EVENT_GAME_OVER);
+            stopUpdating();
+        }
+    });
 
     function setPlayerSteering(player, steering) {
         playerHandler.setSteering(player, steering);
     }
 
-    function start(players) {
+    function start(players, map) {
+        run = true;
         previousTime = getCurrentTime();
-        update(players);
+        update(players, map);
+    }
+
+    function stopUpdating() {
+        run = false;
     }
 
     function getCurrentTime() {
         return Date.now();
     }
 
-    function update(players) {
+    function update(players, map) {
         function updatePrevTimeAndGetDeltaTime() {
             var DELTA_TIME_DIVIDER = 1000;
 
@@ -38,22 +60,27 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
             return deltaTime;
         }
 
+        if (!run) {
+            return;
+        }
+
         var deltaTime = updatePrevTimeAndGetDeltaTime();
 
         players.forEach(function (player) {
-            playerHandler.updatePlayer(deltaTime, player);
+            playerHandler.updatePlayer(deltaTime, players, map, player);
         });
 
         eventEmitter.emit(EVENT_UPDATED);
 
         requestUpdateTick(function onUpdateTick() {
-            update(players);
+            update(players, map);
         });
     }
 
     return {
         events: events,
         start: start,
+        stop: stopUpdating,
         on: eventEmitter.on.bind(eventEmitter),
         setPlayerSteering: setPlayerSteering
     }

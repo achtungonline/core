@@ -10,7 +10,7 @@ module.exports = function Game(updateHandler, map, players) {
     });
 
     function start() {
-        updateHandler.start(players);
+        updateHandler.start(players, map);
     }
 
     function on(event, listener) {
