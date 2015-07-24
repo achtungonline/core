@@ -1,48 +1,44 @@
 var circleType = require("./shape/circle.js").type;
 var rectType = require("./shape/rectangle.js").type;
 
-var shapeIFn = module.exports = {}
+var spatialRelations = module.exports = {};
 
-shapeIFn.getIntersectFunctionName = function (shapeType, otherShapeType) {
-    var firstWord, secondWord;
+var intersectsFunctions = {};
 
-    if (shapeType < otherShapeType) {
-        firstWord = shapeType;
-        secondWord = otherShapeType;
-    } else {
-        firstWord = otherShapeType;
-        secondWord = shapeType;
+spatialRelations.intersects = function intersects(shape, otherShape) {
+    var intersectsFunction;
+
+    if (intersectsFunctions[shape.type] && intersectsFunctions[shape.type][otherShape.type]) {
+        intersectFunction = intersectsFunctions[shape.type][otherShape.type].bind(null, shape, otherShape);
+    } else if (intersectsFunctions[otherShape.type] && intersectsFunctions[otherShape.type][shape.type]) {
+        intersectsFunction = intersectsFunctions[otherShape.type][shape.type].bind(null, otherShape, shape);
     }
-    return firstWord + "Intersects" + secondWord.charAt(0).toUpperCase() + secondWord.slice(1);
-}
 
-var getFnName = shapeIFn.getIntersectFunctionName;
+    if (!intersectFunction) {
+        throw Error("No intersection function found between shapes: " + shape.type + " and " + otherShape.type);
+    }
 
-shapeIFn[getFnName(circleType, circleType)] = function (circle, otherCircle) {
+    return intersectFunction();
+};
+
+setFunction(intersectsFunctions, circleType, circleType, function (circle, otherCircle) {
     if (!boundingBoxesIntersects(circle, otherCircle)) {
         return false;
     }
+
     var minAllowedDist = circle.radius + otherCircle.radius;
 
     var dist = getXYDist(circle, otherCircle);
     return Math.pow(dist.x, 2) + Math.pow(dist.y, 2) < Math.pow(minAllowedDist, 2);
-}
+});
 
-shapeIFn[getFnName(rectType, rectType)] = function (rect, otherRect) {
+setFunction(intersectsFunctions, rectType, rectType, function (rect, otherRect) {
     return boundingBoxesIntersects(rect, otherRect);
-}
+});
 
-shapeIFn[getFnName(circleType, rectType)] = function (shape, otherShape) {
-    if (!boundingBoxesIntersects(shape, otherShape)) {
+setFunction(intersectsFunctions, circleType, rectType, function (circle, rect) {
+    if (!boundingBoxesIntersects(circle, rect)) {
         return false;
-    }
-    var circle, rect;
-    if (shape.type === circleType) {
-        circle = shape;
-        rect = otherShape;
-    } else {
-        circle = otherShape;
-        rect = shape;
     }
 
     var dist = getXYDist(circle, rect);
@@ -59,8 +55,7 @@ shapeIFn[getFnName(circleType, rectType)] = function (shape, otherShape) {
     cornerDistanceSq = Math.pow(dist.x - rect.width / 2, 2) + Math.pow(dist.y - rect.height / 2, 2);
 
     return cornerDistanceSq <= Math.pow(circle.radius, 2);
-}
-
+});
 
 function boundingBoxesIntersects(shape, otherShape) {
     var dist = getXYDist(shape, otherShape);
@@ -77,10 +72,17 @@ function boundingBoxesIntersects(shape, otherShape) {
     }
 }
 
-
 function getXYDist(shape, otherShape) {
     var dist = {};
     dist.x = Math.abs(shape.centerX - otherShape.centerX);
     dist.y = Math.abs(shape.centerY - otherShape.centerY);
     return dist;
+}
+
+function setFunction(map, firstLevel, secondLevel, fn) {
+    if (!map[firstLevel]) {
+        map[firstLevel] = {};
+    }
+
+    map[firstLevel][secondLevel] = fn;
 }
