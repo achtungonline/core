@@ -3,8 +3,8 @@ var utils = module.exports = {};
 utils.isInsidePlayableArea = function (map, shape) {
     //TODO: This needs to be done better.
 
-    var mapX = map.shapes[0].x;
-    var mapY = map.shapes[0].y;
+    var mapX = map.zones[0].shape.x;
+    var mapY = map.zones[0].shape.y;
     var mapBoundingBox = map.boundingBox;
 
     if (shape.x + shape.boundingBox.width > mapX + mapBoundingBox.width) {

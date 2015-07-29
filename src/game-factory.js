@@ -1,5 +1,5 @@
 var ShapeModifier = require("./geometry/shape-modifier.js");
-var MapFactory = require("./map-factory.js");
+var MapFactory = require("./map/map-factory.js");
 var ShapeFactory = require("./geometry/shape-factory.js");
 var UpdateManager = require("./update-manager.js");
 var PlayerModifier = require("./player/player-modifier.js");
@@ -8,7 +8,7 @@ var Game = require("./game.js");
 var Player = require("./player/player.js").Player;
 var Worm = require("./player/worm.js");
 var clone = require("./util/clone.js");
-var mapUtils = require("./map-utils.js");
+var mapUtils = require("./map/map-utils.js");
 
 module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
