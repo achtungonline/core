@@ -20,7 +20,7 @@ function spatialRelationHelpFunction(spatialRelationsFunctions, shape, otherShap
     if (spatialRelationsFunctions[shape.type] && spatialRelationsFunctions[shape.type][otherShape.type]) {
         selectedFunction = spatialRelationsFunctions[shape.type][otherShape.type].bind(null, shape, otherShape);
     } else if (spatialRelationsFunctions[otherShape.type] && spatialRelationsFunctions[otherShape.type][shape.type]) {
-        selectedFunction = spatialRelationsFunctions[otherShape.type][shape.type].bind(null, otherShape, Shape);
+        selectedFunction = spatialRelationsFunctions[otherShape.type][shape.type].bind(null, otherShape, shape);
     }
 
     if (!selectedFunction) {
