@@ -6,10 +6,10 @@ utils.isInsidePlayableArea = function (map, shape) {
         return false;
     }
 
-    map.blockingShapes.forEach(function (blockingShape) {
-        if (shapeSpatialRelations.intersects(blockingShape, shape)) {
+    for (var i in map.blockingShapes) {
+        if (shapeSpatialRelations.intersects(map.blockingShapes[i], shape)) {
             return false;
         }
-    });
+    }
     return true;
 };
