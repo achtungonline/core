@@ -4,6 +4,10 @@ var Map = require("./map.js");
 module.exports = function MapFactory() {
     var shapeFactory = ShapeFactory();
 
+    function create(shape, blockingShapes) {
+        return Map(shape, blockingShapes);
+    }
+
     function createRectangle(width, height) {
         var rectangle = shapeFactory.createRectangle(width, height, 0, 0);
         return Map(rectangle);
@@ -14,6 +18,7 @@ module.exports = function MapFactory() {
     }
 
     return {
+        create: create,
         createSquare: createSquare,
         createRectangle: createRectangle
     };

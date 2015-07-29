@@ -15,8 +15,10 @@ module.exports = function GameFactory(requestUpdateTick) {
     var shapeFactory = ShapeFactory();
     var shapeModifier = ShapeModifier();
 
-    function create(players) {
-        var map = mapFactory.createSquare(800);
+    function create(players, map) {
+        if (!map) {
+            map = mapFactory.createSquare(800);
+        }
 
         var wormModifier = WormModifier(mapUtils, shapeModifier, clone);
         var playerModifier = PlayerModifier(wormModifier);
