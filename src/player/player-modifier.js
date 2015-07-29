@@ -3,10 +3,10 @@ var EventEmitter = require("events").EventEmitter;
 var EVENT_PLAYER_DIED = "playerDied";
 var events = [EVENT_PLAYER_DIED];
 
-module.exports = function PlayerHandler(wormHandler) {
+module.exports = function PlayerModifier(wormModifier) {
     var eventEmitter = new EventEmitter();
 
-    wormHandler.on("collisionMap", function onCollisionMap(players, player, worm) {
+    wormModifier.on("collisionMap", function onCollisionMap(players, player, worm) {
         var index = player.worms.indexOf(worm);
         player.worms.splice(index, 1);
 
@@ -25,8 +25,8 @@ module.exports = function PlayerHandler(wormHandler) {
         updateDirection(deltaTime, player);
 
         player.worms.forEach(function (worm) {
-            wormHandler.moveWorm(deltaTime, worm);
-            wormHandler.performCollisionDetection(players, map, worm);
+            wormModifier.moveWorm(deltaTime, worm);
+            wormModifier.performCollisionDetection(players, map, worm);
         });
     }
 

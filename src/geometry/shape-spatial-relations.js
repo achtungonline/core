@@ -90,7 +90,7 @@ setFunction(containsFunctions, circleType, rectType, function (outerCircle, inne
 
     var rectOnRight = (innerRect.x > outerCircle.x ? 1 : -1);
     var rectOnTop = (innerRect.y > outerCircle.y ? 1 : -1);
-    
+
     var dist = getXYDist(outerCircle, innerRect);
 
     //here we select the rectangles corner point furthest away from the circle center

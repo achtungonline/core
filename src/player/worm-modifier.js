@@ -3,14 +3,14 @@ var EventEmitter = require("events").EventEmitter;
 var EVENT_COLLISION_MAP = "collisionMap";
 var events = [EVENT_COLLISION_MAP];
 
-module.exports = function WormHandler(mapUtils, shapeHandler, clone) {
+module.exports = function WormModifier(mapUtils, shapeModifier, clone) {
     var eventEmitter = new EventEmitter();
 
     function moveWorm(deltaTime, worm) {
         var xDiff = Math.cos(worm.direction) * worm.speed * deltaTime;
         var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
-        shapeHandler.move(worm.head, xDiff, yDiff);
+        shapeModifier.move(worm.head, xDiff, yDiff);
 
         worm.body.push(clone(worm.head));
     }

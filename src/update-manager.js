@@ -1,16 +1,16 @@
 var EventEmitter = require("events").EventEmitter;
-var ShapeHandler = require("./geometry/shape-handler.js");
+var ShapeModifier = require("./geometry/shape-modifier.js");
 
 var EVENT_UPDATED = "updated";
 var EVENT_GAME_OVER = "gameOver";
 var events = [EVENT_UPDATED, EVENT_GAME_OVER];
 
-module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
+module.exports = function UpdateManager(requestUpdateTick, playerModifier) {
     var run;
     var eventEmitter = new EventEmitter();
     var previousTime;
 
-    playerHandler.on("playerDied", function onPlayerDied(players, player) {
+    playerModifier.on("playerDied", function onPlayerDied(players, player) {
         var numAlivePlayers = 0;
 
         players.forEach(function (player) {
@@ -26,7 +26,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
     });
 
     function setPlayerSteering(player, steering) {
-        playerHandler.setSteering(player, steering);
+        playerModifier.setSteering(player, steering);
     }
 
     function start(players, map) {
@@ -67,7 +67,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler) {
         var deltaTime = updatePrevTimeAndGetDeltaTime();
 
         players.forEach(function (player) {
-            playerHandler.updatePlayer(deltaTime, players, map, player);
+            playerModifier.updatePlayer(deltaTime, players, map, player);
         });
 
         eventEmitter.emit(EVENT_UPDATED);
