@@ -1,16 +1,16 @@
-module.exports = function Game(updateHandler, playerHandler, playerModifier, map, players) {
+module.exports = function Game(updateManager, playerHandler, playerModifier, map, players) {
     var eventEmitters = {};
 
-    updateHandler.events.forEach(function (event) {
+    updateManager.events.forEach(function (event) {
         if (eventEmitters[event]) {
             throw new Error("Multiple EventEmitters are using the event: " + event);
         }
 
-        eventEmitters[event] = updateHandler;
+        eventEmitters[event] = updateManager;
     });
 
     function start() {
-        updateHandler.start(players, map);
+        updateManager.start(players, map);
     }
 
     function on(event, listener) {
