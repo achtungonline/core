@@ -1,4 +1,4 @@
-module.exports = function Game(updateHandler, map, players) {
+module.exports = function Game(updateHandler, playerHandler, playerModifier, map, players) {
     var eventEmitters = {};
 
     updateHandler.events.forEach(function (event) {
@@ -24,7 +24,7 @@ module.exports = function Game(updateHandler, map, players) {
     }
 
     function setPlayerSteering(player, steering) {
-        updateHandler.setPlayerSteering(player, steering);
+        playerModifier.setSteering(player, steering);
     }
 
     return {

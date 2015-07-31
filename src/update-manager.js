@@ -5,12 +5,12 @@ var EVENT_UPDATED = "updated";
 var EVENT_GAME_OVER = "gameOver";
 var events = [EVENT_UPDATED, EVENT_GAME_OVER];
 
-module.exports = function UpdateManager(requestUpdateTick, playerModifier) {
+module.exports = function UpdateManager(requestUpdateTick, playerHandler, wormModifier, collisionHandler) {
     var run;
     var eventEmitter = new EventEmitter();
     var previousTime;
 
-    playerModifier.on("playerDied", function onPlayerDied(players, player) {
+    playerHandler.on("playerDied", function onPlayerDied(players, player) {
         var numAlivePlayers = 0;
 
         players.forEach(function (player) {
@@ -24,10 +24,6 @@ module.exports = function UpdateManager(requestUpdateTick, playerModifier) {
             stopUpdating();
         }
     });
-
-    function setPlayerSteering(player, steering) {
-        playerModifier.setSteering(player, steering);
-    }
 
     function start(players, map) {
         run = true;
@@ -65,9 +61,12 @@ module.exports = function UpdateManager(requestUpdateTick, playerModifier) {
         }
 
         var deltaTime = updatePrevTimeAndGetDeltaTime();
-
         players.forEach(function (player) {
-            playerModifier.updatePlayer(deltaTime, players, map, player);
+            player.worms.forEach(function (worm) {
+                wormModifier.updateDirection(deltaTime, player, worm);
+                wormModifier.updatePosition(deltaTime, worm);
+                collisionHandler.wormMapCollisionDetection(players, player, worm, map)
+            });
         });
 
         eventEmitter.emit(EVENT_UPDATED);
@@ -81,7 +80,6 @@ module.exports = function UpdateManager(requestUpdateTick, playerModifier) {
         events: events,
         start: start,
         stop: stopUpdating,
-        on: eventEmitter.on.bind(eventEmitter),
-        setPlayerSteering: setPlayerSteering
+        on: eventEmitter.on.bind(eventEmitter)
     }
 }
