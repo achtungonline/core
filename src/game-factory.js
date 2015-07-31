@@ -5,6 +5,7 @@ var PlayerModifier = require("./player/player-modifier.js");
 var WormModifier = require("./player/worm/worm-modifier.js");
 var PlayerHandler = require("./player/player-handler.js");
 var CollisionHandler = require("./collision-handler.js");
+var EventHandler = require("./event-handler.js");
 var Game = require("./game.js");
 var clone = require("./util/clone.js");
 var mapUtils = require("./map/map-utils.js");
@@ -21,12 +22,13 @@ module.exports = function GameFactory(requestUpdateTick) {
         var wormModifier = WormModifier(shapeModifier, clone);
         var playerModifier = PlayerModifier();
 
-        var collisionHandler = CollisionHandler(mapUtils);
-        var playerHandler = PlayerHandler(collisionHandler, playerModifier);
+        var eventHandler = EventHandler();
+        var collisionHandler = CollisionHandler(eventHandler, mapUtils);
+        var playerHandler = PlayerHandler(eventHandler, playerModifier);
 
-        var updateManager = UpdateManager(requestUpdateTick, playerHandler, wormModifier, collisionHandler);
+        var updateManager = UpdateManager(requestUpdateTick, eventHandler, wormModifier, collisionHandler);
 
-        return Game(updateManager, playerHandler, playerModifier, map, players);
+        return Game(updateManager, playerHandler, playerModifier, eventHandler, map, players);
     }
 
     return {

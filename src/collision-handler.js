@@ -1,15 +1,10 @@
-var EventEmitter = require("events").EventEmitter;
-
-var EVENT_COLLISION_MAP = "wormMapCollision";
-var events = [EVENT_COLLISION_MAP];
-
-module.exports = function CollisionHandler(mapUtils) {
-    var eventEmitter = new EventEmitter();
+module.exports = function CollisionHandler(eventHandler, mapUtils) {
+    eventHandler.register(eventHandler.events.WORM_MAP_COLLISION);
 
     function wormMapCollisionDetection(players, player, worm, map) {
         var head = worm.head;
         if (!mapUtils.isInsidePlayableArea(map, head)) {
-            eventEmitter.emit(EVENT_COLLISION_MAP, players, player, worm, map);
+            eventHandler.emit(eventHandler.events.WORM_MAP_COLLISION, players, player, worm, map);
         }
     }
 
@@ -22,7 +17,6 @@ module.exports = function CollisionHandler(mapUtils) {
     }
 
     return {
-        wormMapCollisionDetection: wormMapCollisionDetection,
-        on: eventEmitter.on.bind(eventEmitter)
+        wormMapCollisionDetection: wormMapCollisionDetection
     }
 }

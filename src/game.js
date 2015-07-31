@@ -1,26 +1,16 @@
-module.exports = function Game(updateManager, playerHandler, playerModifier, map, players) {
-    var eventEmitters = {};
-
-    updateManager.events.forEach(function (event) {
-        if (eventEmitters[event]) {
-            throw new Error("Multiple EventEmitters are using the event: " + event);
-        }
-
-        eventEmitters[event] = updateManager;
-    });
+module.exports = function Game(updateManager, playerHandler, playerModifier, eventHandler, map, players) {
 
     function start() {
         updateManager.start(players, map);
     }
 
     function on(event, listener) {
-        var eventEmitter = eventEmitters[event];
 
-        if (!eventEmitter) {
+        if (!eventHandler.isRegistered(event)) {
             throw new Error("Invalid event: " + event);
         }
 
-        eventEmitter.on(event, listener);
+        eventHandler.on(event, listener);
     }
 
     function setPlayerSteering(player, steering) {

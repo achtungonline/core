@@ -1,16 +1,13 @@
-var EventEmitter = require("events").EventEmitter;
 var ShapeModifier = require("./geometry/shape-modifier.js");
 
-var EVENT_UPDATED = "updated";
-var EVENT_GAME_OVER = "gameOver";
-var events = [EVENT_UPDATED, EVENT_GAME_OVER];
-
-module.exports = function UpdateManager(requestUpdateTick, playerHandler, wormModifier, collisionHandler) {
+module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormModifier, collisionHandler) {
     var run;
-    var eventEmitter = new EventEmitter();
     var previousTime;
 
-    playerHandler.on("playerDied", function onPlayerDied(players, player) {
+    eventHandler.register(eventHandler.events.GAME_OVER);
+    eventHandler.register(eventHandler.events.GAME_UPDATED);
+
+    eventHandler.on(eventHandler.events.PLAYER_DIED, function onPlayerDied(players, player) {
         var numAlivePlayers = 0;
 
         players.forEach(function (player) {
@@ -20,7 +17,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler, wormMo
         });
 
         if (numAlivePlayers === 1) {
-            eventEmitter.emit(EVENT_GAME_OVER);
+            eventHandler.emit(eventHandler.events.GAME_OVER);
             stopUpdating();
         }
     });
@@ -69,7 +66,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler, wormMo
             });
         });
 
-        eventEmitter.emit(EVENT_UPDATED);
+        eventHandler.emit(eventHandler.events.GAME_UPDATED);
 
         requestUpdateTick(function onUpdateTick() {
             update(players, map);
@@ -77,9 +74,7 @@ module.exports = function UpdateManager(requestUpdateTick, playerHandler, wormMo
     }
 
     return {
-        events: events,
         start: start,
-        stop: stopUpdating,
-        on: eventEmitter.on.bind(eventEmitter)
+        stop: stopUpdating
     }
 }

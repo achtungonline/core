@@ -1,21 +1,12 @@
-var EventEmitter = require("events").EventEmitter;
+module.exports = function PlayerHandler(eventHandler, playerModifier) {
+    eventHandler.register(eventHandler.events.PLAYER_DIED);
 
-var EVENT_PLAYER_DIED = "playerDied";
-var events = [EVENT_PLAYER_DIED];
-
-module.exports = function PlayerHandler(collisionHandler, playerModifier) {
-    var eventEmitter = new EventEmitter();
-
-    collisionHandler.on("wormMapCollision", function onWormMapCollision(players, player, worm) {
+    eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
         var index = player.worms.indexOf(worm);
         player.worms.splice(index, 1);
 
         if (player.worms.length === 0) {
-            eventEmitter.emit(EVENT_PLAYER_DIED, players, player);
+            eventHandler.emit(eventHandler.events.PLAYER_DIED, players, player);
         }
     });
-
-    return {
-        on: eventEmitter.on.bind(eventEmitter)
-    };
 };
