@@ -22,10 +22,6 @@ module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormMod
         }
     });
 
-    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function(players, player, worm) {
-       console.log("Worm: " + worm.id + "crashed");
-    });
-
     function start(players, map) {
         run = true;
         previousTime = getCurrentTime();
