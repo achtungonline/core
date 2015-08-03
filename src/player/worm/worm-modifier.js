@@ -8,7 +8,7 @@ module.exports = function WormModifier(eventHandler, shapeModifier, clone) {
     }
 
     function updateDirection(deltaTime, player, worm) {
-        worm.direction += player.steering * deltaTime;
+        worm.direction += player.steering * worm.turningSpeed * deltaTime;
     }
 
     function updatePosition(deltaTime, worm) {
