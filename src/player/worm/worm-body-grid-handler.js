@@ -1,13 +1,5 @@
-module.exports = function wormBodyGridHandler(eventHandler, gridFactory) {
+module.exports = function wormBodyGridHandler(gridFactory) {
     var wormBodyGrids = {};
-
-    eventHandler.on(eventHandler.WORM_BODY_ADDED, function onWormBodyAdded(worm, bodyPart) {
-        if (!wormBodyGrids[worm.id]) {
-            wormBodyGrids[worm.id] = gridFactory.create();
-        }
-        updateGrid(wormBodyGrids[worm.id], bodyPart)
-    });
-
 
     function getCell(wormBodyGrid, row, col) {
         var grid = wormBodyGrid.grid;
@@ -56,7 +48,8 @@ module.exports = function wormBodyGridHandler(eventHandler, gridFactory) {
     }
 
 
-    function updateGrid(wormBodyGrid, bodyPart) {
+    function addBodyPart(worm, bodyPart) {
+        var wormBodyGrid = getWormBodyGrid(worm);
         var intersectingCells = getIntersectingCells(wormBodyGrid, bodyPart);
 
         intersectingCells.forEach(function (cell) {
@@ -65,11 +58,15 @@ module.exports = function wormBodyGridHandler(eventHandler, gridFactory) {
     }
 
     function getWormBodyGrid(worm) {
+        if (!wormBodyGrids[worm.id]) {
+            wormBodyGrids[worm.id] = gridFactory.create();
+        }
         return wormBodyGrids[worm.id];
     }
 
 
     return {
+        addBodyPart: addBodyPart,
         getWormBodyGrid: getWormBodyGrid,
         getIntersectingCells: getIntersectingCells
     }

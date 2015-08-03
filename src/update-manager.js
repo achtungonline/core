@@ -1,6 +1,6 @@
 var ShapeModifier = require("./geometry/shape-modifier.js");
 
-module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormModifier, collisionHandler) {
+module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormHandler, collisionHandler) {
     var run;
     var previousTime;
 
@@ -60,8 +60,8 @@ module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormMod
         var deltaTime = updatePrevTimeAndGetDeltaTime();
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                wormModifier.updateDirection(deltaTime, player, worm);
-                wormModifier.updatePosition(deltaTime, worm);
+                wormHandler.updateDirection(deltaTime, player, worm);
+                wormHandler.updatePosition(deltaTime, worm);
             });
         });
 
