@@ -10,7 +10,14 @@ module.exports = function ShapeModifier() {
         shape.maxY += yDiff;
     }
 
+    function setPosition(shape, newX, newY) {
+        var xDiff = newX - shape.x;
+        var yDiff = newY - shape.y;
+        move(shape, xDiff, yDiff);
+    }
+
     return {
-        move: move
+        move: move,
+        setPosition: setPosition
     };
 };

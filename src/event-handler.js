@@ -3,9 +3,13 @@ var EventEmitter = require("events").EventEmitter;
 var events = {};
 
 events.WORM_MAP_COLLISION = "wormMapCollision";
-events.PLAYER_DIED = "playerDied";
+events.WORM_WORM_COLLISION = "wormWormCollision";
+
 events.GAME_UPDATED = "gameUpdated";
 events.GAME_OVER = "gameOver";
+
+events.PLAYER_DIED = "playerDied";
+events.WORM_BODY_ADDED = "wormBodyAdded";
 
 module.exports = function EventHandler() {
     var eventEmitter = new EventEmitter();

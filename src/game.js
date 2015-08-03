@@ -1,4 +1,4 @@
-module.exports = function Game(updateManager, playerHandler, playerModifier, eventHandler, map, players) {
+module.exports = function Game(updateManager, playerHandler, playerModifier, eventHandler, map, players, wormBodyGrids) {
 
     function start() {
         updateManager.start(players, map);

@@ -22,6 +22,10 @@ module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormMod
         }
     });
 
+    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function(players, player, worm) {
+       console.log("Worm: " + worm.id + "crashed");
+    });
+
     function start(players, map) {
         run = true;
         previousTime = getCurrentTime();
@@ -62,9 +66,23 @@ module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormMod
             player.worms.forEach(function (worm) {
                 wormModifier.updateDirection(deltaTime, player, worm);
                 wormModifier.updatePosition(deltaTime, worm);
-                collisionHandler.wormMapCollisionDetection(players, player, worm, map)
             });
         });
+
+        players.forEach(function (player) {
+            player.worms.forEach(function (worm) {
+                collisionHandler.wormMapCollisionDetection(players, player, worm, map)
+
+                players.forEach(function (otherPlayer) {
+                    otherPlayer.worms.forEach(function (otherWorm) {
+                        if (otherWorm.id !== worm.id) {
+                            collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
+                        }
+                    });
+                });
+
+            });
+        })
 
         eventHandler.emit(eventHandler.events.GAME_UPDATED);
 

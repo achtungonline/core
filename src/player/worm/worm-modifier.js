@@ -1,4 +1,11 @@
-module.exports = function WormModifier(shapeModifier, clone) {
+module.exports = function WormModifier(eventHandler, shapeModifier, clone) {
+    eventHandler.register(eventHandler.WORM_BODY_ADDED);
+
+    function addBodyPart(worm) {
+        var bodyPart = clone(worm.head);
+        worm.body.push(bodyPart);
+        eventHandler.emit(eventHandler.WORM_BODY_ADDED, worm, bodyPart)
+    }
 
     function updateDirection(deltaTime, player, worm) {
         worm.direction += player.steering * deltaTime;
@@ -9,8 +16,7 @@ module.exports = function WormModifier(shapeModifier, clone) {
         var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
         shapeModifier.move(worm.head, xDiff, yDiff);
-
-        worm.body.push(clone(worm.head));
+        addBodyPart(worm);
     }
 
     return {
