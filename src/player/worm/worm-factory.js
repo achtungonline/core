@@ -11,6 +11,8 @@ module.exports = function WormFactory(idGenerator) {
 
     function create() {
         return Worm(idGenerator(), shapeFactory.createCircle(WORM_RADIUS, 10, 10), 0, WORM_SPEED, TURNING_SPEED);
+        return Worm(idGenerator(), shapeFactory.createRectangle(WORM_RADIUS*2, WORM_RADIUS*2, 10, 10), 0, WORM_SPEED, TURNING_SPEED);
+
     }
 
     return {

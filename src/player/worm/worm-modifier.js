@@ -1,4 +1,4 @@
-module.exports = function WormModifier(shapeModifier, clone) {
+module.exports = function WormModifier(shapeRelocater, clone) {
 
     function generateAndAddBodyPart(worm) {
         var bodyPart = clone(worm.head);
@@ -14,7 +14,7 @@ module.exports = function WormModifier(shapeModifier, clone) {
         var xDiff = Math.cos(worm.direction) * worm.speed * deltaTime;
         var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
-        shapeModifier.move(worm.head, xDiff, yDiff);
+        shapeRelocater.move(worm.head, xDiff, yDiff);
     }
 
 

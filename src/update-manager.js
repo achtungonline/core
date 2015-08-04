@@ -1,5 +1,3 @@
-var ShapeModifier = require("./geometry/shape-modifier.js");
-
 module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormHandler, collisionHandler) {
     var run;
     var previousTime;
