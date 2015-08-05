@@ -3,6 +3,7 @@ module.exports = function WormBodyModifier(wormBodyGridHandler) {
     function pushBodyPart(worm, bodyPart) {
         worm.body.push(bodyPart);
         wormBodyGridHandler.addBodyPart(worm, bodyPart);
+
     }
 
     function removeBodyPart(worm, bodyPart) {

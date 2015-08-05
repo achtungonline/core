@@ -1,4 +1,4 @@
-var Player = require("./Player.js").Player;
+var Player = require("./player.js").Player;
 var Worm = require("./worm/Worm.js");
 var ShapeFactory = require("./../geometry/shape-factory.js");
 
