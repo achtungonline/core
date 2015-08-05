@@ -10,7 +10,7 @@ module.exports = function WormModifier(shapeRelocater, wormBodyModifier, clone) 
         worm.direction += player.steering * worm.turningSpeed * deltaTime;
     }
 
-    function updateHeadPosition(deltaTime, worm) {
+    function updatePosition(deltaTime, worm) {
         var xDiff = Math.cos(worm.direction) * worm.speed * deltaTime;
         var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
@@ -20,7 +20,7 @@ module.exports = function WormModifier(shapeRelocater, wormBodyModifier, clone) 
 
     return {
         updateDirection: updateDirection,
-        updatePosition: updateHeadPosition,
+        updatePosition: updatePosition,
         createAndPushNextBodyPart: createAndPushNextBodyPart
     }
 }
