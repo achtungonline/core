@@ -67,17 +67,20 @@ module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormMod
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
                 collisionHandler.wormMapCollisionDetection(players, player, worm, map)
+            });
+        });
 
+        players.forEach(function (player) {
+            player.worms.forEach(function (worm) {
                 players.forEach(function (otherPlayer) {
                     otherPlayer.worms.forEach(function (otherWorm) {
-                        if (otherWorm.id !== worm.id) {
+                        if (worm.id !== otherWorm.id) {
                             collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
                         }
                     });
                 });
-
             });
-        })
+        });
 
         eventHandler.emit(eventHandler.events.GAME_UPDATED);
 
