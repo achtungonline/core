@@ -57,6 +57,20 @@ module.exports = function wormBodyGridHandler(gridFactory) {
         });
     }
 
+    function removeBodyPart(worm, bodyPart) {
+        var wormBodyGrid = getWormBodyGrid(worm);
+        var intersectingCells = getIntersectingCells(wormBodyGrid, bodyPart);
+
+        intersectingCells.forEach(function (cell) {
+            for (var i = 0; i < cell.length; i++) {
+                if (cell[i] == bodyPart) {
+                    cell.splice(i, 1);
+                    break;
+                }
+            }
+        });
+    }
+
     function getWormBodyGrid(worm) {
         if (!wormBodyGrids[worm.id]) {
             wormBodyGrids[worm.id] = gridFactory.create();
@@ -67,6 +81,7 @@ module.exports = function wormBodyGridHandler(gridFactory) {
 
     return {
         addBodyPart: addBodyPart,
+        removeBodyPart: removeBodyPart,
         getWormBodyGrid: getWormBodyGrid,
         getIntersectingCells: getIntersectingCells
     }

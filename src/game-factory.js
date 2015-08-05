@@ -3,7 +3,7 @@ var MapFactory = require("./map/map-factory.js");
 var UpdateManager = require("./update-manager.js");
 var PlayerModifier = require("./player/player-modifier.js");
 var WormModifier = require("./player/worm/worm-modifier.js");
-var WormHandler = require("./player/worm/worm-handler.js");
+var WormBodyModifier = require("./player/worm/worm-body-modifier.js");
 var WormGridFactory = require("./grid-factory.js").GridFactoryCoveringArea;
 var WormBodyGridHandler = require("./player/worm/worm-body-grid-handler.js");
 var PlayerHandler = require("./player/player-handler.js");
@@ -39,12 +39,13 @@ module.exports = function GameFactory(requestUpdateTick) {
 
 
         var wormBodyGridHandler = WormBodyGridHandler(WormGridFactory(map.width, map.height, 30));
-        var wormHandler = WormHandler(WormModifier(shapeRelocater, clone), wormBodyGridHandler);
+        var wormBodyModifier = WormBodyModifier(wormBodyGridHandler);
+        var wormModifier = WormModifier(shapeRelocater, wormBodyModifier, clone);
         var wormWormCollisionHandler = WormWormCollisionHandler(eventHandler, wormBodyGridHandler, shapeSpatialRelations);
         var collisionHandler = CollisionHandler(eventHandler, wormWormCollisionHandler, mapUtils);
         var playerHandler = PlayerHandler(eventHandler, playerModifier);
 
-        var updateManager = UpdateManager(requestUpdateTick, eventHandler, wormHandler, collisionHandler);
+        var updateManager = UpdateManager(requestUpdateTick, eventHandler, wormModifier, collisionHandler);
 
         return Game(updateManager, playerHandler, playerModifier, eventHandler, map, players);
     }

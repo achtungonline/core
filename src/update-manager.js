@@ -1,4 +1,4 @@
-module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormHandler, collisionHandler) {
+module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormModifier, collisionHandler) {
     var run;
     var previousTime;
 
@@ -58,8 +58,9 @@ module.exports = function UpdateManager(requestUpdateTick, eventHandler, wormHan
         var deltaTime = updatePrevTimeAndGetDeltaTime();
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                wormHandler.updateDirection(deltaTime, player, worm);
-                wormHandler.updatePosition(deltaTime, worm);
+                wormModifier.updateDirection(deltaTime, player, worm);
+                wormModifier.updatePosition(deltaTime, worm);
+                wormModifier.createAndPushNextBodyPart(worm);
             });
         });
 

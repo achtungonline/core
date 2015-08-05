@@ -1,8 +1,8 @@
-module.exports = function WormModifier(shapeRelocater, clone) {
+module.exports = function WormModifier(shapeRelocater, wormBodyModifier, clone) {
 
-    function generateAndAddBodyPart(worm) {
+    function createAndPushNextBodyPart(worm) {
         var bodyPart = clone(worm.head);
-        worm.body.push(bodyPart);
+        wormBodyModifier.pushBodyPart(worm, bodyPart);
         return bodyPart;
     }
 
@@ -21,7 +21,7 @@ module.exports = function WormModifier(shapeRelocater, clone) {
     return {
         updateDirection: updateDirection,
         updatePosition: updateHeadPosition,
-        generateAndAddBodyPart: generateAndAddBodyPart,
+        createAndPushNextBodyPart: createAndPushNextBodyPart
     }
 }
 
