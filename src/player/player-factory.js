@@ -1,5 +1,5 @@
 var Player = require("./player.js").Player;
-var Worm = require("./worm/Worm.js");
+var Worm = require("./worm/worm.js");
 var ShapeFactory = require("./../geometry/shape-factory.js");
 
 module.exports = function PlayerFactory(idGenerator, wormFactory) {
