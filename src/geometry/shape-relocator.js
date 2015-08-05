@@ -1,6 +1,4 @@
-var intersectFunctions = require("./shape-spatial-relations.js");
-
-module.exports = function ShapeModifier() {
+module.exports = function ShapeRelocator() {
     function move(shape, xDiff, yDiff) {
         shape.x += xDiff;
         shape.y += yDiff;
