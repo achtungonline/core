@@ -6,6 +6,6 @@ module.exports = function Worm(id, head, direction, speed, turningSpeed, alive) 
         speed: speed,
         turningSpeed: turningSpeed,
         alive: alive,
-        body: [head]
+        body: []
     };
 }

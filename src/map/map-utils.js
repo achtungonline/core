@@ -21,12 +21,12 @@ utils.isInsidePlayableArea = function (map, shape) {
 utils.getRandomPositionInsidePlayableArea = function (clone, shapeModifier, map, shape) {
     var pos = {};
     var i = 0;
+    var shapeWithNewPos = shape;
     while (i < 100000) {
         pos.x = Math.random() * map.width;
         pos.y = Math.random() * map.height;
-        var tempShape = clone(shape);
-        shapeModifier.setPosition(tempShape, pos.x, pos.y);
-        if (utils.isInsidePlayableArea(map, tempShape)) {
+        shapeWithNewPos = shapeModifier.setPosition(shapeWithNewPos, pos.x, pos.y);
+        if (utils.isInsidePlayableArea(map, shapeWithNewPos)) {
             return pos;
         }
         i++;

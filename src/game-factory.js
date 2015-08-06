@@ -1,4 +1,4 @@
-var ShapeRelocator = require("./geometry/shape-relocator.js");
+var ShapeModifierIFactory = require("./geometry/shape-modifier-immutable-factory.js");
 var MapFactory = require("./map/map-factory.js");
 var UpdateManager = require("./update-manager.js");
 var PlayerModifier = require("./player/player-modifier.js");
@@ -24,23 +24,22 @@ module.exports = function GameFactory(requestUpdateTick) {
         }
 
         var eventHandler = EventHandler();
-
-        var shapeRelocator = ShapeRelocator();
-        var playerModifier = PlayerModifier();
-
+        var shapeModifierI = ShapeModifierIFactory().create();
 
         //TODO: This logic is only here temporarely, should be moved
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                var newWormPos = mapUtils.getRandomPositionInsidePlayableArea(clone, shapeRelocator, map, worm.head);
-                shapeRelocator.setPosition(worm.head, newWormPos.x, newWormPos.y);
+                var newWormPos = mapUtils.getRandomPositionInsidePlayableArea(clone, shapeModifierI, map, worm.head);
+                worm.head = shapeModifierI.setPosition(worm.head, newWormPos.x, newWormPos.y);
             });
         });
+
+        var playerModifier = PlayerModifier();
 
 
         var wormBodyGridHandler = WormBodyGridHandler(WormGridFactory(map.width, map.height, 30));
         var wormBodyModifier = WormBodyModifier(wormBodyGridHandler);
-        var wormModifier = WormModifier(shapeRelocator, wormBodyModifier, clone);
+        var wormModifier = WormModifier(shapeModifierI, wormBodyModifier, clone);
         var wormWormCollisionHandler = WormWormCollisionHandler(eventHandler, wormBodyGridHandler, shapeSpatialRelations);
         var collisionHandler = CollisionHandler(eventHandler, wormWormCollisionHandler, mapUtils);
         var playerHandler = PlayerHandler(eventHandler, playerModifier);
