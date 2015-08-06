@@ -1,4 +1,4 @@
-module.exports = function WormWormCollisionHandler(eventHandler, wormBodyGridHandler, shapeSpatialRelations) {
+module.exports = function WormWormCollisionHandler(eventHandler, wormBodyGridHandler, wormBodyImmunityHandler, shapeSpatialRelations) {
 
 
     eventHandler.register(eventHandler.events.WORM_WORM_COLLISION);
@@ -7,7 +7,9 @@ module.exports = function WormWormCollisionHandler(eventHandler, wormBodyGridHan
         var wormBodyParts = wormBodyGridHandler.getBodyPartsInProximity(otherWorm, head);
         wormBodyParts.forEach(function (bodyPart) {
             if (shapeSpatialRelations.intersects(head, bodyPart)) {
-                eventHandler.emit(eventHandler.events.WORM_WORM_COLLISION, players, player, worm)
+                if (!wormBodyImmunityHandler.isImmuneBodyPart(worm, bodyPart)) {
+                    eventHandler.emit(eventHandler.events.WORM_WORM_COLLISION, players, player, worm)
+                }
             }
         });
     }
