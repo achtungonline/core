@@ -47,9 +47,7 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormModifier, collisionHa
             player.worms.forEach(function (worm) {
                 players.forEach(function (otherPlayer) {
                     otherPlayer.worms.forEach(function (otherWorm) {
-                        if (worm.id !== otherWorm.id) {
-                            collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
-                        }
+                        collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
                     });
                 });
             });

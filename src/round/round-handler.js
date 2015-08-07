@@ -18,7 +18,7 @@ module.exports = function RoundHandler(eventHandler, phases) {
     }
 
     function update(deltaTime, players, map) {
-        if(!isRunning()) {
+        if (!isRunning()) {
             return;
         }
 
@@ -28,7 +28,9 @@ module.exports = function RoundHandler(eventHandler, phases) {
             function isLastPhase() {
                 return currentPhaseIndex === phases.length - 1
             }
-            if(isLastPhase()) {
+
+            if (isLastPhase()) {
+                // Do not start a new phase if it is the last
                 return;
             }
             startNextPhase();

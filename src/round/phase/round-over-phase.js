@@ -13,7 +13,7 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
     }
 
     function update(deltaTime) {
-        if(isRunning()) {
+        if (isRunning()) {
             return;
         }
         runtime -= deltaTime;

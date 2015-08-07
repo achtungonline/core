@@ -1,4 +1,5 @@
-module.exports = function WormModifier(shapeModifierI, wormBodyModifier, clone) {
+
+module.exports = function WormModifier(shapeModifierI, wormBodyModifier, wormBodyImmunityHandler, clone) {
 
     function createAndPushNextBodyPart(worm) {
         var bodyPart = clone(worm.head);
@@ -16,6 +17,7 @@ module.exports = function WormModifier(shapeModifierI, wormBodyModifier, clone) 
         var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
         setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
+        wormBodyImmunityHandler.update(worm);
     }
 
     function setHead(worm, shape) {
@@ -33,5 +35,5 @@ module.exports = function WormModifier(shapeModifierI, wormBodyModifier, clone) 
         updatePosition: updatePosition,
         createAndPushNextBodyPart: createAndPushNextBodyPart
     }
-}
+};
 
