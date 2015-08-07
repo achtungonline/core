@@ -7,18 +7,28 @@ module.exports = function WormModifier(shapeModifierI, wormBodyModifier, clone) 
     }
 
     function updateDirection(deltaTime, player, worm) {
-        worm.direction += player.steering * worm.turningSpeed * deltaTime;
+        var direction = worm.direction + player.steering * worm.turningSpeed * deltaTime;
+        setDirection(worm, direction);
     }
 
     function updatePosition(deltaTime, worm) {
         var xDiff = Math.cos(worm.direction) * worm.speed * deltaTime;
         var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
-        worm.head = shapeModifierI.move(worm.head, xDiff, yDiff);
+        setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
     }
 
+    function setHead(worm, shape) {
+        worm.head = shape;
+    }
+
+    function setDirection(worm, direction) {
+        worm.direction = direction;
+    }
 
     return {
+        setDirection: setDirection,
+        setHead: setHead,
         updateDirection: updateDirection,
         updatePosition: updatePosition,
         createAndPushNextBodyPart: createAndPushNextBodyPart

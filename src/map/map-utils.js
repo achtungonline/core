@@ -1,5 +1,5 @@
 var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
-var clone = require("./../util/clone.js");
+var shapeModifierI = require("./../geometry/shape-modifier-immutable-factory.js")().create();
 
 var utils = module.exports = {};
 
@@ -17,15 +17,14 @@ utils.isInsidePlayableArea = function (map, shape) {
     return true;
 };
 
-//TODO: Shoule be moved and probably remade a bit
-utils.getRandomPositionInsidePlayableArea = function (clone, shapeModifier, map, shape) {
+utils.getRandomPositionInsidePlayableArea = function (map, shape) {
     var pos = {};
     var i = 0;
     var shapeWithNewPos = shape;
     while (i < 100000) {
         pos.x = Math.random() * map.width;
         pos.y = Math.random() * map.height;
-        shapeWithNewPos = shapeModifier.setPosition(shapeWithNewPos, pos.x, pos.y);
+        shapeWithNewPos = shapeModifierI.setPosition(shapeWithNewPos, pos.x, pos.y);
         if (utils.isInsidePlayableArea(map, shapeWithNewPos)) {
             return pos;
         }

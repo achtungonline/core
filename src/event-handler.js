@@ -2,11 +2,12 @@ var EventEmitter = require("events").EventEmitter;
 
 var events = {};
 
-events.WORM_MAP_COLLISION = "wormMapCollision";
-events.WORM_WORM_COLLISION = "wormWormCollision";
-
 events.GAME_UPDATED = "gameUpdated";
 events.GAME_OVER = "gameOver";
+events.GAME_ROUND_PHASE_STARTED = "gameRoundPhaseStarted";
+
+events.WORM_MAP_COLLISION = "wormMapCollision";
+events.WORM_WORM_COLLISION = "wormWormCollision";
 
 events.PLAYER_DIED = "playerDied";
 
