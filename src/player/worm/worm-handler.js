@@ -1,11 +1,15 @@
 module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone) {
 
     eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
-        kill(players, player, worm);
+        if (worm.alive) {
+            kill(players, player, worm);
+        }
     });
 
     eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
-        kill(players, player, worm);
+        if (worm.alive) {
+            kill(players, player, worm);
+        }
     });
 
     function kill(players, player, worm) {

@@ -38,10 +38,7 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHan
         playerUtils.forEachAliveWorm(players, function (player, worm) {
             players.forEach(function (otherPlayer) {
                 otherPlayer.worms.forEach(function (otherWorm) {
-                    //Player could have died so we need to make sure he does not collide/get killed again
-                    if (worm.alive) {
-                        collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
-                    }
+                    collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
                 });
             });
         });

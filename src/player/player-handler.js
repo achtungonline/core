@@ -10,11 +10,15 @@ module.exports = function PlayerHandler(eventHandler) {
         }
 
         function kill(player) {
-            if(!player.alive) {
+            if (!player.alive) {
                 throw Error("Trying to kill player that is already dead");
             }
             player.alive = false;
             eventHandler.emit(eventHandler.events.PLAYER_DIED, players, player)
+        }
+
+        if(!player.alive) {
+            throw Error("A worm died for a already dead player.");
         }
 
         if (!isAnyWormAlive(player)) {
