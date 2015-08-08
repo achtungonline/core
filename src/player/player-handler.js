@@ -1,5 +1,4 @@
 module.exports = function PlayerHandler(eventHandler) {
-    eventHandler.register(eventHandler.events.PLAYER_DIED);
 
     eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
         wormCrashed(players, player, worm);

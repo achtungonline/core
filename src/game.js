@@ -12,15 +12,6 @@ module.exports = function Game(gameEngine, eventHandler, playerHandler, map, pla
         gameEngine.start(players, map);
     }
 
-    function on(event, listener) {
-
-        if (!eventHandler.isRegistered(event)) {
-            throw Error("Invalid event: " + event);
-        }
-
-        eventHandler.on(event, listener);
-    }
-
     function setPlayerSteering(player, steering) {
         playerHandler.setSteering(player, steering);
     }
@@ -36,7 +27,7 @@ module.exports = function Game(gameEngine, eventHandler, playerHandler, map, pla
         map: map,
         players: players,
         start: start,
-        on: on,
+        on: eventHandler.on,
         setPlayerSteering: setPlayerSteering,
         pause: pause
     };

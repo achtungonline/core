@@ -3,8 +3,6 @@ module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandl
     var run;
     var paused;
 
-    eventHandler.register(eventHandler.events.GAME_OVER);
-    eventHandler.register(eventHandler.events.GAME_UPDATED);
     function start(players, map) {
         run = true;
         previousTime = getCurrentTime();

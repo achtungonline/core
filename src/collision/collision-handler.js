@@ -1,5 +1,4 @@
 module.exports = function CollisionHandler(eventHandler, wormWormCollisionHandler, mapUtils) {
-    eventHandler.register(eventHandler.events.WORM_MAP_COLLISION);
 
     function wormMapCollisionDetection(players, player, worm, map) {
         var head = worm.head;

@@ -1,6 +1,5 @@
 module.exports = function RoundHandler(eventHandler, phases) {
     var currentPhaseIndex = 0;
-    eventHandler.register(eventHandler.events.GAME_ROUND_PHASE_STARTED);
 
     function start(players, map) {
         startCurrentPhase(players, map);
