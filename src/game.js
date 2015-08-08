@@ -1,4 +1,4 @@
-module.exports = function Game(gameEngine, eventHandler, playerModifier, map, players) {
+module.exports = function Game(gameEngine, eventHandler, playerHandler, map, players) {
 
     eventHandler.on(eventHandler.events.GAME_ROUND_PHASE_STARTED, function(phaseType) {
        console.log("Phase: " + phaseType + " started");
@@ -22,7 +22,7 @@ module.exports = function Game(gameEngine, eventHandler, playerModifier, map, pl
     }
 
     function setPlayerSteering(player, steering) {
-        playerModifier.setSteering(player, steering);
+        playerHandler.setSteering(player, steering);
     }
 
     function pause() {

@@ -1,9 +1,8 @@
+module.exports = function WormHandler(shapeModifierI, wormBodyHandler, wormBodyImmunityHandler, clone) {
 
-module.exports = function WormModifier(shapeModifierI, wormBodyModifier, wormBodyImmunityHandler, clone) {
-
-    function createAndPushNextBodyPart(worm) {
+    function updateBody(worm) {
         var bodyPart = clone(worm.head);
-        wormBodyModifier.pushBodyPart(worm, bodyPart);
+        wormBodyHandler.pushBodyPart(worm, bodyPart);
         return bodyPart;
     }
 
@@ -33,7 +32,7 @@ module.exports = function WormModifier(shapeModifierI, wormBodyModifier, wormBod
         setHead: setHead,
         updateDirection: updateDirection,
         updatePosition: updatePosition,
-        createAndPushNextBodyPart: createAndPushNextBodyPart
+        updateBody: updateBody
     }
 };
 

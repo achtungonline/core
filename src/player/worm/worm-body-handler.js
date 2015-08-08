@@ -1,4 +1,4 @@
-module.exports = function WormBodyModifier(wormBodyGridHandler, wormBodyImmunityHandler) {
+module.exports = function WormBodyHandler(wormBodyGridHandler, wormBodyImmunityHandler) {
 
     function pushBodyPart(worm, bodyPart) {
         worm.body.push(bodyPart);

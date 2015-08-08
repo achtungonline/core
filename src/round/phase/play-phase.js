@@ -2,7 +2,7 @@ var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase(eventHandler, wormModifier, collisionHandler) {
+playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHandler) {
     var type = playPhase.type;
     var run;
 
@@ -31,9 +31,9 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormModifier, collisionHa
         }
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                wormModifier.updateDirection(deltaTime, player, worm);
-                wormModifier.updatePosition(deltaTime, worm);
-                wormModifier.createAndPushNextBodyPart(worm);
+                wormHandler.updateDirection(deltaTime, player, worm);
+                wormHandler.updatePosition(deltaTime, worm);
+                wormHandler.updateBody(worm);
             });
         });
 

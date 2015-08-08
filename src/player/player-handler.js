@@ -1,5 +1,13 @@
-module.exports = function PlayerHandler(eventHandler, playerModifier) {
+module.exports = function PlayerHandler(eventHandler) {
     eventHandler.register(eventHandler.events.PLAYER_DIED);
+
+    eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
+        wormCrashed(players, player, worm);
+    });
+
+    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
+        wormCrashed(players, player, worm);
+    });
 
     function wormCrashed(players, player, worm) {
         var index = player.worms.indexOf(worm);
@@ -10,11 +18,11 @@ module.exports = function PlayerHandler(eventHandler, playerModifier) {
         }
     }
 
-    eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
-        wormCrashed(players, player, worm);
-    });
+    function setSteering(player, steering) {
+        player.steering = steering;
+    }
 
-    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
-        wormCrashed(players, player, worm);
-    });
+    return {
+        setSteering: setSteering
+    }
 };
