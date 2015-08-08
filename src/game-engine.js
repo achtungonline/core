@@ -47,7 +47,7 @@ module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandl
 
         roundHandler.update(deltaTime, players, map);
 
-        if(!roundHandler.isRunning()) {
+        if (!roundHandler.isRunning()) {
             stopUpdating();
         }
 
@@ -69,7 +69,7 @@ module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandl
     return {
         start: start,
         stop: stopUpdating,
-        swithPaused: switchPaused,
+        switchPaused: switchPaused,
         isRunning: isRunning
     }
 }

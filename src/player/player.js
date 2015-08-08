@@ -1,11 +1,11 @@
-var player = module.exports = {}
+var player = module.exports = {};
 
-player.steering = {}
+player.steering = {};
 player.steering.LEFT = -1;
 player.steering.RIGHT = 1;
 player.steering.STRAIGHT = 0;
 
-player.Player = function (id, worms) {
+player.Player = function (id, worms, alive) {
     var steering = player.steering.STRAIGHT;
     if (!worms) {
         worms = [];
@@ -16,6 +16,7 @@ player.Player = function (id, worms) {
     return {
         id: id,
         worms: worms,
-        steering: steering
-    };
-}
+        steering: steering,
+        alive: alive
+    }
+};

@@ -4,17 +4,19 @@ var RoundOverPhase = require("./phase/round-over-phase.js").RoundOverPhase;
 
 var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
 var ShapeModifierIFactory = require("./../geometry/shape-modifier-immutable-factory.js");
+
 var mapUtils = require("./../map/map-utils.js");
+var playerUtils = require("./../player/player-utils.js");
 
 module.exports = function PhaseFactory(eventHandler, wormHandler, collisionHandler) {
     var shapeModifierIFactory = ShapeModifierIFactory();
 
     function createStartPhase() {
-        return StartPhase(eventHandler, wormHandler, shapeModifierIFactory.create(), shapeSpatialRelations, mapUtils);
+        return StartPhase(eventHandler, wormHandler, shapeModifierIFactory.create(), shapeSpatialRelations, mapUtils, playerUtils);
     }
 
     function createPlayPhase() {
-        return PlayPhase(eventHandler, wormHandler, collisionHandler);
+        return PlayPhase(eventHandler, wormHandler, collisionHandler, playerUtils);
     }
 
     function createRoundOverPhase() {

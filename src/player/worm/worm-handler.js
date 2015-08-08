@@ -1,4 +1,20 @@
-module.exports = function WormHandler(shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone) {
+module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone) {
+
+    eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
+        kill(players, player, worm);
+    });
+
+    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
+        kill(players, player, worm);
+    });
+
+    function kill(players, player, worm) {
+        if (!worm.alive) {
+            throw Error("Trying to kill worm that is already dead");
+        }
+        worm.alive = false;
+        eventHandler.emit(eventHandler.events.WORM_DIED, players, player, worm);
+    }
 
     function pushBodyPart(worm, bodyPart) {
         worm.body.push(bodyPart);

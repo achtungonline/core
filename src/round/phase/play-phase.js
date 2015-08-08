@@ -2,21 +2,16 @@ var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHandler) {
+playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHandler, playerUtils) {
     var type = playPhase.type;
     var run;
 
     eventHandler.on(eventHandler.events.PLAYER_DIED, function onPlayerDied(players, player) {
-        var numAlivePlayers = 0;
+        var alivePlayers = playerUtils.getAlivePlayers(players);
 
-        players.forEach(function (player) {
-            if (player.worms.length > 0) {
-                numAlivePlayers++;
-            }
-        });
-
-        if (numAlivePlayers === 1) {
+        if (alivePlayers.length <= 1) {
             run = false;
+
         }
     });
 
@@ -29,26 +24,24 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHan
         if (!isRunning()) {
             return;
         }
-        players.forEach(function (player) {
-            player.worms.forEach(function (worm) {
-                wormHandler.updateDirection(deltaTime, player, worm);
-                wormHandler.updatePosition(deltaTime, worm);
-                wormHandler.updateBody(worm);
-            });
+
+        playerUtils.forEachAliveWorm(players, function (player, worm) {
+            wormHandler.updateDirection(deltaTime, player, worm);
+            wormHandler.updatePosition(deltaTime, worm);
+            wormHandler.updateBody(worm);
         });
 
-        players.forEach(function (player) {
-            player.worms.forEach(function (worm) {
-                collisionHandler.wormMapCollisionDetection(players, player, worm, map)
-            });
+        playerUtils.forEachAliveWorm(players, function (player, worm) {
+            collisionHandler.wormMapCollisionDetection(players, player, worm, map)
         });
 
-        players.forEach(function (player) {
-            player.worms.forEach(function (worm) {
-                players.forEach(function (otherPlayer) {
-                    otherPlayer.worms.forEach(function (otherWorm) {
+        playerUtils.forEachAliveWorm(players, function (player, worm) {
+            players.forEach(function (otherPlayer) {
+                otherPlayer.worms.forEach(function (otherWorm) {
+                    //Player could have died so we need to make sure he does not collide/get killed again
+                    if (worm.alive) {
                         collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
-                    });
+                    }
                 });
             });
         });
@@ -64,6 +57,6 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHan
         update: update,
         isRunning: isRunning
     }
-}
+};
 
 

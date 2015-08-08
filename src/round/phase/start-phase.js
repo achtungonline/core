@@ -4,7 +4,7 @@ var startPhase = module.exports = {};
 
 startPhase.type = "startPhase";
 
-startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils) {
+startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils) {
     var runtime;
     var type = startPhase.type;
 
@@ -28,7 +28,6 @@ startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModi
         var updatedWorms = [];
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                var approvedLocation;
                 var newHead = getWormHeadInsidePlayableMapArea(worm);
                 var counter = 0;
                 while (isCollidingWithWorms(updatedWorms, newHead)) {
@@ -54,7 +53,6 @@ startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModi
     }
 
     function start(players, map) {
-        run = true;
         runtime = PHASE_DURATION;
         setPlayerStartingPositions(players, map);
         setPlayerStartingDirections(players);
@@ -64,10 +62,9 @@ startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModi
         if (!isRunning()) {
             return;
         }
-        players.forEach(function (player) {
-            player.worms.forEach(function (worm) {
-                wormHandler.updateDirection(deltaTime, player, worm);
-            });
+        playerUtils.forEachAliveWorm(players, function (player, worm) {
+            wormHandler.updateDirection(deltaTime, player, worm);
+
         });
 
         runtime -= deltaTime;

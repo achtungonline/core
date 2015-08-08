@@ -1,11 +1,15 @@
 module.exports = function Game(gameEngine, eventHandler, playerHandler, map, players) {
 
-    eventHandler.on(eventHandler.events.GAME_ROUND_PHASE_STARTED, function(phaseType) {
-       console.log("Phase: " + phaseType + " started");
+    eventHandler.on(eventHandler.events.GAME_ROUND_PHASE_STARTED, function (phaseType) {
+        console.log("Phase: " + phaseType + " started");
     });
 
-    eventHandler.on(eventHandler.events.GAME_OVER, function() {
-       console.log("Game Over");
+    eventHandler.on(eventHandler.events.GAME_OVER, function () {
+        console.log("Game Over");
+    });
+
+    eventHandler.on(eventHandler.events.PLAYER_DIED, function (players, player) {
+        console.log("Player Died: " + player.id);
     });
 
     function start() {

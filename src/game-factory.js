@@ -18,7 +18,7 @@ module.exports = function GameFactory(requestUpdateTick) {
         }
         var eventHandler = EventHandler();
 
-        var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 30));
+        var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 30), eventHandler);
         var wormHandler = wormHandlerFactory.create();
 
         var collisionHandlerFactory = CollisionHandlerFactory(eventHandler, wormHandler);

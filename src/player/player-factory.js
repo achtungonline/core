@@ -1,13 +1,9 @@
 var Player = require("./player.js").Player;
-var Worm = require("./worm/worm.js");
-var ShapeFactory = require("./../geometry/shape-factory.js");
 
 module.exports = function PlayerFactory(idGenerator, wormFactory) {
 
-    var shapeFactory = ShapeFactory();
-
     function create() {
-        return Player(idGenerator(), wormFactory.create());
+        return Player(idGenerator(), wormFactory.create(), true);
     }
 
     function createPlayers(numberOfPlayers) {
@@ -22,4 +18,4 @@ module.exports = function PlayerFactory(idGenerator, wormFactory) {
         create: create,
         createPlayers: createPlayers
     }
-}
+};

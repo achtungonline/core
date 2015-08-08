@@ -6,7 +6,7 @@ var WormBodyImmunityHandler = require("./worm-body-immunity-handler.js");
 var shapeSpatialRelations = require("./../../geometry/shape-spatial-relations.js");
 var clone = require("./../../util/clone.js");
 
-module.exports = function WormHandlerFactory(wormGridFactory) {
+module.exports = function WormHandlerFactory(wormGridFactory, eventHandler) {
     var shapeModifierIFactory = ShapeModifierIFactory();
 
     function create() {
@@ -15,7 +15,7 @@ module.exports = function WormHandlerFactory(wormGridFactory) {
 
         var shapeModifierI = shapeModifierIFactory.create();
 
-        return WormHandler(shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone);
+        return WormHandler(eventHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone);
     }
 
     return {

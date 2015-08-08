@@ -1,21 +1,27 @@
 module.exports = function PlayerHandler(eventHandler) {
-
-    eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
-        wormCrashed(players, player, worm);
-    });
-
-    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
-        wormCrashed(players, player, worm);
-    });
-
-    function wormCrashed(players, player, worm) {
-        var index = player.worms.indexOf(worm);
-        player.worms.splice(index, 1);
-
-        if (player.worms.length === 0) {
-            eventHandler.emit(eventHandler.events.PLAYER_DIED, players, player);
+    eventHandler.on(eventHandler.events.WORM_DIED, function (players, player, worm) {
+        function isAnyWormAlive(player) {
+            player.worms.forEach(function (worm) {
+                if (worm.alive) {
+                    return true;
+                }
+            });
+            return false;
         }
-    }
+
+        function kill(player) {
+            if(!player.alive) {
+                throw Error("Trying to kill player that is already dead");
+            }
+            player.alive = false;
+            eventHandler.emit(eventHandler.events.PLAYER_DIED, players, player)
+        }
+
+        if (!isAnyWormAlive(player)) {
+            kill(player);
+        }
+    });
+
 
     function setSteering(player, steering) {
         player.steering = steering;
