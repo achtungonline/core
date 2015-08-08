@@ -9,7 +9,7 @@ module.exports = function WormBodyImmunityHandler(shapeSpatialRelations) {
         bodyParts.push(bodyPart);
     }
 
-    function isImmuneBodyPart(worm, bodyPart) {
+    function isImmuneToBodyPart(worm, bodyPart) {
         var bodyParts = wormImmunityBodyParts[worm.id];
         return bodyParts && bodyParts.indexOf(bodyPart) !== -1;
     }
@@ -19,7 +19,7 @@ module.exports = function WormBodyImmunityHandler(shapeSpatialRelations) {
         if (!bodyParts) {
             return;
         }
-        bodyParts.forEach(function(bodyPart, index, list) {
+        bodyParts.forEach(function (bodyPart, index, list) {
             if (!shapeSpatialRelations.intersects(worm.head, bodyPart)) {
                 list.splice(index, 1);
             }
@@ -28,7 +28,7 @@ module.exports = function WormBodyImmunityHandler(shapeSpatialRelations) {
 
     return {
         addBodyPart: addBodyPart,
-        isImmuneBodyPart: isImmuneBodyPart,
+        isImmuneToBodyPart: isImmuneToBodyPart,
         update: update
     }
-}
+};

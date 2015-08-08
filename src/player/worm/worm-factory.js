@@ -1,6 +1,5 @@
 var Worm = require("./worm.js");
 var ShapeFactory = require("./../../geometry/shape-factory.js");
-var Clone = require("./../../util/clone.js");
 
 var WORM_RADIUS = 2;
 var WORM_SPEED = 50;
@@ -15,6 +14,6 @@ module.exports = function WormFactory(idGenerator) {
     }
 
     return {
-        create: create,
+        create: create
     }
-}
+};

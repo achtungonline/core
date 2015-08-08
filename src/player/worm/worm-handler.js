@@ -1,8 +1,24 @@
-module.exports = function WormHandler(shapeModifierI, wormBodyHandler, wormBodyImmunityHandler, clone) {
+module.exports = function WormHandler(shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone) {
+
+    function pushBodyPart(worm, bodyPart) {
+        worm.body.push(bodyPart);
+        wormBodyGridHandler.addBodyPart(worm, bodyPart);
+        wormBodyImmunityHandler.addBodyPart(worm, bodyPart);
+    }
+
+    function removeBodyPart(worm, bodyPart) {
+        for (var i = 0; i < worm.body.length; i++) {
+            if (worm.body[i] == bodyPart) {
+                worm.body.splice(i, 1);
+                wormBodyGridHandler.removeBodyPart(worm, bodyPart);
+                return;
+            }
+        }
+    }
 
     function updateBody(worm) {
         var bodyPart = clone(worm.head);
-        wormBodyHandler.pushBodyPart(worm, bodyPart);
+        pushBodyPart(worm, bodyPart);
         return bodyPart;
     }
 
@@ -32,7 +48,9 @@ module.exports = function WormHandler(shapeModifierI, wormBodyHandler, wormBodyI
         setHead: setHead,
         updateDirection: updateDirection,
         updatePosition: updatePosition,
-        updateBody: updateBody
+        updateBody: updateBody,
+        getBodyPartsInProximity: wormBodyGridHandler.getBodyPartsInProximity,
+        isImmuneToBodyPart: wormBodyImmunityHandler.isImmuneToBodyPart
     }
 };
 
