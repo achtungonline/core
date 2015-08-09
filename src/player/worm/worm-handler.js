@@ -1,4 +1,4 @@
-module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone) {
+module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDecider) {
 
     eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
         if (worm.alive) {
@@ -36,8 +36,12 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
         }
     }
 
-    function updateBody(worm) {
+    function updateBody(deltaTime, worm) {
         var bodyPart = clone(worm.head);
+        bodyPart = bodyPartDecider.decide(deltaTime, worm, bodyPart);
+        if (!bodyPart) {
+            return;
+        }
         pushBodyPart(worm, bodyPart);
         return bodyPart;
     }

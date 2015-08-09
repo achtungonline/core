@@ -5,7 +5,7 @@ var WORM_RADIUS = 2;
 var WORM_SPEED = 50;
 var TURNING_SPEED = 1.75;
 
-module.exports = function WormFactory(idGenerator) {
+module.exports = function WormFactory(idGenerator, wormBodyDecider) {
     var shapeFactory = ShapeFactory();
 
     function create() {
