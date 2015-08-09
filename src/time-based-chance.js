@@ -29,7 +29,7 @@ timeBasedChance.calculators = {};
  * Exponential and uses pow on doubles (expensive).
  * Goes towards 100% chance.
  * 1 second passed = baseChance. When time goes to infinity, chance goes towards 100%.
- * (1 - baseChance^time) = chance
+ * (1 - (1 - baseChance)^time) = chance
  */
 timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function expoTimeBaseChanceCalculator(baseChance) {
     var currentChance = 0;
