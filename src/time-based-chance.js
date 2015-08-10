@@ -65,8 +65,24 @@ timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTim
     reset();
 
     function update(deltaTime) {
+<<<<<<< Updated upstream
         currentChance = deltaTime / (1 / baseChance - totalTime);
         totalTime += deltaTime;
+=======
+
+        var newWay = deltaTime / (1/baseChance - totalTime);
+
+        console.log("New way: " + newWay);
+        totalTime += deltaTime;
+        var totalChance = baseChance * totalTime;
+        var totalNotChance = 1 - totalChance;
+        var chanceNotThisUpdate = (totalNotChance === 0 ? 0 : totalNotChance / accumulatedNotChance); // Make sure we don't divide by 0
+        var chanceThisUpdate = 1 - chanceNotThisUpdate;
+        accumulatedNotChance = accumulatedNotChance * chanceNotThisUpdate;
+
+        currentChance = chanceThisUpdate;
+        console.log("Old way: " + currentChance);
+>>>>>>> Stashed changes
     }
 
 
