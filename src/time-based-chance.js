@@ -9,8 +9,8 @@ var timeBasedChance = module.exports = {};
  */
 timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator) {
 
-    function update(deltaTime, totalTime, callback) {
-        timeBasedChanceCalculator.update(deltaTime, totalTime);
+    function update(deltaTime, callback) {
+        timeBasedChanceCalculator.update(deltaTime);
         var chance = timeBasedChanceCalculator.getCurrentChance();
         if (chance >= Math.random()) {
             timeBasedChanceCalculator.reset();
@@ -34,7 +34,7 @@ timeBasedChance.calculators = {};
 timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function expoTimeBaseChanceCalculator(baseChance) {
     var currentChance = 0;
 
-    function update(deltaTime, totalTime) {
+    function update(deltaTime) {
         currentChance = 1 - Math.pow(1 - baseChance, deltaTime);
     }
 
@@ -59,29 +59,24 @@ timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function expoTimeBas
  * (time * baseChance)  = chance
  */
 timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTimeBasedChanceCalculator(baseChance) {
-    var accumulatedNotChance;
     var currentChance;
+    var totalTime;
 
     reset();
 
-    function update(deltaTime, totalTime) {
-        var totalChance = baseChance * totalTime;
-        var totalNotChance = 1 - totalChance;
-        var chanceNotThisUpdate = (totalNotChance === 0 ? 0 : totalNotChance / accumulatedNotChance); // Make sure we don't divide by 0
-        var chanceThisUpdate = 1 - chanceNotThisUpdate;
-        accumulatedNotChance = accumulatedNotChance * chanceNotThisUpdate;
-
-        currentChance = chanceThisUpdate;
+    function update(deltaTime) {
+        currentChance = deltaTime / (1 / baseChance - totalTime);
+        totalTime += deltaTime;
     }
+
 
     function getCurrentChance() {
         return currentChance;
     }
 
     function reset() {
-        //Always begin with 0 % currentChance at time 0 and 0 % accumulated chance (or 100% accumulatedNotChance)
-        accumulatedNotChance = 1;
         currentChance = 0;
+        totalTime = 0;
     }
 
     return {

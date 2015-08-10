@@ -20,11 +20,6 @@ module.exports = function Jump(timeBasedChanceTrigger, jumpLength, jumpMinFreque
         lastJumpTimer = 0;
     }
 
-    function getNextJumpTimer() {
-        return Math.max(0, lastJumpTimer - jumpMinFrequency);
-    }
-
-
     function update(deltaTime) {
         if (isJumping()) {
             updateJumping(deltaTime);
@@ -37,9 +32,7 @@ module.exports = function Jump(timeBasedChanceTrigger, jumpLength, jumpMinFreque
             return;
         }
 
-        var nextJumpTimer = getNextJumpTimer();
-
-        timeBasedChanceTrigger.update(deltaTime, nextJumpTimer, startJumping);
+        timeBasedChanceTrigger.update(deltaTime, startJumping);
     }
 
     return {

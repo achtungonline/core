@@ -7,7 +7,7 @@ var JUMP_CHANCE = 0.4; // 0.5 means 50 % chance of jump after 1 second has passe
 
 module.exports = function JumpFactory() {
     function create() {
-        var timeBasedChanceCalculator = timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(JUMP_CHANCE);
+        var timeBasedChanceCalculator = timeBasedChance.calculators.LinearTimeBasedChanceCalculator(JUMP_CHANCE);
         var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChanceCalculator);
         return Jump(timeBasedChanceTrigger, JUMP_LENGTH, JUMP_MIN_FREQUENCY);
     }
