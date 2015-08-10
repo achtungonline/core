@@ -1,7 +1,19 @@
-module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandler) {
+var EventEmitter = require("events").EventEmitter;
+
+
+module.exports = function GameEngine(requestUpdateTick, roundHandler) {
+    var eventEmitter = new EventEmitter();
+    var events = {};
+    events.GAME_UPDATED = "gameUpdated";
+    events.GAME_OVER = "gameOver";
+
     var previousTime;
     var run;
     var paused;
+
+    roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType) {
+        console.log("Phase: " + phaseType + " started");
+    });
 
     function start(players, map) {
         run = true;
@@ -14,7 +26,8 @@ module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandl
         paused = !paused;
     }
 
-    function stopUpdating() {
+    function stopGame() {
+        eventEmitter.emit(events.GAME_OVER);
         run = false;
     }
 
@@ -48,10 +61,10 @@ module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandl
         roundHandler.update(deltaTime, players, map);
 
         if (!roundHandler.isRunning()) {
-            stopUpdating();
+            stopGame();
         }
 
-        eventHandler.emit(eventHandler.events.GAME_UPDATED);
+        eventEmitter.emit(events.GAME_UPDATED);
 
         requestUpdateTick(function onUpdateTick() {
             update(players, map);
@@ -68,8 +81,10 @@ module.exports = function GameEngine(requestUpdateTick, eventHandler, roundHandl
 
     return {
         start: start,
-        stop: stopUpdating,
+        stop: stopGame,
         switchPaused: switchPaused,
-        isRunning: isRunning
+        isRunning: isRunning,
+        on: eventEmitter.on.bind(eventEmitter),
+        events: events
     }
-}
+};

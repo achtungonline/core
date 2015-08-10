@@ -6,8 +6,6 @@ var WormGridFactory = require("./grid-factory.js").GridFactoryCoveringArea;
 var PlayerHandler = require("./player/player-handler.js");
 var AIHandler = require("./player/ai/ai-handler.js");
 var playerUtils = require("./player/player-utils.js");
-var CollisionHandlerFactory = require("./collision/collision-handler-factory.js");
-var EventHandler = require("./event-handler.js");
 var Game = require("./game.js");
 
 module.exports = function GameFactory(requestUpdateTick) {
@@ -18,23 +16,19 @@ module.exports = function GameFactory(requestUpdateTick) {
         if (!map) {
             map = mapFactory.createSquare(800);
         }
-        var eventHandler = EventHandler();
 
-        var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 30), eventHandler);
+        var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 30));
         var wormHandler = wormHandlerFactory.create();
 
-        var collisionHandlerFactory = CollisionHandlerFactory(eventHandler, wormHandler);
-        var collisionHandler = collisionHandlerFactory.create();
-
         var aiHandler = AIHandler();
-        var playerHandler = PlayerHandler(eventHandler, aiHandler, playerUtils);
+        var playerHandler = PlayerHandler(wormHandler, aiHandler);
 
-        var roundHandlerFactory = RoundHandlerFactory(eventHandler, wormHandler, collisionHandler, aiHandler);
+        var roundHandlerFactory = RoundHandlerFactory(wormHandler, playerHandler, aiHandler);
         var roundHandler = roundHandlerFactory.create();
 
-        var gameEngine = GameEngine(requestUpdateTick, eventHandler, roundHandler);
+        var gameEngine = GameEngine(requestUpdateTick, roundHandler);
 
-        return Game(gameEngine, eventHandler, playerHandler, map, players);
+        return Game(gameEngine, playerHandler, map, players);
     }
 
     return {

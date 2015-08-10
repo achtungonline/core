@@ -1,5 +1,11 @@
-module.exports = function PlayerHandler(eventHandler, aiHandler, playerUtils) {
-    eventHandler.on(eventHandler.events.WORM_DIED, function (players, player, worm) {
+var EventEmitter = require("events").EventEmitter;
+
+module.exports = function PlayerHandler(wormHandler, aiHandler) {
+    var eventEmitter = new EventEmitter();
+    var events = {};
+    events.PLAYER_DIED = "playerDied";
+
+    wormHandler.on(wormHandler.events.WORM_DIED, function (players, player, worm) {
         function isAnyWormAlive(player) {
             player.worms.forEach(function (worm) {
                 if (worm.alive) {
@@ -14,7 +20,7 @@ module.exports = function PlayerHandler(eventHandler, aiHandler, playerUtils) {
                 throw Error("Trying to kill player that is already dead");
             }
             player.alive = false;
-            eventHandler.emit(eventHandler.events.PLAYER_DIED, players, player)
+            eventEmitter.emit(events.PLAYER_DIED, players, player)
         }
 
         if (!player.alive) {
@@ -46,6 +52,8 @@ module.exports = function PlayerHandler(eventHandler, aiHandler, playerUtils) {
         setSteering: setSteering,
         setAIPlayer: setAIPlayer,
         updateAIPlayers: updateAIPlayers,
-        removeAIPlayer: removeAIPlayer
+        removeAIPlayer: removeAIPlayer,
+        on: eventEmitter.on.bind(eventEmitter),
+        events: events
     }
 };

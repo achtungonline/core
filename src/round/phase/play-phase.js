@@ -2,11 +2,11 @@ var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHandler, playerUtils, aiHandler) {
+playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils, aiHandler) {
     var type = playPhase.type;
     var run;
 
-    eventHandler.on(eventHandler.events.PLAYER_DIED, function onPlayerDied(players, player) {
+    playerHandler.on(playerHandler.events.PLAYER_DIED, function onPlayerDied(players, player) {
         var alivePlayers = playerUtils.getAlivePlayers(players);
 
         if (alivePlayers.length <= 1) {
@@ -27,19 +27,7 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHan
         aiHandler.update();
 
         playerUtils.forEachAliveWorm(players, function (player, worm) {
-            wormHandler.update(deltaTime, player, worm);
-        });
-
-        playerUtils.forEachAliveWorm(players, function (player, worm) {
-            collisionHandler.wormMapCollisionDetection(players, player, worm, map)
-        });
-
-        playerUtils.forEachAliveWorm(players, function (player, worm) {
-            players.forEach(function (otherPlayer) {
-                otherPlayer.worms.forEach(function (otherWorm) {
-                    collisionHandler.wormWormCollisionDetection(players, player, worm, otherWorm);
-                });
-            });
+            wormHandler.update(deltaTime, players, map, player, worm);
         });
     }
 

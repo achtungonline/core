@@ -8,15 +8,15 @@ var ShapeModifierIFactory = require("./../geometry/shape-modifier-immutable-fact
 var mapUtils = require("./../map/map-utils.js");
 var playerUtils = require("./../player/player-utils.js");
 
-module.exports = function PhaseFactory(eventHandler, wormHandler, collisionHandler, aiHandler) {
+module.exports = function PhaseFactory(wormHandler, playerHandler, aiHandler) {
     var shapeModifierIFactory = ShapeModifierIFactory();
 
     function createStartPhase() {
-        return StartPhase(eventHandler, wormHandler, shapeModifierIFactory.create(), shapeSpatialRelations, mapUtils, playerUtils);
+        return StartPhase(wormHandler, shapeModifierIFactory.create(), shapeSpatialRelations, mapUtils, playerUtils);
     }
 
     function createPlayPhase() {
-        return PlayPhase(eventHandler, wormHandler, collisionHandler, playerUtils, aiHandler);
+        return PlayPhase(wormHandler, playerHandler, playerUtils, aiHandler);
     }
 
     function createRoundOverPhase() {

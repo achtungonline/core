@@ -4,7 +4,7 @@ var startPhase = module.exports = {};
 
 startPhase.type = "startPhase";
 
-startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils) {
+startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils) {
     var runtime;
     var type = startPhase.type;
     var originalWormSpeeds = []; //TODO: Should be removed, replaced with immobilize effect/powerup
@@ -71,7 +71,7 @@ startPhase.StartPhase = function StartPhase(eventHandler, wormHandler, shapeModi
         }
 
         playerUtils.forEachAliveWorm(players, function (player, worm) {
-            wormHandler.update(deltaTime, player, worm);
+            wormHandler.update(deltaTime, players, map, player, worm);
         });
 
         runtime -= deltaTime;

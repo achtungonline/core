@@ -1,14 +1,10 @@
-module.exports = function Game(gameEngine, eventHandler, playerHandler, map, players) {
+module.exports = function Game(gameEngine, playerHandler, map, players) {
 
-    eventHandler.on(eventHandler.events.GAME_ROUND_PHASE_STARTED, function (phaseType) {
-        console.log("Phase: " + phaseType + " started");
-    });
-
-    eventHandler.on(eventHandler.events.GAME_OVER, function () {
+    gameEngine.on(gameEngine.events.GAME_OVER, function () {
         console.log("Game Over");
     });
 
-    eventHandler.on(eventHandler.events.PLAYER_DIED, function (players, player) {
+    playerHandler.on(playerHandler.events.PLAYER_DIED, function (players, player) {
         console.log("Player Died: " + player.id);
     });
 
@@ -39,10 +35,11 @@ module.exports = function Game(gameEngine, eventHandler, playerHandler, map, pla
         map: map,
         players: players,
         start: start,
-        on: eventHandler.on,
         setPlayerSteering: setPlayerSteering,
         setAIPlayer: setAIPlayer,
         removeAIPlayer: removeAIPlayer,
-        pause: pause
+        pause: pause,
+        on: gameEngine.on.bind(gameEngine),
+        events: gameEngine.events
     };
 };

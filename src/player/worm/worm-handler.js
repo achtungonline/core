@@ -1,12 +1,18 @@
-module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDecider) {
+var EventEmitter = require("events").EventEmitter;
 
-    eventHandler.on(eventHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
+module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDecider) {
+    var eventEmitter = new EventEmitter();
+    var events = {};
+
+    events.WORM_DIED = "wormDied";
+
+    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
         if (worm.alive) {
             kill(players, player, worm);
         }
     });
 
-    eventHandler.on(eventHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
+    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
         if (worm.alive) {
             kill(players, player, worm);
         }
@@ -17,7 +23,7 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
             throw Error("Trying to kill worm that is already dead");
         }
         worm.alive = false;
-        eventHandler.emit(eventHandler.events.WORM_DIED, players, player, worm);
+        eventEmitter.emit(events.WORM_DIED, players, player, worm);
     }
 
     function pushBodyPart(worm, bodyPart) {
@@ -36,7 +42,7 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
         }
     }
 
-    function update(deltaTime, player, worm) {
+    function update(deltaTime, players, map, player, worm) {
         function updateDirection() {
             var direction = worm.direction + player.steering * worm.turningSpeed * deltaTime;
             setDirection(worm, direction);
@@ -60,9 +66,15 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
             wormBodyImmunityHandler.update(worm);
         }
 
+        function collisionDetection() {
+            collisionHandler.wormMapCollisionDetection(players, player, worm, map);
+            collisionHandler.wormWormCollisionDetection(players, player, worm);
+        }
+
         updateDirection();
         updateBody();
         updatePosition();
+        collisionDetection()
     }
 
 
@@ -83,8 +95,8 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
         setDirection: setDirection,
         setHead: setHead,
         update: update,
-        getBodyPartsInProximity: wormBodyGridHandler.getBodyPartsInProximity,
-        isImmuneToBodyPart: wormBodyImmunityHandler.isImmuneToBodyPart
+        on: eventEmitter.on.bind(eventEmitter),
+        events: events
     }
 };
 
