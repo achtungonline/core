@@ -1,4 +1,4 @@
-module.exports = function PlayerHandler(eventHandler) {
+module.exports = function PlayerHandler(eventHandler, aiHandler) {
     eventHandler.on(eventHandler.events.WORM_DIED, function (players, player, worm) {
         function isAnyWormAlive(player) {
             player.worms.forEach(function (worm) {
@@ -26,12 +26,26 @@ module.exports = function PlayerHandler(eventHandler) {
         }
     });
 
+    function setAIPlayer(player, ai) {
+        aiHandler.addAIPlayer(player, ai);
+    }
+
+    function removeAIPlayer(player) {
+        aiHandler.removeAIPlayer(player);
+    }
+
+    function updateAIPlayers() {
+        aiHandler.update();
+    }
 
     function setSteering(player, steering) {
         player.steering = steering;
     }
 
     return {
-        setSteering: setSteering
+        setSteering: setSteering,
+        setAIPlayer: setAIPlayer,
+        updateAIPlayers: updateAIPlayers,
+        removeAIPlayer: removeAIPlayer
     }
 };
