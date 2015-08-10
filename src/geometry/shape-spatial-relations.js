@@ -43,7 +43,7 @@ function getIntersectsFunctions() {
         var maxAllowedDist = circle.radius + otherCircle.radius;
 
         var dist = getXYDist(circle, otherCircle);
-        return Math.pow(dist.x, 2) + Math.pow(dist.y, 2) < Math.pow(maxAllowedDist, 2);
+        return dist.x * dist.x + dist.y * dist.y < maxAllowedDist * maxAllowedDist;
     });
 
     set(rectType, rectType, function (rect, otherRect) {

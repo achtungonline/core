@@ -17,7 +17,7 @@ module.exports = function GameFactory(requestUpdateTick) {
             map = mapFactory.createSquare(800);
         }
 
-        var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 30));
+        var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 8));
         var wormHandler = wormHandlerFactory.create();
 
         var aiHandler = AIHandler();
