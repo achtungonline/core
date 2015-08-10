@@ -66,7 +66,7 @@ function getIntersectsFunctions() {
         }
 
         // special case for rectangle corners
-        cornerDistanceSq = Math.pow(dist.x - rect.width / 2, 2) + Math.pow(dist.y - rect.height / 2, 2);
+        var cornerDistanceSq = Math.pow(dist.x - rect.width / 2, 2) + Math.pow(dist.y - rect.height / 2, 2);
 
         return cornerDistanceSq <= Math.pow(circle.radius, 2);
     });
