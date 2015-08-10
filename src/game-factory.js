@@ -5,6 +5,7 @@ var WormHandlerFactory = require("./player/worm/worm-handler-factory.js");
 var WormGridFactory = require("./grid-factory.js").GridFactoryCoveringArea;
 var PlayerHandler = require("./player/player-handler.js");
 var AIHandler = require("./player/ai/ai-handler.js");
+var playerUtils = require("./player/player-utils.js");
 var CollisionHandlerFactory = require("./collision/collision-handler-factory.js");
 var EventHandler = require("./event-handler.js");
 var Game = require("./game.js");
@@ -26,7 +27,7 @@ module.exports = function GameFactory(requestUpdateTick) {
         var collisionHandler = collisionHandlerFactory.create();
 
         var aiHandler = AIHandler();
-        var playerHandler = PlayerHandler(eventHandler, aiHandler);
+        var playerHandler = PlayerHandler(eventHandler, aiHandler, playerUtils);
 
         var roundHandlerFactory = RoundHandlerFactory(eventHandler, wormHandler, collisionHandler, aiHandler);
         var roundHandler = roundHandlerFactory.create();

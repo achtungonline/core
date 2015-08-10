@@ -18,7 +18,7 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
         }
         runtime -= deltaTime;
         if (runtime < 0) {
-            run = false;
+            runtime = false;
         }
     }
 
@@ -26,10 +26,14 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
         return (runtime !== undefined && runtime > 0);
     }
 
+    function end() {
+    }
+
     return {
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning
+        isRunning: isRunning,
+        end: end
     }
-}
+};

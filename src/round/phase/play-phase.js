@@ -27,9 +27,7 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHan
         aiHandler.update();
 
         playerUtils.forEachAliveWorm(players, function (player, worm) {
-            wormHandler.updateDirection(deltaTime, player, worm);
-            wormHandler.updatePosition(deltaTime, worm);
-            wormHandler.updateBody(deltaTime, worm);
+            wormHandler.update(deltaTime, player, worm);
         });
 
         playerUtils.forEachAliveWorm(players, function (player, worm) {
@@ -49,11 +47,15 @@ playPhase.PlayPhase = function PlayPhase(eventHandler, wormHandler, collisionHan
         return run;
     }
 
+    function end() {
+    }
+
     return {
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning
+        isRunning: isRunning,
+        end: end
     }
 };
 

@@ -29,7 +29,7 @@ utils.forEachAlivePlayerWorm = function forEachAlivePlayerWorm(player, callback)
 utils.getAlivePlayers = function getAlivePlayers(players) {
     var alivePlayers = [];
     utils.forEachAlivePlayer(players, function (player) {
-      alivePlayers.push(player);
+        alivePlayers.push(player);
     });
     return alivePlayers;
 };

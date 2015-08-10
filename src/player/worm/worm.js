@@ -8,4 +8,4 @@ module.exports = function Worm(id, head, direction, speed, turningSpeed, alive) 
         alive: alive,
         body: []
     };
-}
+};

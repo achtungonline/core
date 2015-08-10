@@ -10,7 +10,9 @@ var timeBasedChance = module.exports = {};
 timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator) {
 
     function update(deltaTime, callback) {
+
         timeBasedChanceCalculator.update(deltaTime);
+
         var chance = timeBasedChanceCalculator.getCurrentChance();
         if (chance >= Math.random()) {
             timeBasedChanceCalculator.reset();
@@ -31,7 +33,7 @@ timeBasedChance.calculators = {};
  * 1 second passed = baseChance. When time goes to infinity, chance goes towards 100%.
  * (1 - (1 - baseChance)^time) = chance
  */
-timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function expoTimeBaseChanceCalculator(baseChance) {
+timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function ExpoTimeBaseChanceCalculator(baseChance) {
     var currentChance = 0;
 
     function update(deltaTime) {
@@ -65,24 +67,8 @@ timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTim
     reset();
 
     function update(deltaTime) {
-<<<<<<< Updated upstream
         currentChance = deltaTime / (1 / baseChance - totalTime);
         totalTime += deltaTime;
-=======
-
-        var newWay = deltaTime / (1/baseChance - totalTime);
-
-        console.log("New way: " + newWay);
-        totalTime += deltaTime;
-        var totalChance = baseChance * totalTime;
-        var totalNotChance = 1 - totalChance;
-        var chanceNotThisUpdate = (totalNotChance === 0 ? 0 : totalNotChance / accumulatedNotChance); // Make sure we don't divide by 0
-        var chanceThisUpdate = 1 - chanceNotThisUpdate;
-        accumulatedNotChance = accumulatedNotChance * chanceNotThisUpdate;
-
-        currentChance = chanceThisUpdate;
-        console.log("Old way: " + currentChance);
->>>>>>> Stashed changes
     }
 
 

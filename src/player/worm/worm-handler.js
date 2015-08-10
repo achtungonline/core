@@ -36,28 +36,35 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
         }
     }
 
-    function updateBody(deltaTime, worm) {
-        var bodyPart = clone(worm.head);
-        bodyPart = bodyPartDecider.decide(deltaTime, worm, bodyPart);
-        if (!bodyPart) {
-            return;
+    function update(deltaTime, player, worm) {
+        function updateDirection() {
+            var direction = worm.direction + player.steering * worm.turningSpeed * deltaTime;
+            setDirection(worm, direction);
         }
-        pushBodyPart(worm, bodyPart);
-        return bodyPart;
+
+        function updateBody() {
+            var bodyPart = clone(worm.head);
+            bodyPart = bodyPartDecider.decide(deltaTime, worm, bodyPart);
+            if (!bodyPart) {
+                return;
+            }
+            pushBodyPart(worm, bodyPart);
+            return bodyPart;
+        }
+
+        function updatePosition() {
+            var xDiff = Math.cos(worm.direction) * worm.speed * deltaTime;
+            var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
+
+            setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
+            wormBodyImmunityHandler.update(worm);
+        }
+
+        updateDirection();
+        updateBody();
+        updatePosition();
     }
 
-    function updateDirection(deltaTime, player, worm) {
-        var direction = worm.direction + player.steering * worm.turningSpeed * deltaTime;
-        setDirection(worm, direction);
-    }
-
-    function updatePosition(deltaTime, worm) {
-        var xDiff = Math.cos(worm.direction) * worm.speed * deltaTime;
-        var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
-
-        setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
-        wormBodyImmunityHandler.update(worm);
-    }
 
     function setHead(worm, shape) {
         worm.head = shape;
@@ -67,12 +74,15 @@ module.exports = function WormHandler(eventHandler, shapeModifierI, wormBodyGrid
         worm.direction = direction;
     }
 
+    function setSpeed(worm, speed) {
+        worm.speed = speed;
+    }
+
     return {
+        setSpeed: setSpeed,
         setDirection: setDirection,
         setHead: setHead,
-        updateDirection: updateDirection,
-        updatePosition: updatePosition,
-        updateBody: updateBody,
+        update: update,
         getBodyPartsInProximity: wormBodyGridHandler.getBodyPartsInProximity,
         isImmuneToBodyPart: wormBodyImmunityHandler.isImmuneToBodyPart
     }

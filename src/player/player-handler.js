@@ -1,4 +1,4 @@
-module.exports = function PlayerHandler(eventHandler, aiHandler) {
+module.exports = function PlayerHandler(eventHandler, aiHandler, playerUtils) {
     eventHandler.on(eventHandler.events.WORM_DIED, function (players, player, worm) {
         function isAnyWormAlive(player) {
             player.worms.forEach(function (worm) {
@@ -17,7 +17,7 @@ module.exports = function PlayerHandler(eventHandler, aiHandler) {
             eventHandler.emit(eventHandler.events.PLAYER_DIED, players, player)
         }
 
-        if(!player.alive) {
+        if (!player.alive) {
             throw Error("A worm died for a already dead player.");
         }
 
