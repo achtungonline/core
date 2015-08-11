@@ -6,13 +6,10 @@ var WormGridFactory = require("./grid-factory.js").GridFactoryCoveringArea;
 var PlayerHandler = require("./player/player-handler.js");
 var Game = require("./game.js");
 var AIHandler = require("./player/ai/ai-handler.js");
+var GameState = require("./game-state.js")
 
 module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
-
-    function createGameState(players, worms, map) {
-        return {players: players, worms: worms, map: map};
-    }
 
     function create(playerSetup, map) {
 
@@ -28,7 +25,7 @@ module.exports = function GameFactory(requestUpdateTick) {
             });
         });
 
-        var gameState = createGameState(players, worms, map);
+        var gameState = GameState(players, worms, map);
 
         var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 8));
         var wormHandler = wormHandlerFactory.create();
