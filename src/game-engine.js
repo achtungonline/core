@@ -42,11 +42,6 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
             var currentTime = getCurrentTime();
             deltaTime = (currentTime - previousTime) / DELTA_TIME_DIVIDER; //Delta time is in seconds.
 
-            //Minimum delta time is 1 msec (to avoid problems of dividing .
-            if (deltaTime === 0) {
-                deltaTime = 1 / DELTA_TIME_DIVIDER; //1 msec.
-            }
-
             previousTime = currentTime;
 
             return deltaTime;
@@ -54,7 +49,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
 
         var deltaTime = updatePrevTimeAndGetDeltaTime();
 
-        if (!isRunning() || isPaused()) {
+        if (!isRunning() || isPaused() || deltaTime === 0) {
             return;
         }
 

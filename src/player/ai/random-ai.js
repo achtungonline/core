@@ -1,4 +1,4 @@
-module.exports = function RandomAI(player) {
+module.exports = function RandomAI(game) {
 
     var updateTicks = 30;
 
@@ -6,10 +6,10 @@ module.exports = function RandomAI(player) {
         return Math.floor(Math.random() * (high - low) + low);
     }
 
-    function update() {
+    function update(player) {
         updateTicks += 1;
         if (updateTicks >= 30) {
-            player.steering = randInt(-1, 2);
+            game.setPlayerSteering(player, randInt(-1, 2));
             updateTicks = 0;
         }
     }

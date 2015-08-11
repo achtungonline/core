@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function PlayerHandler(wormHandler, aiHandler) {
+module.exports = function PlayerHandler(wormHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};
     events.PLAYER_DIED = "playerDied";
@@ -32,27 +32,12 @@ module.exports = function PlayerHandler(wormHandler, aiHandler) {
         }
     });
 
-    function setAIPlayer(player, ai) {
-        aiHandler.addAIPlayer(player, ai);
-    }
-
-    function removeAIPlayer(player) {
-        aiHandler.removeAIPlayer(player);
-    }
-
-    function updateAIPlayers() {
-        aiHandler.update();
-    }
-
     function setSteering(player, steering) {
         player.steering = steering;
     }
 
     return {
         setSteering: setSteering,
-        setAIPlayer: setAIPlayer,
-        updateAIPlayers: updateAIPlayers,
-        removeAIPlayer: removeAIPlayer,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
     }

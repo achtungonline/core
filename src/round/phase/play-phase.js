@@ -2,7 +2,7 @@ var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils, aiHandler) {
+playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils) {
     var type = playPhase.type;
     var run;
 
@@ -23,8 +23,6 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
         if (!isRunning()) {
             return;
         }
-
-        aiHandler.update();
 
         playerUtils.forEachAliveWorm(players, function (player, worm) {
             wormHandler.update(deltaTime, players, map, player, worm);

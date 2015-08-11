@@ -1,32 +1,36 @@
-module.exports = function AIHandler() {
+var RandomAI = require("./random-ai.js");
 
-    var playerAI = [];
+module.exports = function AIHandler(game) {
 
-    function createPlayerAI(player, ai) {
-        return {player: player, ai: ai}
-    }
+    game.on(game.events.GAME_UPDATED, function() {
+        update();
+    });
 
-    function addAIPlayer(player, ai) {
-        playerAI.push(createPlayerAI(player, ai));
+    var players = [];
+    var ais = [];
+
+    function addAIPlayer(player) {
+        players.push(player);
+        ais.push(RandomAI(game));
     }
 
     function removeAIPlayer(player) {
-        playerAI.forEach(function (ai, index, list) {
-            if (player.id === ai.player.id) {
-                list.splice(index, 1);
+        players.forEach(function (pl, index) {
+            if (player.id === pl.id) {
+                players.splice(index, 1);
+                ais.splice(index, 1);
             }
         });
     }
 
     function update() {
-        playerAI.forEach(function(ai) {
-            ai.ai.update();
+        players.forEach(function(player, index) {
+            ais[index].update(player);
         });
     }
 
     return  {
         addAIPlayer: addAIPlayer,
-        update: update,
         removeAIPlayer: removeAIPlayer
     }
 

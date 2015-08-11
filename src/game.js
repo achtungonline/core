@@ -16,14 +16,6 @@ module.exports = function Game(gameEngine, playerHandler, map, players) {
         playerHandler.setSteering(player, steering);
     }
 
-    function setAIPlayer(player, ai) {
-        playerHandler.setAIPlayer(player, ai);
-    }
-
-    function removeAIPlayer(player) {
-        playerHandler.removeAIPlayer(player);
-    }
-
     function pause() {
         if (!gameEngine.isRunning()) {
             throw Error("Trying to pause a game that is not running");
@@ -36,8 +28,6 @@ module.exports = function Game(gameEngine, playerHandler, map, players) {
         players: players,
         start: start,
         setPlayerSteering: setPlayerSteering,
-        setAIPlayer: setAIPlayer,
-        removeAIPlayer: removeAIPlayer,
         pause: pause,
         on: gameEngine.on.bind(gameEngine),
         events: gameEngine.events
