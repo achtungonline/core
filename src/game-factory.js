@@ -10,13 +10,25 @@ var AIHandler = require("./player/ai/ai-handler.js");
 module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
 
+    function createGameState(players, worms, map) {
+        return {players: players, worms: worms, map: map};
+    }
+
     function create(playerSetup, map) {
 
         var players = playerSetup.humanPlayers.concat(playerSetup.AIPlayers);
-        console.log(players);
         if (!map) {
             map = mapFactory.createSquare(800);
         }
+
+        var worms = [];
+        players.forEach(function(player) {
+            player.worms.forEach(function(worm) {
+                worms.push(worm);
+            });
+        });
+
+        var gameState = createGameState(players, worms, map);
 
         var wormHandlerFactory = WormHandlerFactory(WormGridFactory(map.width, map.height, 8));
         var wormHandler = wormHandlerFactory.create();
@@ -28,7 +40,7 @@ module.exports = function GameFactory(requestUpdateTick) {
 
         var gameEngine = GameEngine(requestUpdateTick, roundHandler);
 
-        var game = Game(gameEngine, playerHandler, map, players);
+        var game = Game(gameState, gameEngine, playerHandler);
 
         var aiHandler = AIHandler(game);
         playerSetup.AIPlayers.forEach(function(aiPlayer) {

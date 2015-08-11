@@ -15,11 +15,11 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
         console.log("Phase: " + phaseType + " started");
     });
 
-    function start(players, map) {
+    function start(gameState) {
         run = true;
         previousTime = getCurrentTime();
-        roundHandler.start(players, map);
-        update(players, map);
+        roundHandler.start(gameState);
+        update(gameState);
     }
 
     function switchPaused() {
@@ -35,7 +35,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
         return Date.now();
     }
 
-    function update(players, map) {
+    function update(gameState) {
         function updatePrevTimeAndGetDeltaTime() {
             var DELTA_TIME_DIVIDER = 1000;
 
@@ -53,7 +53,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
             return;
         }
 
-        roundHandler.update(deltaTime, players, map);
+        roundHandler.update(gameState, deltaTime);
 
         if (!roundHandler.isRunning()) {
             stopGame();
@@ -62,7 +62,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
         eventEmitter.emit(events.GAME_UPDATED);
 
         requestUpdateTick(function onUpdateTick() {
-            update(players, map);
+            update(gameState);
         });
     }
 

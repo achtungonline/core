@@ -5,7 +5,7 @@ module.exports = function PlayerHandler(wormHandler) {
     var events = {};
     events.PLAYER_DIED = "playerDied";
 
-    wormHandler.on(wormHandler.events.WORM_DIED, function (players, player, worm) {
+    wormHandler.on(wormHandler.events.WORM_DIED, function (gameState, player, worm) {
         function isAnyWormAlive(player) {
             player.worms.forEach(function (worm) {
                 if (worm.alive) {
@@ -20,7 +20,7 @@ module.exports = function PlayerHandler(wormHandler) {
                 throw Error("Trying to kill player that is already dead");
             }
             player.alive = false;
-            eventEmitter.emit(events.PLAYER_DIED, players, player)
+            eventEmitter.emit(events.PLAYER_DIED, gameState, player)
         }
 
         if (!player.alive) {

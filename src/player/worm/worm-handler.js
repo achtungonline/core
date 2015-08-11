@@ -6,24 +6,24 @@ module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBody
 
     events.WORM_DIED = "wormDied";
 
-    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(players, player, worm) {
+    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, player, worm) {
         if (worm.alive) {
-            kill(players, player, worm);
+            kill(gameState, player, worm);
         }
     });
 
-    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(players, player, worm) {
+    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(gameState, player, worm, otherWorm) {
         if (worm.alive) {
-            kill(players, player, worm);
+            kill(gameState, player, worm);
         }
     });
 
-    function kill(players, player, worm) {
+    function kill(gameState, player, worm) {
         if (!worm.alive) {
             throw Error("Trying to kill worm that is already dead");
         }
         worm.alive = false;
-        eventEmitter.emit(events.WORM_DIED, players, player, worm);
+        eventEmitter.emit(events.WORM_DIED, gameState, player, worm);
     }
 
     function pushBodyPart(worm, bodyPart) {
@@ -42,7 +42,7 @@ module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBody
         }
     }
 
-    function update(deltaTime, players, map, player, worm) {
+    function update(gameState, deltaTime, player, worm) {
         function updateDirection() {
             var direction = worm.direction + player.steering * worm.turningSpeed * deltaTime;
             setDirection(worm, direction);
@@ -67,8 +67,8 @@ module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBody
         }
 
         function collisionDetection() {
-            collisionHandler.wormMapCollisionDetection(players, player, worm, map);
-            collisionHandler.wormWormCollisionDetection(players, player, worm);
+            collisionHandler.wormMapCollisionDetection(gameState, player, worm);
+            collisionHandler.wormWormCollisionDetection(gameState, player, worm);
         }
 
         updateDirection();

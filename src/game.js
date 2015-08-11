@@ -1,15 +1,15 @@
-module.exports = function Game(gameEngine, playerHandler, map, players) {
+module.exports = function Game(gameState, gameEngine, playerHandler) {
 
     gameEngine.on(gameEngine.events.GAME_OVER, function () {
         console.log("Game Over");
     });
 
-    playerHandler.on(playerHandler.events.PLAYER_DIED, function (players, player) {
+    playerHandler.on(playerHandler.events.PLAYER_DIED, function (gameState, player) {
         console.log("Player Died: " + player.id);
     });
 
     function start() {
-        gameEngine.start(players, map);
+        gameEngine.start(gameState);
     }
 
     function setPlayerSteering(player, steering) {
@@ -24,8 +24,7 @@ module.exports = function Game(gameEngine, playerHandler, map, players) {
     }
 
     return {
-        map: map,
-        players: players,
+        gameState: gameState,
         start: start,
         setPlayerSteering: setPlayerSteering,
         pause: pause,

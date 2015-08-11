@@ -58,27 +58,27 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         });
     }
 
-    function start(players, map) {
+    function start(gameState) {
         runtime = PHASE_DURATION;
-        setPlayersStartingPositions(players, map);
-        setPlayersStartingDirections(players);
-        immobilizePlayers(players);
+        setPlayersStartingPositions(gameState.players, gameState.map);
+        setPlayersStartingDirections(gameState.players);
+        immobilizePlayers(gameState.players);
     }
 
-    function update(deltaTime, players, map) {
+    function update(gameState, deltaTime) {
         if (!isRunning()) {
             return;
         }
 
-        playerUtils.forEachAliveWorm(players, function (player, worm) {
-            wormHandler.update(deltaTime, players, map, player, worm);
+        playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
+            wormHandler.update(gameState, deltaTime, player, worm);
         });
 
         runtime -= deltaTime;
     }
 
-    function end(players, map) {
-        playerUtils.forEachAliveWorm(players, function setOriginalPlayerSpeeds(player, worm) {
+    function end(gameState) {
+        playerUtils.forEachAliveWorm(gameState.players, function setOriginalPlayerSpeeds(player, worm) {
             wormHandler.setSpeed(worm, originalWormSpeeds[worm.id]);
         });
     }

@@ -7,30 +7,30 @@ module.exports = function RoundHandler(phases) {
 
     var currentPhaseIndex = 0;
 
-    function start(players, map) {
-        startCurrentPhase(players, map);
+    function start(gameState) {
+        startCurrentPhase(gameState);
     }
 
-    function startCurrentPhase(players, map) {
-        getCurrentPhase().start(players, map);
+    function startCurrentPhase(gameState) {
+        getCurrentPhase().start(gameState);
         eventEmitter.emit(events.NEW_PHASE_STARTED, getCurrentPhase().type);
     }
 
-    function startNextPhase(players, map) {
+    function startNextPhase(gameState) {
         currentPhaseIndex++;
-        startCurrentPhase(players, map);
+        startCurrentPhase(gameState);
     }
 
-    function endCurrentPhase(players, map) {
-        getCurrentPhase().end(players, map);
+    function endCurrentPhase(gameState) {
+        getCurrentPhase().end(gameState);
     }
 
-    function update(deltaTime, players, map) {
+    function update(gameState, deltaTime) {
         if (!isRunning()) {
             return;
         }
 
-        getCurrentPhase().update(deltaTime, players, map);
+        getCurrentPhase().update(gameState, deltaTime);
 
         if (!getCurrentPhase().isRunning()) {
             function isLastPhase() {
@@ -41,8 +41,8 @@ module.exports = function RoundHandler(phases) {
                 // Do not start a new phase if it is the last
                 return;
             }
-            endCurrentPhase(players, map);
-            startNextPhase(players, map);
+            endCurrentPhase(gameState);
+            startNextPhase(gameState);
         }
     }
 

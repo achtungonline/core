@@ -23,9 +23,9 @@ module.exports = function AIHandler(game) {
         });
     }
 
-    function update() {
+    function update(gameState) {
         players.forEach(function(player, index) {
-            ais[index].update(player);
+            ais[index].update(gameState, player);
         });
     }
 

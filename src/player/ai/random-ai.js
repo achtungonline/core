@@ -6,7 +6,7 @@ module.exports = function RandomAI(game) {
         return Math.floor(Math.random() * (high - low) + low);
     }
 
-    function update(player) {
+    function update(gameState, player) {
         updateTicks += 1;
         if (updateTicks >= 30) {
             game.setPlayerSteering(player, randInt(-1, 2));

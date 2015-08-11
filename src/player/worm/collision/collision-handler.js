@@ -8,22 +8,22 @@ module.exports = function CollisionHandler(wormBodyGridHandler, wormBodyImmunity
     var eventEmitter = new EventEmitter();
 
 
-    function wormMapCollisionDetection(players, player, worm, map) {
+    function wormMapCollisionDetection(gameState, player, worm) {
         var head = worm.head;
-        if (!mapUtils.isInsidePlayableArea(map, head)) {
-            eventEmitter.emit(events.WORM_MAP_COLLISION, players, player, worm, map);
+        if (!mapUtils.isInsidePlayableArea(gameState.map, head)) {
+            eventEmitter.emit(events.WORM_MAP_COLLISION, gameState, player, worm);
         }
     }
 
-    function wormWormCollisionDetection(players, player, worm) {
-        players.forEach(function (otherPlayer) {
+    function wormWormCollisionDetection(gameState, player, worm) {
+        gameState.players.forEach(function (otherPlayer) {
             otherPlayer.worms.forEach(function (otherWorm) {
                 var head = worm.head;
                 var wormBodyParts = wormBodyGridHandler.getBodyPartsInProximity(otherWorm, head);
                 wormBodyParts.forEach(function (bodyPart) {
                     if (shapeSpatialRelations.intersects(head, bodyPart)) {
                         if (!wormBodyImmunityHandler.isImmuneToBodyPart(worm, bodyPart)) {
-                            eventEmitter.emit(events.WORM_WORM_COLLISION, players, player, worm, otherWorm);
+                            eventEmitter.emit(events.WORM_WORM_COLLISION, gameState, player, worm, otherWorm);
                         }
                     }
                 });
