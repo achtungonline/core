@@ -30,6 +30,10 @@ module.exports = function GameFactory(requestUpdateTick) {
         var playArea = PlayArea.createPlayArea(map.width, map.height);
         var playAreaHandler = PlayAreaHandler();
 
+        map.blockingShapes.forEach(function (shape) {
+            playAreaHandler.applyObstacleShape(playArea, shape);
+        });
+
         var gameState = GameState(players, worms, map, playArea, playAreaHandler);
 
         var wormHandlerFactory = WormHandlerFactory(GridFactory(map.width, map.height, 8), playAreaHandler);
