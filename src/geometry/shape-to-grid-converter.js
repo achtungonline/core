@@ -10,18 +10,19 @@ function getConvertFunctions() {
     var functions = {};
 
     functions[rectType] = function rectToGrid(rect, grid) {
-        var points = [];
+        var leftRow = Math.round(rect.y / grid.cellSize);
+        var leftCol = Math.round(rect.x / grid.cellSize);
 
-        var leftRow = Math.floor(rect.x / grid.cellSize) + 0.5;
-        var leftCol = Math.floor(rect.y / grid.cellSize) + 0.5;
+        var rightRow = Math.round(rect.maxY / grid.cellSize);
+        var rightCol = Math.round(rect.maxX / grid.cellSize);
 
-        var rightRow = Math.floor(rect.maxX / grid.cellSize) - 0.5;
-        var rightCol = Math.floor(rect.maxY / grid.cellSize) - 0.5;
-
-        for (var row = leftRow; leftRow <= rightRow; row++) {
-            for (var col = leftCol; leftCol <= rightCol; col++) {
+        var size = (rightRow - leftRow + 1) * (rightCol - leftCol + 1);
+        var points = new Array(size);
+        var index = 0;
+        for (var row = leftRow; row <= rightRow; row++) {
+            for (var col = leftCol; col <= rightCol; col++) {
                 if (gridUtils.isInsideGrid(grid, row, col)) {
-                    points.push(gridUtils.coordinatesToIndex(grid, row, col));
+                    points[index++] = (gridUtils.coordinatesToIndex(grid, row, col));
                 }
             }
         }

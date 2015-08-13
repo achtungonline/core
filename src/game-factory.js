@@ -7,6 +7,8 @@ var PlayerHandler = require("./player/player-handler.js");
 var Game = require("./game.js");
 var AIHandler = require("./player/ai/ai-handler.js");
 var GameState = require("./game-state.js");
+var PlayArea = require("./play-area/play-area.js");
+var PlayAreaHandler = require("./play-area/play-area-handler.js");
 
 module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
@@ -25,9 +27,12 @@ module.exports = function GameFactory(requestUpdateTick) {
             });
         });
 
-        var gameState = GameState(players, worms, map);
+        var playArea = PlayArea.createPlayArea(map.width, map.height);
+        var playAreaHandler = PlayAreaHandler();
 
-        var wormHandlerFactory = WormHandlerFactory(GridFactory(map.width, map.height, 8));
+        var gameState = GameState(players, worms, map, playArea, playAreaHandler);
+
+        var wormHandlerFactory = WormHandlerFactory(GridFactory(map.width, map.height, 8), playAreaHandler);
         var wormHandler = wormHandlerFactory.create();
 
         var playerHandler = PlayerHandler(wormHandler);

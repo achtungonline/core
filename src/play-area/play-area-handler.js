@@ -1,27 +1,25 @@
 var PlayArea = require("./play-area.js");
-var playAreaUtils = require("./../grid/grid-utils.js");
+var GridUtils = require("./../grid/grid-utils.js");
 var ShapeToGridConverter = require("./../geometry/shape-to-grid-converter.js");
 
 module.exports = function PlayAreaHandler() {
 
     var updateBuffer = [];
 
-    var updateBufferData = function() {
-
-    };
-
-
     function applyShape(playArea, shape, value) {
         var points = ShapeToGridConverter().convert(shape, playArea);
+        var grid = playArea.grid;
         for (var i = 0; i < points.length; i++) {
-            playArea[points[i]] = value;
-            updateBuffer.push()
+            // Buffer should only be updated when a value has changed
+            if (grid[points[i]] !== value) {
+                grid[points[i]] = value;
+                updateBuffer.push([points[i], value]);
+            }
         }
     }
 
     function applyWormHead(playArea, worm) {
-        applyShape(playArea, worm.head, 1);
-
+        applyShape(playArea, worm.head, worm.id);
     }
 
     function applyObstacleShape(playArea, shape) {
@@ -29,13 +27,23 @@ module.exports = function PlayAreaHandler() {
     }
 
     function resetPlayArea(playArea) {
+        GridUtils.fillGrid(playArea.grid, PlayArea.FREE);
+    }
 
+    function getUpdateBuffer() {
+        return updateBuffer.slice();
+    }
+
+    function resetUpdateBuffer() {
+        updateBuffer = [];
     }
 
     return {
         applyWormHead: applyWormHead,
         applyObstacleShape: applyObstacleShape,
-        resetPlayArea: resetPlayArea
+        resetPlayArea: resetPlayArea,
+        getUpdateBuffer: getUpdateBuffer,
+        resetUpdateBuffer: resetUpdateBuffer
     };
 
 };
