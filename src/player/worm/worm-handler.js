@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDecider) {
+module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDecider) {
     var eventEmitter = new EventEmitter();
     var events = {};
 
@@ -26,10 +26,11 @@ module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBody
         eventEmitter.emit(events.WORM_DIED, gameState, player, worm);
     }
 
-    function pushBodyPart(worm, bodyPart) {
+    function pushBodyPart(playArea, worm, bodyPart) {
         worm.body.push(bodyPart);
         wormBodyGridHandler.addBodyPart(worm, bodyPart);
         wormBodyImmunityHandler.addBodyPart(worm, bodyPart);
+        playAreaHandler.applyWormHead(playArea, worm);
     }
 
     function removeBodyPart(worm, bodyPart) {
@@ -54,7 +55,7 @@ module.exports = function WormHandler(collisionHandler, shapeModifierI, wormBody
             if (!bodyPart) {
                 return;
             }
-            pushBodyPart(worm, bodyPart);
+            pushBodyPart(gameState.playArea, worm, bodyPart);
             return bodyPart;
         }
 
