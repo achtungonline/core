@@ -22,7 +22,7 @@ function getConvertFunctions() {
         for (var row = leftRow; row <= rightRow; row++) {
             for (var col = leftCol; col <= rightCol; col++) {
                 if (gridUtils.isInsideGrid(grid, row, col)) {
-                    points[index++] = (gridUtils.coordinatesToIndex(grid, row, col));
+                    points[index++] = (gridUtils.getIndex(grid, row, col));
                 }
             }
         }
@@ -42,7 +42,7 @@ function getConvertFunctions() {
             var firstCol = Math.max(0, Math.round((circle.centerX - dx) / grid.cellSize));
             var lastCol = Math.min(grid.cols, Math.round((circle.centerX + dx) / grid.cellSize));
             for (var col = firstCol; col <= lastCol; col++) {
-                points.push(gridUtils.coordinatesToIndex(grid, row, col));
+                points.push(gridUtils.getIndex(grid, row, col));
             }
         }
 

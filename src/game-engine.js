@@ -1,7 +1,7 @@
 var EventEmitter = require("events").EventEmitter;
 
 
-module.exports = function GameEngine(requestUpdateTick, roundHandler) {
+module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};
     events.GAME_UPDATED = "gameUpdated";
@@ -60,6 +60,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler) {
         }
 
         eventEmitter.emit(events.GAME_UPDATED);
+        playAreaHandler.resetUpdateBuffer();
 
         requestUpdateTick(function onUpdateTick() {
             update(gameState);

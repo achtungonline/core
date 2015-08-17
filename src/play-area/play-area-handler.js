@@ -2,6 +2,13 @@ var PlayArea = require("./play-area.js");
 var GridUtils = require("./../grid/grid-utils.js");
 var ShapeToGridConverter = require("./../geometry/shape-to-grid-converter.js");
 
+var UpdateBufferData = function UpdateBufferData(index, value) {
+    var data = {};
+    data.index = index;
+    data.value = value;
+    return data;
+};
+
 module.exports = function PlayAreaHandler() {
 
     var updateBuffer = [];
@@ -13,7 +20,7 @@ module.exports = function PlayAreaHandler() {
             // Buffer should only be updated when a value has changed
             if (grid[points[i]] !== value) {
                 grid[points[i]] = value;
-                updateBuffer.push([points[i], value]);
+                updateBuffer.push(UpdateBufferData(points[i], value));
             }
         }
     }
@@ -45,5 +52,4 @@ module.exports = function PlayAreaHandler() {
         getUpdateBuffer: getUpdateBuffer,
         resetUpdateBuffer: resetUpdateBuffer
     };
-
 };

@@ -1,7 +1,14 @@
 var utils = module.exports = {};
 
-utils.coordinatesToIndex = function coordinatesToIndex(grid, row, col) {
+utils.getIndex = function getIndex(grid, row, col) {
     return row * grid.cols + col;
+};
+
+utils.getRowCol = function getRowCol(grid, index) {
+    var rowCol = {};
+    rowCol.row = Math.floor(index / grid.cols);
+    rowCol.col = index - rowCol.row * grid.cols;
+    return rowCol;
 };
 
 utils.isInsideGrid = function isInsideGrid(grid, row, col) {
