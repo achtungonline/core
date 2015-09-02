@@ -1,17 +1,25 @@
-module.exports = function WormBodyImmunityHandler(shapeSpatialRelations) {
-    var wormImmunityBodyParts = {};
+var ShapeToGridConverter = require("./../../geometry/shape-to-grid-converter.js");
+var forEach = require("./../../util/for-each.js");
 
-    function addBodyPart(worm, bodyPart) {
-        if (!wormImmunityBodyParts[worm.id]) {
-            wormImmunityBodyParts[worm.id] = [];
-        }
+module.exports = function WormBodyImmunityHandler() {
+    var wormImmunityBodyParts = {};
+    var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
+
+    var TTL = 3;
+
+    function setImmunityBodyParts(playArea, worm, shape) {
         var bodyParts = wormImmunityBodyParts[worm.id];
-        bodyParts.push(bodyPart);
+        if (!bodyParts) {
+            bodyParts = wormImmunityBodyParts[worm.id] = {};
+        }
+        shapeToGridConverter.convert(shape, playArea, ShapeToGridConverter.RoundingModes.TOUCHES).forEach(function (bodyPart) {
+            bodyParts[bodyPart] = TTL;
+        });
     }
 
     function isImmuneToBodyPart(worm, bodyPart) {
         var bodyParts = wormImmunityBodyParts[worm.id];
-        return bodyParts && bodyParts.indexOf(bodyPart) !== -1;
+        return bodyParts && (bodyPart in bodyParts);
     }
 
     function update(worm) {
@@ -19,15 +27,17 @@ module.exports = function WormBodyImmunityHandler(shapeSpatialRelations) {
         if (!bodyParts) {
             return;
         }
-        bodyParts.forEach(function (bodyPart, index, list) {
-            if (!shapeSpatialRelations.intersects(worm.head, bodyPart)) {
-                list.splice(index, 1);
+        forEach(bodyParts, function (value, key) {
+            if (!value) {
+                delete bodyParts[key];
+            } else {
+                bodyParts[key]--;
             }
         });
     }
 
     return {
-        addBodyPart: addBodyPart,
+        setImmunityBodyParts: setImmunityBodyParts,
         isImmuneToBodyPart: isImmuneToBodyPart,
         update: update
     }

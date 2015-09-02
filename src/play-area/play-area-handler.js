@@ -12,9 +12,10 @@ var UpdateBufferData = function UpdateBufferData(index, value) {
 module.exports = function PlayAreaHandler() {
 
     var updateBuffer = [];
+    var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
     function applyShape(playArea, shape, value) {
-        var points = ShapeToGridConverter().convert(shape, playArea);
+        var points = shapeToGridConverter.convert(shape, playArea);
         var grid = playArea.grid;
         for (var i = 0; i < points.length; i++) {
             // Buffer should only be updated when a value has changed
@@ -23,6 +24,10 @@ module.exports = function PlayAreaHandler() {
                 updateBuffer.push(UpdateBufferData(points[i], value));
             }
         }
+    }
+
+    function getCellValue(playArea, index) {
+        return playArea.grid[index];
     }
 
     function applyWormHead(playArea, worm) {
@@ -50,6 +55,7 @@ module.exports = function PlayAreaHandler() {
         applyObstacleShape: applyObstacleShape,
         resetPlayArea: resetPlayArea,
         getUpdateBuffer: getUpdateBuffer,
-        resetUpdateBuffer: resetUpdateBuffer
+        resetUpdateBuffer: resetUpdateBuffer,
+        getCellValue: getCellValue
     };
 };
