@@ -26,9 +26,9 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         eventEmitter.emit(events.WORM_DIED, gameState, player, worm);
     }
 
-    function pushBodyPart(playArea, worm, bodyPart) {
-        wormBodyImmunityHandler.setImmunityBodyParts(playArea, worm, bodyPart);
-        playAreaHandler.applyWormHead(playArea, worm);
+    function pushBodyPart(playArea, worm) {
+        var changedCells = playAreaHandler.applyWormHead(playArea, worm);
+        wormBodyImmunityHandler.setImmunityCells(worm, changedCells);
     }
 
     function update(gameState, deltaTime, player, worm) {

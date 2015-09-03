@@ -14,6 +14,11 @@ spatialRelations.contains = function contains(outerShape, innerShape) {
     return isRelationTrue(containsFunctions, outerShape, innerShape);
 };
 
+spatialRelations.dist2 = function distance(shape, otherShape) {
+    var dist = getXYDist(shape, otherShape);
+    return dist.x * dist.x + dist.y * dist.y;
+};
+
 function isRelationTrue(spatialRelationsFunctions, shape, otherShape) {
     var selectedFunction;
 

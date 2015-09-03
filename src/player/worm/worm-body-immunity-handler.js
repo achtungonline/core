@@ -1,44 +1,51 @@
-var ShapeToGridConverter = require("./../../geometry/shape-to-grid-converter.js");
+var shapeSpatialRelations = require("../../geometry/shape-spatial-relations.js");
 var forEach = require("./../../util/for-each.js");
 
+var IMMUNITY_DISTANCE = 100;
+
 module.exports = function WormBodyImmunityHandler() {
-    var wormImmunityBodyParts = {};
-    var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
+    var cellDistance = {};
+    var wormData = {};
 
-    var TTL = 3;
+    function createWormData(worm) {
+        var data = {};
+        data.distance = 0;
+        data.position = worm.head;
+        return data;
+    }
 
-    function setImmunityBodyParts(playArea, worm, shape) {
-        var bodyParts = wormImmunityBodyParts[worm.id];
-        if (!bodyParts) {
-            bodyParts = wormImmunityBodyParts[worm.id] = {};
+    function getWormData(worm) {
+        var data = wormData[worm.id];
+        if (!data) {
+            data = wormData[worm.id] = createWormData(worm)
         }
-        shapeToGridConverter.convert(shape, playArea, ShapeToGridConverter.RoundingModes.TOUCHES).forEach(function (bodyPart) {
-            bodyParts[bodyPart] = TTL;
+        return data;
+    }
+
+    /*
+    bodyParts should be a list in the format returned from PlayAreaHandler.getUpdateBuffer()
+     */
+    function setImmunityCells(worm, cells) {
+        var data = getWormData(worm);
+        cells.forEach(function (cell) {
+            cellDistance[cell.index] = data.distance;
         });
     }
 
-    function isImmuneToBodyPart(worm, bodyPart) {
-        var bodyParts = wormImmunityBodyParts[worm.id];
-        return bodyParts && (bodyPart in bodyParts);
+    function isImmuneCell(worm, cell) {
+        var data = getWormData(worm);
+        return data.distance - cellDistance[cell] <= IMMUNITY_DISTANCE;
     }
 
     function update(worm) {
-        var bodyParts = wormImmunityBodyParts[worm.id];
-        if (!bodyParts) {
-            return;
-        }
-        forEach(bodyParts, function (value, key) {
-            if (!value) {
-                delete bodyParts[key];
-            } else {
-                bodyParts[key]--;
-            }
-        });
+        var data = getWormData(worm);
+        data.distance += shapeSpatialRelations.dist2(worm.head, data.position);
+        data.position = worm.head;
     }
 
     return {
-        setImmunityBodyParts: setImmunityBodyParts,
-        isImmuneToBodyPart: isImmuneToBodyPart,
+        setImmunityCells: setImmunityCells,
+        isImmuneCell: isImmuneCell,
         update: update
     }
 };

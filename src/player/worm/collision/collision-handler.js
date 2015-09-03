@@ -23,7 +23,7 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
         cells.forEach(function (cell) {
             var value = playAreaHandler.getCellValue(playArea, cell);
             if (value !== PlayArea.FREE) { // TODO Utility function to check if worm-id
-                if (value !== worm.id || !wormBodyImmunityHandler.isImmuneToBodyPart(worm, cell)) {
+                if (value !== worm.id || !wormBodyImmunityHandler.isImmuneCell(worm, cell)) {
                     eventEmitter.emit(events.WORM_WORM_COLLISION, gameState, player, worm, value);
                 }
             }
