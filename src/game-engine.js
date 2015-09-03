@@ -12,7 +12,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHa
     var paused;
 
     roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType) {
-        console.log("Phase: " + phaseType + " started");
+        eventEmitter.emit(roundHandler.events.NEW_PHASE_STARTED, phaseType);
     });
 
     function start(gameState) {
