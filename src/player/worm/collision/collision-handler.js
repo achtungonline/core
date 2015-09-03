@@ -19,9 +19,9 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
 
     function wormWormCollisionDetection(gameState, player, worm) {
         var playArea = gameState.playArea;
-        var cells = shapeToGridConverter.convert(worm.head, playArea, ShapeToGridConverter.RoundingModes.INSIDE);
+        var cells = shapeToGridConverter.convert(worm.head, playArea, ShapeToGridConverter.RoundingModes.CONTAINMENT);
         cells.forEach(function (cell) {
-            var value = playAreaHandler.getCellValue(playArea, cell);
+            var value = playArea.grid[cell];
             if (value !== PlayArea.FREE) { // TODO Utility function to check if worm-id
                 if (value !== worm.id || !wormBodyImmunityHandler.isImmuneCell(worm, cell)) {
                     eventEmitter.emit(events.WORM_WORM_COLLISION, gameState, player, worm, value);

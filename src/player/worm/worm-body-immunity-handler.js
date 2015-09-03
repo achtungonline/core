@@ -39,7 +39,7 @@ module.exports = function WormBodyImmunityHandler() {
 
     function update(worm) {
         var data = getWormData(worm);
-        data.distance += shapeSpatialRelations.dist2(worm.head, data.position);
+        data.distance += shapeSpatialRelations.distanceSquared(worm.head, data.position);
         data.position = worm.head;
     }
 

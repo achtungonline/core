@@ -60,19 +60,8 @@ function createRoundingMode(roundLeft, roundRight) {
 
 ShapeToGridConverter.RoundingModes = {};
 ShapeToGridConverter.RoundingModes.ROUND = createRoundingMode(Math.round, Math.round);
-ShapeToGridConverter.RoundingModes.INSIDE = createRoundingMode(Math.ceil, Math.floor);
-ShapeToGridConverter.RoundingModes.TOUCHES = createRoundingMode(Math.floor, Math.ceil);
-ShapeToGridConverter.RoundingModes.CONTOUR = function contour(distance) {
-    var roundLeft = function(x) {
-        return Math.round(x - distance);
-    };
-
-    var roundRight = function(x) {
-        return Math.round(x + distance);
-    };
-
-    return createRoundingMode(roundLeft, roundRight);
-};
+ShapeToGridConverter.RoundingModes.CONTAINMENT = createRoundingMode(Math.ceil, Math.floor);
+ShapeToGridConverter.RoundingModes.INTERSECTION = createRoundingMode(Math.floor, Math.ceil);
 
 ShapeToGridConverter.createShapeToGridConverter = function createShapeToGridConverter() {
     function convert(shape, grid, roundingMode) {

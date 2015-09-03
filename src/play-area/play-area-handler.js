@@ -29,10 +29,6 @@ module.exports = function PlayAreaHandler() {
         return changedData;
     }
 
-    function getCellValue(playArea, index) {
-        return playArea.grid[index];
-    }
-
     function applyWormHead(playArea, worm) {
         return applyShape(playArea, worm.head, worm.id);
     }
@@ -46,7 +42,7 @@ module.exports = function PlayAreaHandler() {
     }
 
     function getUpdateBuffer() {
-        return updateBuffer.slice();
+        return updateBuffer;
     }
 
     function resetUpdateBuffer() {
@@ -58,7 +54,6 @@ module.exports = function PlayAreaHandler() {
         applyObstacleShape: applyObstacleShape,
         resetPlayArea: resetPlayArea,
         getUpdateBuffer: getUpdateBuffer,
-        resetUpdateBuffer: resetUpdateBuffer,
-        getCellValue: getCellValue
+        resetUpdateBuffer: resetUpdateBuffer
     };
 };

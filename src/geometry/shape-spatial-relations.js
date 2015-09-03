@@ -14,7 +14,7 @@ spatialRelations.contains = function contains(outerShape, innerShape) {
     return isRelationTrue(containsFunctions, outerShape, innerShape);
 };
 
-spatialRelations.dist2 = function distance(shape, otherShape) {
+spatialRelations.distanceSquared = function distance(shape, otherShape) {
     var dist = getXYDist(shape, otherShape);
     return dist.x * dist.x + dist.y * dist.y;
 };
@@ -47,8 +47,7 @@ function getIntersectsFunctions() {
 
         var maxAllowedDist = circle.radius + otherCircle.radius;
 
-        var dist = getXYDist(circle, otherCircle);
-        return dist.x * dist.x + dist.y * dist.y < maxAllowedDist * maxAllowedDist;
+        return spatialRelations.distanceSquared(circle, otherCircle) < maxAllowedDist * maxAllowedDist;
     });
 
     set(rectType, rectType, function (rect, otherRect) {
@@ -89,11 +88,9 @@ function getContainsFunctions() {
             return false;
         }
 
-        var dist = getXYDist(outerCircle, innerCircle);
-
         var maxAllowedDist = outerCircle.radius - innerCircle.radius;
 
-        return Math.pow(dist.x, 2) + Math.pow(dist.y, 2) < Math.pow(maxAllowedDist, 2);
+        return spatialRelations.distanceSquared(outerCircle, innerCircle) < maxAllowedDist * maxAllowedDist;
     });
 
     set(rectType, rectType, function (outerRect, innerRect) {
