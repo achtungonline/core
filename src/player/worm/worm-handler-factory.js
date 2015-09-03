@@ -1,28 +1,24 @@
 var ShapeModifierIFactory = require("./../../geometry/shape-modifier-immutable-factory.js");
 var WormHandler = require("./worm-handler.js");
-var WormBodyGridHandler = require("./worm-body-grid-handler.js");
 var WormBodyImmunityHandler = require("./worm-body-immunity-handler.js");
 var BodyPartDeciderHandler = require("./body-part-decider-handler.js");
 var JumpFactory = require("./jump-factory.js");
 var CollisionHandlerFactory = require("./collision/collision-handler-factory.js");
 
-
-var shapeSpatialRelations = require("./../../geometry/shape-spatial-relations.js");
 var clone = require("./../../util/clone.js");
 
-module.exports = function WormHandlerFactory(wormGridFactory, playAreaHandler) {
+module.exports = function WormHandlerFactory(playAreaHandler) {
     var shapeModifierIFactory = ShapeModifierIFactory();
     var jumpFactory = JumpFactory();
 
     function create() {
-        var wormBodyGridHandler = WormBodyGridHandler(wormGridFactory);
-        var wormBodyImmunityHandler = WormBodyImmunityHandler(shapeSpatialRelations);
+        var wormBodyImmunityHandler = WormBodyImmunityHandler();
 
         var shapeModifierI = shapeModifierIFactory.create();
         var bodyPartDeciderHandler = BodyPartDeciderHandler(jumpFactory);
-        var collisionHandler = CollisionHandlerFactory(wormBodyGridHandler, wormBodyImmunityHandler, shapeSpatialRelations).create();
+        var collisionHandler = CollisionHandlerFactory(playAreaHandler, wormBodyImmunityHandler).create();
 
-        return WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDeciderHandler);
+        return WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, bodyPartDeciderHandler);
     }
 
     return {

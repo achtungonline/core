@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyGridHandler, wormBodyImmunityHandler, clone, bodyPartDecider) {
+module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, bodyPartDecider) {
     var eventEmitter = new EventEmitter();
     var events = {};
 
@@ -12,7 +12,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
     });
 
-    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(gameState, player, worm, otherWorm) {
+    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(gameState, player, worm, otherWormID) {
         if (worm.alive) {
             kill(gameState, player, worm);
         }
@@ -26,21 +26,9 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         eventEmitter.emit(events.WORM_DIED, gameState, player, worm);
     }
 
-    function pushBodyPart(playArea, worm, bodyPart) {
-        worm.body.push(bodyPart);
-        wormBodyGridHandler.addBodyPart(worm, bodyPart);
-        wormBodyImmunityHandler.addBodyPart(worm, bodyPart);
-        playAreaHandler.applyWormHead(playArea, worm);
-    }
-
-    function removeBodyPart(worm, bodyPart) {
-        for (var i = 0; i < worm.body.length; i++) {
-            if (worm.body[i] == bodyPart) {
-                worm.body.splice(i, 1);
-                wormBodyGridHandler.removeBodyPart(worm, bodyPart);
-                return;
-            }
-        }
+    function pushBodyPart(playArea, worm) {
+        var changedCells = playAreaHandler.applyWormHead(playArea, worm);
+        wormBodyImmunityHandler.setImmunityCells(worm, changedCells);
     }
 
     function update(gameState, deltaTime, player, worm) {
@@ -51,7 +39,9 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
         function updateBody() {
             var bodyPart = clone(worm.head);
-            bodyPart = bodyPartDecider.decide(deltaTime, worm, bodyPart);
+            if (worm.speed) { // Never jump when standing still
+                bodyPart = bodyPartDecider.decide(deltaTime, worm, bodyPart);
+            }
             if (!bodyPart) {
                 return;
             }
@@ -72,8 +62,8 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             collisionHandler.wormWormCollisionDetection(gameState, player, worm);
         }
 
-        updateDirection();
         updateBody();
+        updateDirection();
         updatePosition();
         collisionDetection()
     }

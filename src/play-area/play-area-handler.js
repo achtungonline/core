@@ -12,25 +12,29 @@ var UpdateBufferData = function UpdateBufferData(index, value) {
 module.exports = function PlayAreaHandler() {
 
     var updateBuffer = [];
+    var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
     function applyShape(playArea, shape, value) {
-        var points = ShapeToGridConverter().convert(shape, playArea);
+        var points = shapeToGridConverter.convert(shape, playArea);
         var grid = playArea.grid;
+        var changedData = [];
         for (var i = 0; i < points.length; i++) {
             // Buffer should only be updated when a value has changed
             if (grid[points[i]] !== value) {
                 grid[points[i]] = value;
-                updateBuffer.push(UpdateBufferData(points[i], value));
+                changedData.push(UpdateBufferData(points[i], value));
             }
         }
+        updateBuffer = updateBuffer.concat(changedData);
+        return changedData;
     }
 
     function applyWormHead(playArea, worm) {
-        applyShape(playArea, worm.head, worm.id);
+        return applyShape(playArea, worm.head, worm.id);
     }
 
     function applyObstacleShape(playArea, shape) {
-        applyShape(playArea, shape, PlayArea.OBSTACLE);
+        return applyShape(playArea, shape, PlayArea.OBSTACLE);
     }
 
     function resetPlayArea(playArea) {
@@ -38,7 +42,7 @@ module.exports = function PlayAreaHandler() {
     }
 
     function getUpdateBuffer() {
-        return updateBuffer.slice();
+        return updateBuffer;
     }
 
     function resetUpdateBuffer() {

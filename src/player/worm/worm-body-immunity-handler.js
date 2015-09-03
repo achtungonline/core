@@ -1,34 +1,51 @@
-module.exports = function WormBodyImmunityHandler(shapeSpatialRelations) {
-    var wormImmunityBodyParts = {};
+var shapeSpatialRelations = require("../../geometry/shape-spatial-relations.js");
+var forEach = require("./../../util/for-each.js");
 
-    function addBodyPart(worm, bodyPart) {
-        if (!wormImmunityBodyParts[worm.id]) {
-            wormImmunityBodyParts[worm.id] = [];
-        }
-        var bodyParts = wormImmunityBodyParts[worm.id];
-        bodyParts.push(bodyPart);
+var IMMUNITY_DISTANCE = 100;
+
+module.exports = function WormBodyImmunityHandler() {
+    var cellDistance = {};
+    var wormData = {};
+
+    function createWormData(worm) {
+        var data = {};
+        data.distance = 0;
+        data.position = worm.head;
+        return data;
     }
 
-    function isImmuneToBodyPart(worm, bodyPart) {
-        var bodyParts = wormImmunityBodyParts[worm.id];
-        return bodyParts && bodyParts.indexOf(bodyPart) !== -1;
+    function getWormData(worm) {
+        var data = wormData[worm.id];
+        if (!data) {
+            data = wormData[worm.id] = createWormData(worm)
+        }
+        return data;
     }
 
-    function update(worm) {
-        var bodyParts = wormImmunityBodyParts[worm.id];
-        if (!bodyParts) {
-            return;
-        }
-        bodyParts.forEach(function (bodyPart, index, list) {
-            if (!shapeSpatialRelations.intersects(worm.head, bodyPart)) {
-                list.splice(index, 1);
-            }
+    /*
+    bodyParts should be a list in the format returned from PlayAreaHandler.getUpdateBuffer()
+     */
+    function setImmunityCells(worm, cells) {
+        var data = getWormData(worm);
+        cells.forEach(function (cell) {
+            cellDistance[cell.index] = data.distance;
         });
     }
 
+    function isImmuneCell(worm, cell) {
+        var data = getWormData(worm);
+        return data.distance - cellDistance[cell] <= IMMUNITY_DISTANCE;
+    }
+
+    function update(worm) {
+        var data = getWormData(worm);
+        data.distance += shapeSpatialRelations.distanceSquared(worm.head, data.position);
+        data.position = worm.head;
+    }
+
     return {
-        addBodyPart: addBodyPart,
-        isImmuneToBodyPart: isImmuneToBodyPart,
+        setImmunityCells: setImmunityCells,
+        isImmuneCell: isImmuneCell,
         update: update
     }
 };
