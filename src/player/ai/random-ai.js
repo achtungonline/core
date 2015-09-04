@@ -12,6 +12,9 @@ module.exports = function RandomAI(game) {
             game.setPlayerSteering(player, randInt(-1, 2));
             updateTicks = 0;
         }
+        player.worms.forEach(function (worm) {
+            worm.trajectory = [{steering: player.steering, time: 1}];
+        });
     }
 
     return {

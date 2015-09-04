@@ -70,9 +70,11 @@ function getIntersectsFunctions() {
         }
 
         // special case for rectangle corners
-        var cornerDistanceSq = Math.pow(dist.x - rect.width / 2, 2) + Math.pow(dist.y - rect.height / 2, 2);
+        var cornerDistX = dist.x - rect.width / 2;
+        var cornerDistY = dist.y - rect.height / 2;
+        var cornerDistanceSq = cornerDistX*cornerDistX + cornerDistY*cornerDistY;
 
-        return cornerDistanceSq <= Math.pow(circle.radius, 2);
+        return cornerDistanceSq <= circle.radius * circle.radius;
     });
 
     return functions;
@@ -111,7 +113,7 @@ function getContainsFunctions() {
         dist.x += rectOnRight * innerRect.width / 2;
         dist.y += rectOnTop * innerRect.height / 2;
 
-        return Math.pow(outerCircle.radius, 2) < Math.pow(dist.x, 2) + Math.pow(dist.y, 2);
+        return outerCircle.radius*outerCircle.radius < dist.x*dist.x + dist.y*dist.y;
     });
 
     set(rectType, circleType, function (outerRect, innerCircle) {

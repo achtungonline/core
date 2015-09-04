@@ -34,6 +34,9 @@ module.exports = function PlayerHandler(wormHandler) {
 
     function setSteering(player, steering) {
         player.steering = steering;
+        player.worms.forEach(function (worm) {
+            worm.trajectory = [{steering: player.steering, time: 1}];
+        });
     }
 
     return {
