@@ -1,4 +1,5 @@
 var EventEmitter = require("events").EventEmitter;
+var any = require("../util/any.js");
 
 module.exports = function PlayerHandler(wormHandler) {
     var eventEmitter = new EventEmitter();
@@ -7,12 +8,9 @@ module.exports = function PlayerHandler(wormHandler) {
 
     wormHandler.on(wormHandler.events.WORM_DIED, function (gameState, player, worm) {
         function isAnyWormAlive(player) {
-            player.worms.forEach(function (worm) {
-                if (worm.alive) {
-                    return true;
-                }
+            return any(player.worms, function (worm) {
+                return worm.alive;
             });
-            return false;
         }
 
         function kill(player) {

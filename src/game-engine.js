@@ -1,6 +1,5 @@
 var EventEmitter = require("events").EventEmitter;
 
-
 module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};

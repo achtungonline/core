@@ -25,7 +25,7 @@ module.exports = function Game(gameState, gameEngine, playerHandler, playAreaHan
 
     return {
         gameState: gameState,
-        getPlayAreaUpdateBuffer : playAreaHandler.getUpdateBuffer,
+        getPlayAreaUpdateBuffer: playAreaHandler.getUpdateBuffer,
         start: start,
         setPlayerSteering: setPlayerSteering,
         pause: pause,
