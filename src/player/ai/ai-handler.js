@@ -1,7 +1,6 @@
-var RandomAI = require("./random-ai.js");
 var PathCheckerAI = require("./path-checker-ai.js");
 
-module.exports = function AIHandler(game, collisionHandler) {
+module.exports = function AIHandler(game, collisionHandler, trajectoryHandler, random) {
 
     game.on(game.events.GAME_UPDATED, function() {
         update(game.gameState);
@@ -12,7 +11,7 @@ module.exports = function AIHandler(game, collisionHandler) {
 
     function addAIPlayer(player) {
         players.push(player);
-        ais.push(PathCheckerAI(game, collisionHandler));
+        ais.push(PathCheckerAI(game, collisionHandler, trajectoryHandler, random));
     }
 
     function removeAIPlayer(player) {

@@ -2,10 +2,9 @@ var RoundHandlerFactory = require("./round/round-handler-factory.js");
 var MapFactory = require("./map/map-factory.js");
 var GameEngine = require("./game-engine.js");
 var WormHandlerFactory = require("./player/worm/worm-handler-factory.js");
-var CollisionHandlerFactory = require("./player/worm/collision/collision-handler-factory.js");
 var PlayerHandler = require("./player/player-handler.js");
 var Game = require("./game.js");
-var AIHandler = require("./player/ai/ai-handler.js");
+var AIHandlerFactory = require("./player/ai/ai-handler-factory.js");
 var GameState = require("./game-state.js");
 var PlayArea = require("./play-area/play-area.js");
 var PlayAreaHandler = require("./play-area/play-area-handler.js");
@@ -48,8 +47,7 @@ module.exports = function GameFactory(requestUpdateTick) {
 
         var game = Game(gameState, gameEngine, playerHandler, playAreaHandler);
 
-        var aiCollisionHandler = CollisionHandlerFactory(playAreaHandler).create();
-        var aiHandler = AIHandler(game, aiCollisionHandler);
+        var aiHandler = AIHandlerFactory(game, playAreaHandler).create();
         playerSetup.AIPlayers.forEach(function (aiPlayer) {
             aiHandler.addAIPlayer(aiPlayer);
         });
