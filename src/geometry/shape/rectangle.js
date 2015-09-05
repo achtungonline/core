@@ -2,7 +2,7 @@ var Shape = require("./shape.js");
 
 var rectangleShape = module.exports = {};
 
-rectangleShape.type = "rectangle";
+rectangleShape.type = 0;
 
 rectangleShape.Rectangle = function(width, height, x, y) {
     var area = width * height;

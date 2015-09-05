@@ -1,17 +1,14 @@
 var circleType = require("./shape/circle.js").type;
-var rectType = require("./shape/rectangle.js").type;
+var rectangleType = require("./shape/rectangle.js").type;
 
 var spatialRelations = module.exports = {};
-
-var intersectsFunctions = getIntersectsFunctions();
-var containsFunctions = getContainsFunctions();
 
 spatialRelations.intersects = function intersects(shape, otherShape) {
     return isRelationTrue(intersectsFunctions, shape, otherShape);
 };
 
 spatialRelations.contains = function contains(outerShape, innerShape) {
-    return isRelationTrue(containsFunctions, outerShape, innerShape);
+    return isRelationTrue(containmentFunctions, outerShape, innerShape);
 };
 
 spatialRelations.distanceSquared = function distance(shape, otherShape) {
@@ -19,108 +16,93 @@ spatialRelations.distanceSquared = function distance(shape, otherShape) {
     return dist.x * dist.x + dist.y * dist.y;
 };
 
+// -- INTERSECTION-FUNCTIONS --
+var intersectsFunctions = createShapeRelationMatrix();
+
+intersectsFunctions[circleType][circleType] = function circleCircleIntersection(circle, otherCircle) {
+    if (!boundingBoxesIntersects(circle, otherCircle)) {
+        return false;
+    }
+
+    var maxAllowedDist = circle.radius + otherCircle.radius;
+
+    return spatialRelations.distanceSquared(circle, otherCircle) < maxAllowedDist * maxAllowedDist;
+};
+
+intersectsFunctions[rectangleType][rectangleType] = function rectangleRectangleIntersection(rectangle, otherRectangle) {
+    return boundingBoxesIntersects(rectangle, otherRectangle);
+};
+
+intersectsFunctions[circleType][rectangleType] = function circleRectangleIntersection(circle, rectangle) {
+    if (!boundingBoxesIntersects(circle, rectangle)) {
+        return false;
+    }
+
+    var dist = getXYDist(circle, rectangle);
+
+    //The following 2 checks are only valid because of prior checking of the bounding boxes
+    if (dist.x <= (rectangle.width / 2)) {
+        return true;
+    }
+    if (dist.y <= (rectangle.height / 2)) {
+        return true;
+    }
+
+    // special case for rectangle corners
+    var cornerDistX = dist.x - rectangle.width / 2;
+    var cornerDistY = dist.y - rectangle.height / 2;
+    var cornerDistanceSq = cornerDistX*cornerDistX + cornerDistY*cornerDistY;
+
+    return cornerDistanceSq <= circle.radius * circle.radius;
+};
+
+intersectsFunctions[rectangleType][circleType] = function rectangleCircleIntersection(rectangle, circle) {
+    return intersectsFunctions[circleType][rectangleType](circle, rectangle);
+};
+
+
+// -- CONTAINMENT-FUNCTIONS
+var containmentFunctions = createShapeRelationMatrix();
+
+containmentFunctions[circleType][circleType] = function circleCircleContainment(outerCircle, innerCircle) {
+    if (!boundingBoxesContains(outerCircle, innerCircle)) {
+        return false;
+    }
+
+    var maxAllowedDist = outerCircle.radius - innerCircle.radius;
+
+    return spatialRelations.distanceSquared(outerCircle, innerCircle) < maxAllowedDist * maxAllowedDist;
+};
+
+containmentFunctions[rectangleType][rectangleType] = function rectangleRectangleContainment(outerRectangle, innerRectangle) {
+    return boundingBoxesContains(outerRectangle, innerRectangle);
+};
+
+containmentFunctions[circleType][rectangleType] = function circleRectangleContainment(outerCircle, innerRectangle) {
+    if (!boundingBoxesContains(outerCircle, innerRectangle)) {
+        return false;
+    }
+
+    var rectOnRight = (innerRectangle.x > outerCircle.x ? 1 : -1);
+    var rectOnTop = (innerRectangle.y > outerCircle.y ? 1 : -1);
+
+    var dist = getXYDist(outerCircle, innerRectangle);
+
+    //here we select the rectangles corner point furthest away from the circle center
+    dist.x += rectOnRight * innerRectangle.width / 2;
+    dist.y += rectOnTop * innerRectangle.height / 2;
+
+    return outerCircle.radius*outerCircle.radius < dist.x*dist.x + dist.y*dist.y;
+};
+
+containmentFunctions[rectangleType][circleType] = function rectangleCircleContainment(outerRectangle, innerCircle) {
+    return boundingBoxesContains(outerRectangle, innerCircle);
+};
+
+
+// -- UTILITY-FUNCTIONS --
 function isRelationTrue(spatialRelationsFunctions, shape, otherShape) {
-    var selectedFunction;
-
-    if (spatialRelationsFunctions[shape.type] && spatialRelationsFunctions[shape.type][otherShape.type]) {
-        selectedFunction = spatialRelationsFunctions[shape.type][otherShape.type].bind(null, shape, otherShape);
-    } else if (spatialRelationsFunctions[otherShape.type] && spatialRelationsFunctions[otherShape.type][shape.type]) {
-        selectedFunction = spatialRelationsFunctions[otherShape.type][shape.type].bind(null, otherShape, shape);
-    }
-
-    if (!selectedFunction) {
-        throw Error("No spatial relation function found between shapes: " + shape.type + " and " + otherShape.type);
-    }
-
-    return selectedFunction();
-}
-
-function getIntersectsFunctions() {
-    var functions = {};
-
-    var set = setFunction.bind(null, functions);
-
-    set(circleType, circleType, function (circle, otherCircle) {
-        if (!boundingBoxesIntersects(circle, otherCircle)) {
-            return false;
-        }
-
-        var maxAllowedDist = circle.radius + otherCircle.radius;
-
-        return spatialRelations.distanceSquared(circle, otherCircle) < maxAllowedDist * maxAllowedDist;
-    });
-
-    set(rectType, rectType, function (rect, otherRect) {
-        return boundingBoxesIntersects(rect, otherRect);
-    });
-
-    set(circleType, rectType, function (circle, rect) {
-        if (!boundingBoxesIntersects(circle, rect)) {
-            return false;
-        }
-
-        var dist = getXYDist(circle, rect);
-
-        //The following 2 checks are only valid because of prior checking of the bounding boxes
-        if (dist.x <= (rect.width / 2)) {
-            return true;
-        }
-        if (dist.y <= (rect.height / 2)) {
-            return true;
-        }
-
-        // special case for rectangle corners
-        var cornerDistX = dist.x - rect.width / 2;
-        var cornerDistY = dist.y - rect.height / 2;
-        var cornerDistanceSq = cornerDistX*cornerDistX + cornerDistY*cornerDistY;
-
-        return cornerDistanceSq <= circle.radius * circle.radius;
-    });
-
-    return functions;
-}
-
-function getContainsFunctions() {
-    var functions = {};
-
-    var set = setFunction.bind(null, functions);
-
-    set(circleType, circleType, function (outerCircle, innerCircle) {
-        if (!boundingBoxesContains(outerCircle, innerCircle)) {
-            return false;
-        }
-
-        var maxAllowedDist = outerCircle.radius - innerCircle.radius;
-
-        return spatialRelations.distanceSquared(outerCircle, innerCircle) < maxAllowedDist * maxAllowedDist;
-    });
-
-    set(rectType, rectType, function (outerRect, innerRect) {
-        return boundingBoxesContains(outerRect, innerRect);
-    });
-
-    set(circleType, rectType, function (outerCircle, innerRect) {
-        if (!boundingBoxesContains(outerCircle, innerRect)) {
-            return false;
-        }
-
-        var rectOnRight = (innerRect.x > outerCircle.x ? 1 : -1);
-        var rectOnTop = (innerRect.y > outerCircle.y ? 1 : -1);
-
-        var dist = getXYDist(outerCircle, innerRect);
-
-        //here we select the rectangles corner point furthest away from the circle center
-        dist.x += rectOnRight * innerRect.width / 2;
-        dist.y += rectOnTop * innerRect.height / 2;
-
-        return outerCircle.radius*outerCircle.radius < dist.x*dist.x + dist.y*dist.y;
-    });
-
-    set(rectType, circleType, function (outerRect, innerCircle) {
-        return boundingBoxesContains(outerRect, innerCircle);
-    });
-
-    return functions;
+    return spatialRelationsFunctions[shape.type][otherShape.type](shape, otherShape);
 }
 
 function boundingBoxesIntersects(shape, otherShape) {
@@ -129,13 +111,7 @@ function boundingBoxesIntersects(shape, otherShape) {
     var minBoundingDistX = shape.boundingBox.width / 2 + otherShape.boundingBox.width / 2;
     var minBoundingDistY = shape.boundingBox.height / 2 + otherShape.boundingBox.height / 2;
 
-    if (dist.x > minBoundingDistX || dist.y > minBoundingDistY) {
-        // If bounding box does not intersect, we know the shapes do not intersect
-        return false
-    } else {
-        // More intersect checking is needed
-        return true;
-    }
+    return !(dist.x > minBoundingDistX || dist.y > minBoundingDistY);
 }
 
 function boundingBoxesContains(outerShape, innerShape) {
@@ -144,11 +120,14 @@ function boundingBoxesContains(outerShape, innerShape) {
     dist.x += innerShape.boundingBox.width / 2;
     dist.y += innerShape.boundingBox.height / 2;
 
-    if (dist.x < outerShape.boundingBox.width / 2 && dist.y < outerShape.boundingBox.height / 2) {
-        return true;
-    } else {
-        return false;
-    }
+    return dist.x < outerShape.boundingBox.width / 2 && dist.y < outerShape.boundingBox.height / 2;
+}
+
+function createShapeRelationMatrix() {
+    var matrix = [];
+    matrix[circleType] = [];
+    matrix[rectangleType] = [];
+    return matrix;
 }
 
 function getXYDist(shape, otherShape) {
@@ -156,12 +135,4 @@ function getXYDist(shape, otherShape) {
     dist.x = Math.abs(shape.centerX - otherShape.centerX);
     dist.y = Math.abs(shape.centerY - otherShape.centerY);
     return dist;
-}
-
-function setFunction(map, firstLevel, secondLevel, fn) {
-    if (!map[firstLevel]) {
-        map[firstLevel] = {};
-    }
-
-    map[firstLevel][secondLevel] = fn;
 }
