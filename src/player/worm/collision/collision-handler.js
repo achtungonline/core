@@ -12,7 +12,7 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
 
     function wormMapCollisionDetection(gameState, player, worm) {
         var head = worm.head;
-        if (!mapUtils.isInsidePlayableArea(gameState.map, head)) {
+        if (!mapUtils.isInsideMap(gameState.map, head)) {
             eventEmitter.emit(events.WORM_MAP_COLLISION, gameState, player, worm);
         }
     }

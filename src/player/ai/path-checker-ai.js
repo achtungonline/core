@@ -77,24 +77,6 @@ module.exports = function PathCheckerAI(game, collisionHandler) {
         return trajectories;
     }
 
-    function randomizeTrajectory(worm, moves, moveTime) {
-        var trajectory = [];
-        var totalTurn = 0;
-        for (var i = 0; i < moves; i++) {
-            var possibleSteering= [STEERING.STRAIGHT];
-            if (totalTurn + worm.turningSpeed*moveTime <= Math.PI) {
-                possibleSteering.push(STEERING.RIGHT);
-                possibleSteering.push(STEERING.LEFT);
-            }
-            var steering = possibleSteering[randInt(0, possibleSteering.length)];
-            if (steering !== STEERING.STRAIGHT) {
-                totalTurn += worm.turningSpeed*moveTime;
-            }
-            trajectory.push({steering: steering, time: moveTime});
-        }
-        return trajectory;
-    }
-
     function checkTrajectory(gameState, player, worm, trajectory) {
         var clonedWorm = clone(worm);
         clonedWorm.head = clone(worm.head);
