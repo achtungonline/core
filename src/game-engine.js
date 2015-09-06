@@ -59,7 +59,7 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHa
         }
 
         eventEmitter.emit(events.GAME_UPDATED);
-        playAreaHandler.resetUpdateBuffer();
+        playAreaHandler.resetUpdateBuffer(gameState);
 
         requestUpdateTick(function onUpdateTick() {
             update(gameState);

@@ -11,10 +11,10 @@ var UpdateBufferData = function UpdateBufferData(index, value) {
 
 module.exports = function PlayAreaHandler() {
 
-    var updateBuffer = [];
     var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
-    function applyShape(playArea, shape, value) {
+    function applyShape(gameState, shape, value) {
+        var playArea = gameState.playArea;
         var points = shapeToGridConverter.convert(shape, playArea);
         var grid = playArea.grid;
         var changedData = [];
@@ -25,35 +25,30 @@ module.exports = function PlayAreaHandler() {
                 changedData.push(UpdateBufferData(points[i], value));
             }
         }
-        updateBuffer = updateBuffer.concat(changedData);
+        gameState.playAreaUpdateBuffer = gameState.playAreaUpdateBuffer.concat(changedData);
         return changedData;
     }
 
-    function applyWormHead(playArea, worm) {
-        return applyShape(playArea, worm.head, worm.id);
+    function applyWormHead(gameState, worm) {
+        return applyShape(gameState, worm.head, worm.id);
     }
 
-    function applyObstacleShape(playArea, shape) {
-        return applyShape(playArea, shape, PlayArea.OBSTACLE);
+    function applyObstacleShape(gameState, shape) {
+        return applyShape(gameState, shape, PlayArea.OBSTACLE);
     }
 
-    function resetPlayArea(playArea) {
-        GridUtils.fillGrid(playArea.grid, PlayArea.FREE);
+    function resetPlayArea(gameState) {
+        GridUtils.fillGrid(gameState.playArea.grid, PlayArea.FREE);
     }
 
-    function getUpdateBuffer() {
-        return updateBuffer;
-    }
-
-    function resetUpdateBuffer() {
-        updateBuffer = [];
+    function resetUpdateBuffer(gameState) {
+        gameState.playAreaUpdateBuffer = [];
     }
 
     return {
         applyWormHead: applyWormHead,
         applyObstacleShape: applyObstacleShape,
         resetPlayArea: resetPlayArea,
-        getUpdateBuffer: getUpdateBuffer,
         resetUpdateBuffer: resetUpdateBuffer
     };
 };

@@ -1,4 +1,4 @@
-module.exports = function Game(gameState, gameEngine, playerHandler, playAreaHandler) {
+module.exports = function Game(gameState, gameEngine, playerHandler) {
 
     gameEngine.on(gameEngine.events.GAME_OVER, function () {
         console.log("Game Over");
@@ -25,7 +25,6 @@ module.exports = function Game(gameState, gameEngine, playerHandler, playAreaHan
 
     return {
         gameState: gameState,
-        getPlayAreaUpdateBuffer: playAreaHandler.getUpdateBuffer,
         start: start,
         setPlayerSteering: setPlayerSteering,
         pause: pause,

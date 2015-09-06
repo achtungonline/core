@@ -29,11 +29,11 @@ module.exports = function GameFactory(requestUpdateTick) {
         var playArea = PlayArea.createPlayArea(map.width, map.height);
         var playAreaHandler = PlayAreaHandler();
 
-        map.blockingShapes.forEach(function (blockingShape) {
-            playAreaHandler.applyObstacleShape(playArea, blockingShape);
-        });
+        var gameState = GameState(players, worms, map, playArea, []);
 
-        var gameState = GameState(players, worms, map, playArea);
+        map.blockingShapes.forEach(function (blockingShape) {
+            playAreaHandler.applyObstacleShape(gameState, blockingShape);
+        });
 
         var wormHandlerFactory = WormHandlerFactory(playAreaHandler);
         var wormHandler = wormHandlerFactory.create();
@@ -45,7 +45,7 @@ module.exports = function GameFactory(requestUpdateTick) {
 
         var gameEngine = GameEngine(requestUpdateTick, roundHandler, playAreaHandler);
 
-        var game = Game(gameState, gameEngine, playerHandler, playAreaHandler);
+        var game = Game(gameState, gameEngine, playerHandler);
 
         var aiHandler = AIHandlerFactory(game, playAreaHandler).create();
         playerSetup.AIPlayers.forEach(function (aiPlayer) {
