@@ -30,5 +30,5 @@ module.exports = function BodyPartDeciderHandler(jumpFactory) {
         register: register,
         unRegister: unRegister,
         decide: decide
-    }
+    };
 };

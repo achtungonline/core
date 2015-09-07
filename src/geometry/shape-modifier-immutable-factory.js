@@ -6,5 +6,5 @@ module.exports = function ShapeModifierIFactory() {
         create: function create() {
             return ShapeModifierI(ShapeFactory());
         }
-    }
-}
+    };
+};

@@ -38,5 +38,5 @@ module.exports = function Jump(timeBasedChanceTrigger, jumpLength, jumpMinFreque
     return {
         isJumping: isJumping,
         update: update
-    }
+    };
 };

@@ -17,5 +17,5 @@ module.exports = function PlayerFactory(idGenerator, wormFactory) {
     return {
         create: create,
         createPlayers: createPlayers
-    }
+    };
 };

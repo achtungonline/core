@@ -15,5 +15,5 @@ module.exports = function AIHandlerFactory(game, playAreaHandler) {
 
     return {
         create: create
-    }
-}
+    };
+};

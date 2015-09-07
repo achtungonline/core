@@ -15,7 +15,7 @@ module.exports = function ShapeModifierImmutable(shapeFactory) {
                 throw Error("Changing size of a circle from size: " + circle.radius + " to: " + newRadius);
             }
             return shapeFactory.createCircle(newRadius, circle.x - radiusDiff, circle.y - radiusDiff);
-        }
+        };
         functions[rectType] = function changeRectSize(rect, widthDiff, heightDiff) {
             if (heightDiff === undefined) {
                 heightDiff = widthDiff;
@@ -26,7 +26,7 @@ module.exports = function ShapeModifierImmutable(shapeFactory) {
                 throw Error("Changing size of rectangle from w/h: " + rect.width + "/" + rect.height + "  to: " + newWidth + "/" + newHeight);
             }
             return shapeFactory.createRectangle(newWidth, newHeight, rect.x - widthDiff / 2, rect.y - heightDiff / 2);
-        }
+        };
 
         return functions;
     }
@@ -43,11 +43,11 @@ module.exports = function ShapeModifierImmutable(shapeFactory) {
 
         functions[circleType] = function setCirclePosition(circle, x, y) {
             return shapeFactory.createCircle(circle.radius, x, y);
-        }
+        };
 
         functions[rectType] = function setRectPosition(rect, x, y) {
             return shapeFactory.createRectangle(rect.width, rect.height, x, y);
-        }
+        };
         return functions;
     }
 

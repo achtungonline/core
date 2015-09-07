@@ -35,5 +35,5 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
         update: update,
         isRunning: isRunning,
         end: end
-    }
+    };
 };

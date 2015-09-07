@@ -18,7 +18,7 @@ module.exports = function PlayerHandler(wormHandler) {
                 throw Error("Trying to kill player that is already dead");
             }
             player.alive = false;
-            eventEmitter.emit(events.PLAYER_DIED, gameState, player)
+            eventEmitter.emit(events.PLAYER_DIED, gameState, player);
         }
 
         if (!player.alive) {
@@ -41,5 +41,5 @@ module.exports = function PlayerHandler(wormHandler) {
         setSteering: setSteering,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
-    }
+    };
 };

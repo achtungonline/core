@@ -14,5 +14,5 @@ module.exports = function JumpFactory() {
 
     return {
         create: create
-    }
+    };
 };

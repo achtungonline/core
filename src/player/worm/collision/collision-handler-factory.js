@@ -9,5 +9,5 @@ module.exports = function CollisionHandlerFactory(playAreaHandler, wormBodyImmun
 
     return {
         create: create
-    }
+    };
 };

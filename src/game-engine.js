@@ -81,5 +81,5 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHa
         isRunning: isRunning,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
-    }
+    };
 };

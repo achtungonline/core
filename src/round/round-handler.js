@@ -29,14 +29,13 @@ module.exports = function RoundHandler(phases) {
         if (!isRunning()) {
             return;
         }
+        function isLastPhase() {
+            return currentPhaseIndex === phases.length - 1;
+        }
 
         getCurrentPhase().update(gameState, deltaTime);
 
         if (!getCurrentPhase().isRunning()) {
-            function isLastPhase() {
-                return currentPhaseIndex === phases.length - 1
-            }
-
             if (isLastPhase()) {
                 // Do not start a new phase if it is the last
                 return;
@@ -60,5 +59,5 @@ module.exports = function RoundHandler(phases) {
         isRunning: isRunning,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
-    }
+    };
 };

@@ -15,6 +15,5 @@ module.exports = function RandomAI(game, random) {
 
     return {
         update: update
-    }
-
+    };
 };

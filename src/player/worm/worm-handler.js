@@ -65,7 +65,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         updateBody();
         updateDirection();
         updatePosition();
-        collisionDetection()
+        collisionDetection();
     }
 
 
@@ -88,6 +88,6 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         update: update,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
-    }
+    };
 };
 

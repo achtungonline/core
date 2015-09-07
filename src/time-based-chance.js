@@ -22,7 +22,7 @@ timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBas
 
     return {
         update: update
-    }
+    };
 };
 
 timeBasedChance.calculators = {};
@@ -51,7 +51,7 @@ timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function ExpoTimeBas
         update: update,
         getCurrentChance: getCurrentChance,
         reset: reset
-    }
+    };
 };
 
 /**
@@ -85,5 +85,5 @@ timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTim
         update: update,
         getCurrentChance: getCurrentChance,
         reset: reset
-    }
+    };
 };

@@ -18,5 +18,5 @@ player.Player = function (id, worms, alive) {
         worms: worms,
         steering: steering,
         alive: alive
-    }
+    };
 };

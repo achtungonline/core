@@ -4,8 +4,8 @@ var Rectangle = require("./shape/rectangle.js").Rectangle;
 module.exports = function ShapeFactory() {
 
     var createSquare = function (size, x, y) {
-        return Rectangle(size, size, x, y)
-    }
+        return Rectangle(size, size, x, y);
+    };
 
     return {
         createRectangle: Rectangle,

@@ -3,5 +3,5 @@ module.exports = function Curve(speed, turningSpeed, duration) {
         speed: speed,
         turningSpeed: turningSpeed,
         duration: duration
-    }
+    };
 };

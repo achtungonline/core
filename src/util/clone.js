@@ -1,11 +1,11 @@
 module.exports = function clone(source) {
-    var clone = {};
+    var clonedObject = {};
 
-    for (prop in source) {
+    for (var prop in source) {
         if (source.hasOwnProperty(prop)) {
-            clone[prop] = source[prop];
+            clonedObject[prop] = source[prop];
         }
     }
 
-    return clone;
+    return clonedObject;
 };

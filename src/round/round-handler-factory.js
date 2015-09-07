@@ -14,5 +14,5 @@ module.exports = function RoundHandlerFactory(wormHandler, playerHandler) {
 
     return {
         create: create
-    }
-}
+    };
+};

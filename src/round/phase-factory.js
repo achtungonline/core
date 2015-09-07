@@ -27,5 +27,5 @@ module.exports = function PhaseFactory(wormHandler, playerHandler) {
         createStartPhase: createStartPhase,
         createPlayPhase: createPlayPhase,
         createRoundOverPhase: createRoundOverPhase
-    }
-}
+    };
+};

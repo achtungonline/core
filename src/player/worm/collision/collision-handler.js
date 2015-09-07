@@ -39,5 +39,5 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
         wormWormCollisionDetection: wormWormCollisionDetection,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
-    }
+    };
 };

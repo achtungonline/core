@@ -15,5 +15,5 @@ module.exports = function WormFactory(idGenerator) {
 
     return {
         create: create
-    }
+    };
 };

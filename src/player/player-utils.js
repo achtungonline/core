@@ -22,7 +22,7 @@ utils.forEachAlivePlayerWorm = function forEachAlivePlayerWorm(player, callback)
             if (worm.alive) {
                 callback(worm);
             }
-        })
+        });
     }
 };
 

@@ -74,5 +74,5 @@ ShapeToGridConverter.createShapeToGridConverter = function createShapeToGridConv
 
     return {
         convert: convert
-    }
+    };
 };

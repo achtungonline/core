@@ -57,12 +57,12 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
 
     function generateSunFanTrajectories(worm, moves, moveTime) {
         var trajectories = [];
-        var maxTurns = Math.min(moves, Math.floor(Math.PI/moveTime/worm.turningSpeed));
+        var maxTurns = Math.min(moves, Math.floor(Math.PI / moveTime / worm.turningSpeed));
         [STEERING.RIGHT, STEERING.LEFT].forEach(function (steering) {
             for (var turns = 0; turns <= maxTurns; turns++) {
                 var trajectory = Trajectory();
                 for (var i = 0; i < turns; i++) {
-                    trajectoryHandler.addCurve(trajectory, Curve(worm.speed, steering*worm.turningSpeed, moveTime));
+                    trajectoryHandler.addCurve(trajectory, Curve(worm.speed, steering * worm.turningSpeed, moveTime));
                 }
                 for (i = 0; i < moves - turns; i++) {
                     trajectoryHandler.addCurve(trajectory, Curve(Math.max(worm.speed, 10), 0, moveTime));
@@ -117,6 +117,5 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
 
     return {
         update: update
-    }
-
+    };
 };

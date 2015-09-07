@@ -2,7 +2,7 @@ var PathCheckerAI = require("./path-checker-ai.js");
 
 module.exports = function AIHandler(game, collisionHandler, trajectoryHandler, random) {
 
-    game.on(game.events.GAME_UPDATED, function() {
+    game.on(game.events.GAME_UPDATED, function () {
         update(game.gameState);
     });
 
@@ -24,14 +24,13 @@ module.exports = function AIHandler(game, collisionHandler, trajectoryHandler, r
     }
 
     function update(gameState) {
-        players.forEach(function(player, index) {
+        players.forEach(function (player, index) {
             ais[index].update(gameState, player);
         });
     }
 
-    return  {
+    return {
         addAIPlayer: addAIPlayer,
         removeAIPlayer: removeAIPlayer
-    }
-
+    };
 };

@@ -42,7 +42,7 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
         update: update,
         isRunning: isRunning,
         end: end
-    }
+    };
 };
 
 

@@ -10,5 +10,5 @@ module.exports = function Random() {
     return {
         randInt: randInt,
         randomElement: randomElement
-    }
+    };
 };

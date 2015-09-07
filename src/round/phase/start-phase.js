@@ -32,7 +32,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
             var counter = 0;
             while (isCollidingWithWorms(updatedWorms, newHead)) {
                 if (counter > 100000) {
-                    throw Error("Failed to find starting position for worm that does not collide with other worms.")
+                    throw Error("Failed to find starting position for worm that does not collide with other worms.");
                 }
                 newHead = getWormHeadInsidePlayableMapArea(worm);
                 counter++;
@@ -93,5 +93,5 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         update: update,
         isRunning: isRunning,
         end: end
-    }
+    };
 };

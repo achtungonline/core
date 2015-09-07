@@ -17,7 +17,7 @@ module.exports = function WormBodyImmunityHandler() {
     function getWormData(worm) {
         var data = wormData[worm.id];
         if (!data) {
-            data = wormData[worm.id] = createWormData(worm)
+            data = wormData[worm.id] = createWormData(worm);
         }
         return data;
     }
@@ -47,5 +47,5 @@ module.exports = function WormBodyImmunityHandler() {
         setImmunityCells: setImmunityCells,
         isImmuneCell: isImmuneCell,
         update: update
-    }
+    };
 };

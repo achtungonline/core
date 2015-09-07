@@ -23,5 +23,5 @@ module.exports = function WormHandlerFactory(playAreaHandler) {
 
     return {
         create: create
-    }
+    };
 };

@@ -51,5 +51,5 @@ module.exports = function TrajectoryHandler() {
         addCurve: addCurve,
         removeDeltaTime: removeDeltaTime,
         followTrajectory: followTrajectory
-    }
+    };
 };
