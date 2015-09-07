@@ -1,5 +1,11 @@
 var EventEmitter = require("events").EventEmitter;
 
+/**
+ * Responsible for a game round.
+ * @param phases
+ * @returns {{start: start, update: update, isRunning: isRunning, on: (*|function(this:(*|EventEmitter))), events: {}}}
+ * @constructor
+ */
 module.exports = function RoundHandler(phases) {
     var eventEmitter = new EventEmitter();
     var events = {};
@@ -21,10 +27,6 @@ module.exports = function RoundHandler(phases) {
         startCurrentPhase(gameState);
     }
 
-    function endCurrentPhase(gameState) {
-        getCurrentPhase().end(gameState);
-    }
-
     function update(gameState, deltaTime) {
         if (!isRunning()) {
             return;
@@ -40,7 +42,6 @@ module.exports = function RoundHandler(phases) {
                 // Do not start a new phase if it is the last
                 return;
             }
-            endCurrentPhase(gameState);
             startNextPhase(gameState);
         }
     }

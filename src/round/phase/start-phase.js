@@ -75,6 +75,10 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         });
 
         runtime -= deltaTime;
+
+        if(!isRunning()) {
+            end(gameState);
+        }
     }
 
     function end(gameState) {
@@ -91,7 +95,6 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning,
-        end: end
+        isRunning: isRunning
     };
 };

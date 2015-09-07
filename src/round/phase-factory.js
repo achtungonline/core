@@ -8,6 +8,13 @@ var ShapeModifierIFactory = require("./../geometry/shape-modifier-immutable-fact
 var mapUtils = require("./../map/map-utils.js");
 var playerUtils = require("./../player/player-utils.js");
 
+/**
+ * A phase is a sort of logical concept within a game round. Such as the starting phase when the worms don't move and the play phase which is when they start moving.
+ * @param wormHandler
+ * @param playerHandler
+ * @returns {{createStartPhase: createStartPhase, createPlayPhase: createPlayPhase, createRoundOverPhase: createRoundOverPhase}}
+ * @constructor
+ */
 module.exports = function PhaseFactory(wormHandler, playerHandler) {
     var shapeModifierIFactory = ShapeModifierIFactory();
 

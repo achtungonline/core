@@ -27,21 +27,18 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
         playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
             wormHandler.update(gameState, deltaTime, player, worm);
         });
+
     }
 
     function isRunning() {
         return run;
     }
 
-    function end() {
-    }
-
     return {
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning,
-        end: end
+        isRunning: isRunning
     };
 };
 

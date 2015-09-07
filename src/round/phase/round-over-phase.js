@@ -26,14 +26,11 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
         return (runtime !== undefined && runtime > 0);
     }
 
-    function end() {
-    }
 
     return {
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning,
-        end: end
+        isRunning: isRunning
     };
 };
