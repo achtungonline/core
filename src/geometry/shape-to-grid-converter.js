@@ -9,11 +9,11 @@ function getConvertFunctions() {
     var functions = {};
 
     functions[rectType] = function rectToGrid(rect, grid, roundingMode) {
-        var leftRow = Math.max(0, roundingMode.roundLeft(rect.y / grid.cellSize));
-        var leftCol = Math.max(0, roundingMode.roundLeft(rect.x / grid.cellSize));
+        var leftRow = Math.max(0, roundingMode.roundLeft(rect.y));
+        var leftCol = Math.max(0, roundingMode.roundLeft(rect.x));
 
-        var rightRow = Math.min(grid.rows - 1, roundingMode.roundRight(rect.maxY / grid.cellSize));
-        var rightCol = Math.min(grid.cols - 1, roundingMode.roundRight(rect.maxX / grid.cellSize));
+        var rightRow = Math.min(grid.rows - 1, roundingMode.roundRight(rect.maxY));
+        var rightCol = Math.min(grid.cols - 1, roundingMode.roundRight(rect.maxX));
 
         var size = (rightRow - leftRow + 1) * (rightCol - leftCol + 1);
         var points = new Array(size);
@@ -30,16 +30,16 @@ function getConvertFunctions() {
     };
 
     functions[circleType] = function circleToGrid(circle, grid, roundingMode) {
-        var firstRow = Math.max(0, roundingMode.roundLeft(circle.y / grid.cellSize));
-        var midRow = Math.round(circle.centerY / grid.cellSize);
-        var lastRow = Math.min(grid.rows - 1, roundingMode.roundRight(circle.maxY / grid.cellSize));
+        var firstRow = Math.max(0, roundingMode.roundLeft(circle.y));
+        var midRow = Math.round(circle.centerY);
+        var lastRow = Math.min(grid.rows - 1, roundingMode.roundRight(circle.maxY));
 
         var points = [];
         for (var row = firstRow; row <= lastRow; row++) {
-            var dy = (midRow - row) * grid.cellSize;
+            var dy = midRow - row;
             var dx = Math.sqrt(circle.radius * circle.radius - dy * dy);
-            var firstCol = Math.max(0, roundingMode.roundLeft((circle.centerX - dx) / grid.cellSize));
-            var lastCol = Math.min(grid.cols - 1, roundingMode.roundRight((circle.centerX + dx) / grid.cellSize));
+            var firstCol = Math.max(0, roundingMode.roundLeft((circle.centerX - dx)));
+            var lastCol = Math.min(grid.cols - 1, roundingMode.roundRight((circle.centerX + dx)));
             for (var col = firstCol; col <= lastCol; col++) {
                 points.push(gridUtils.getIndex(grid, row, col));
             }
