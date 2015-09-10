@@ -4,7 +4,7 @@ var startPhase = module.exports = {};
 
 startPhase.type = "startPhase";
 
-startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils) {
+startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils, random) {
     var runtime;
     var type = startPhase.type;
     var originalWormSpeeds = []; //TODO: Should be removed, replaced with immobilize effect/powerup
@@ -21,7 +21,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            var newWormPos = mapUtils.getRandomPositionInsidePlayableArea(map, worm.head);
+            var newWormPos = mapUtils.getRandomPositionInsidePlayableArea(map, worm.head, random);
             return shapeModifierI.setPosition(worm.head, newWormPos.x, newWormPos.y);
         }
 
@@ -45,7 +45,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
     function setPlayersStartingDirections(players) {
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                var direction = Math.random() * Math.PI * 2;
+                var direction = random.random() * Math.PI * 2;
                 wormHandler.setDirection(worm, direction);
             });
         });

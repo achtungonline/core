@@ -16,13 +16,13 @@ utils.intersectsBlockingShapes = function (map, shape) {
     return false;
 };
 
-utils.getRandomPositionInsidePlayableArea = function (map, shape) {
+utils.getRandomPositionInsidePlayableArea = function (map, shape, random) {
     var pos = {};
     var i = 0;
     var shapeWithNewPos = shape;
     while (i < 100000) {
-        pos.x = Math.random() * map.width;
-        pos.y = Math.random() * map.height;
+        pos.x = random.random() * map.width;
+        pos.y = random.random() * map.height;
         shapeWithNewPos = shapeModifierI.setPosition(shapeWithNewPos, pos.x, pos.y);
         if (utils.isInsideMap(map, shapeWithNewPos) && !utils.intersectsBlockingShapes(map, shapeWithNewPos)) {
             return pos;

@@ -1,6 +1,20 @@
-module.exports = function Random() {
+var seedrandom = require("seedrandom");
+
+module.exports = function Random(seed) {
+
+    seed = seed || Math.seedrandom();
+    var random = seedrandom(seed);
+
+    function setSeed(seed) {
+        random = seedrandom(seed);
+    }
+
+    function getSeed() {
+        return seed;
+    }
+
     function randInt(low, high) {
-        return Math.floor(Math.random() * (high - low) + low);
+        return Math.floor(random() * (high - low) + low);
     }
 
     function randomElement(list) {
@@ -8,6 +22,9 @@ module.exports = function Random() {
     }
 
     return {
+        setSeed: setSeed,
+        getSeed: getSeed,
+        random: random,
         randInt: randInt,
         randomElement: randomElement
     };

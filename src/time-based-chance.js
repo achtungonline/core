@@ -7,14 +7,14 @@ var timeBasedChance = module.exports = {};
  *
  * @param timeBasedChanceCalculator
  */
-timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator) {
+timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator, random) {
 
     function update(deltaTime, callback) {
 
         timeBasedChanceCalculator.update(deltaTime);
 
         var chance = timeBasedChanceCalculator.getCurrentChance();
-        if (chance >= Math.random()) {
+        if (chance >= random.random()) {
             timeBasedChanceCalculator.reset();
             callback();
         }

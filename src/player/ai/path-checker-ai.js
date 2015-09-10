@@ -23,6 +23,7 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         timeUntilNextSimulation -= deltaTime;
         var worm = player.worms[0];
         if (timeUntilNextSimulation < 0) {
+            // TODO Different strategy if speed === 0
             var trajectories = generateSunFanTrajectories(worm, 20, 0.15);
             var bestTime = -1;
             var bestTrajectories = [];
@@ -65,7 +66,7 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
                     trajectoryHandler.addCurve(trajectory, Curve(worm.speed, steering * worm.turningSpeed, moveTime));
                 }
                 for (i = 0; i < moves - turns; i++) {
-                    trajectoryHandler.addCurve(trajectory, Curve(Math.max(worm.speed, 10), 0, moveTime));
+                    trajectoryHandler.addCurve(trajectory, Curve(Math.max(worm.speed, 40), 0, moveTime));
                 }
                 trajectories.push(trajectory);
             }
@@ -96,11 +97,12 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
             if (!simulationCollision) {
                 // Worm collision detection
                 var cells = shapeToGridConverter.convert(clonedHead, playArea, RoundingModes.INTERSECTION);
-                cells.forEach(function (cell) {
+                cells.some(function (cell) {
                     var value = playArea.grid[cell];
                     if (value !== PlayArea.FREE) {
                         if (value !== clonedWorm.id || distanceSquared > immunityDistance) {
                             simulationCollision = true;
+                            return true;
                         }
                     }
                 });

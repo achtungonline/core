@@ -7,9 +7,9 @@ var CollisionHandlerFactory = require("./collision/collision-handler-factory.js"
 
 var clone = require("./../../util/clone.js");
 
-module.exports = function WormHandlerFactory(playAreaHandler) {
+module.exports = function WormHandlerFactory(playAreaHandler, random) {
     var shapeModifierIFactory = ShapeModifierIFactory();
-    var jumpFactory = JumpFactory();
+    var jumpFactory = JumpFactory(random);
 
     function create() {
         var wormBodyImmunityHandler = WormBodyImmunityHandler();

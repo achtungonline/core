@@ -12,7 +12,7 @@ var PlayAreaHandler = require("./play-area/play-area-handler.js");
 module.exports = function GameFactory(requestUpdateTick) {
     var mapFactory = MapFactory();
 
-    function create(playerSetup, map) {
+    function create(playerSetup, map, random) {
 
         var players = playerSetup.humanPlayers.concat(playerSetup.AIPlayers);
         if (!map) {
@@ -35,11 +35,11 @@ module.exports = function GameFactory(requestUpdateTick) {
             playAreaHandler.applyObstacleShape(gameState, blockingShape);
         });
 
-        var wormHandlerFactory = WormHandlerFactory(playAreaHandler);
+        var wormHandlerFactory = WormHandlerFactory(playAreaHandler, random);
         var wormHandler = wormHandlerFactory.create();
 
         var playerHandler = PlayerHandler(wormHandler);
-        var roundHandlerFactory = RoundHandlerFactory(wormHandler, playerHandler);
+        var roundHandlerFactory = RoundHandlerFactory(wormHandler, playerHandler, random);
 
         var roundHandler = roundHandlerFactory.create();
 
@@ -47,7 +47,7 @@ module.exports = function GameFactory(requestUpdateTick) {
 
         var game = Game(gameState, gameEngine, playerHandler);
 
-        var aiHandler = AIHandlerFactory(game, playAreaHandler).create();
+        var aiHandler = AIHandlerFactory(game, playAreaHandler, random).create();
         playerSetup.AIPlayers.forEach(function (aiPlayer) {
             aiHandler.addAIPlayer(aiPlayer);
         });
