@@ -23,23 +23,16 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         timeUntilNextSimulation -= deltaTime;
         var worm = player.worms[0];
         if (timeUntilNextSimulation < 0) {
-            // TODO Different strategy if speed === 0
-            var trajectories = generateSunFanTrajectories(worm, 20, 0.15);
-            var bestTime = -1;
-            var bestTrajectories = [];
-            trajectories.forEach(function (trajectory) {
-                var time = checkTrajectory(gameState, worm, trajectory);
-                if (time > bestTime) {
-                    bestTime = time;
-                    bestTrajectories = [trajectory];
-                } else if (time === bestTime) {
-                    bestTrajectories.push(trajectory);
-                }
-            });
-            trajectory = random.randomElement(bestTrajectories);
+            if (worm.speed === 0) {
+                trajectory = getBestStraightTrajectory(gameState, worm);
+            } else {
+                trajectory = getBestSunFanTrajectory(gameState, worm);
+            }
             timeUntilNextSimulation = random.randInt(200, 300) / 1000.0;
         } else {
-            trajectoryHandler.removeDeltaTime(trajectory, deltaTime);
+            if (worm.speed > 0) {
+                trajectoryHandler.removeDeltaTime(trajectory, deltaTime);
+            }
         }
         if (trajectory.length > 0) {
             if (trajectory[0].turningSpeed < 0) {
@@ -56,17 +49,61 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         lastUpdate = Date.now();
     }
 
+    function getBestSunFanTrajectory(gameState, worm) {
+        var trajectories = generateSunFanTrajectories(worm, 20, 0.15);
+        var bestTime = -1;
+        var bestTrajectories = [];
+        trajectories.forEach(function (trajectory) {
+            var time = checkTrajectory(gameState, worm, trajectory);
+            if (time > bestTime) {
+                bestTime = time;
+                bestTrajectories = [trajectory];
+            } else if (time === bestTime) {
+                bestTrajectories.push(trajectory);
+            }
+        });
+        return random.randomElement(bestTrajectories);
+    }
+
+    function getBestStraightTrajectory(gameState, worm) {
+        var trajectories = generateStraightTrajectories(worm, 20, 0.15);
+        var bestTime = -1;
+        var bestTrajectory = [];
+        var bestDirection = 0;
+        trajectories.forEach(function (trajectory) {
+            var time = checkTrajectory(gameState, worm, trajectory);
+            var direction = 0;
+            trajectory.forEach(function (curve) {
+                direction += curve.turningSpeed * curve.duration;
+            });
+            if (time > bestTime || time === bestTime && Math.abs(direction) < Math.abs(bestDirection)) {
+                bestTime = time;
+                bestTrajectory = trajectory;
+                bestDirection = direction;
+            }
+        });
+        return bestTrajectory;
+    }
+
     function generateSunFanTrajectories(worm, moves, moveTime) {
+        return generateTwoStepTrajectories(moves, moveTime, worm.speed, worm.turningSpeed, worm.speed, 0);
+    }
+
+    function generateStraightTrajectories(worm, moves, moveTime) {
+        return generateTwoStepTrajectories(moves, moveTime, 0, worm.turningSpeed, 50, 0);
+    }
+
+    function generateTwoStepTrajectories(moves, moveTime, speed1, turningSpeed1, speed2, turningSpeed2) {
         var trajectories = [];
-        var maxTurns = Math.min(moves, Math.floor(Math.PI / moveTime / worm.turningSpeed));
+        var maxTurns = Math.min(moves, Math.floor(Math.PI / moveTime / turningSpeed1));
         [STEERING.RIGHT, STEERING.LEFT].forEach(function (steering) {
             for (var turns = 0; turns <= maxTurns; turns++) {
                 var trajectory = Trajectory();
                 for (var i = 0; i < turns; i++) {
-                    trajectoryHandler.addCurve(trajectory, Curve(worm.speed, steering * worm.turningSpeed, moveTime));
+                    trajectoryHandler.addCurve(trajectory, Curve(speed1, steering * turningSpeed1, moveTime));
                 }
                 for (i = 0; i < moves - turns; i++) {
-                    trajectoryHandler.addCurve(trajectory, Curve(Math.max(worm.speed, 40), 0, moveTime));
+                    trajectoryHandler.addCurve(trajectory, Curve(speed2, steering * turningSpeed2, moveTime));
                 }
                 trajectories.push(trajectory);
             }
