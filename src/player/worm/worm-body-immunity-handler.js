@@ -4,8 +4,6 @@ var forEach = require("./../../util/for-each.js");
 var IMMUNITY_DISTANCE = 100;
 
 module.exports = function WormBodyImmunityHandler() {
-    var cellDistance = {};
-    var wormData = {};
 
     function createWormData(worm) {
         var data = {};
@@ -14,10 +12,10 @@ module.exports = function WormBodyImmunityHandler() {
         return data;
     }
 
-    function getWormData(worm) {
-        var data = wormData[worm.id];
+    function getWormData(gameState, worm) {
+        var data = gameState.wormBodyImmunityHandler.wormData[worm.id];
         if (!data) {
-            data = wormData[worm.id] = createWormData(worm);
+            data = gameState.wormBodyImmunityHandler.wormData[worm.id] = createWormData(worm);
         }
         return data;
     }
@@ -25,20 +23,20 @@ module.exports = function WormBodyImmunityHandler() {
     /*
     bodyParts should be a list in the format returned from PlayAreaHandler.getUpdateBuffer()
      */
-    function setImmunityCells(worm, cells) {
-        var data = getWormData(worm);
+    function setImmunityCells(gameState, worm, cells) {
+        var data = getWormData(gameState, worm);
         cells.forEach(function (cell) {
-            cellDistance[cell.index] = data.distance;
+            gameState.wormBodyImmunityHandler.cellDistance[cell.index] = data.distance;
         });
     }
 
-    function isImmuneCell(worm, cell) {
-        var data = getWormData(worm);
-        return data.distance - cellDistance[cell] <= IMMUNITY_DISTANCE;
+    function isImmuneCell(gameState, worm, cell) {
+        var data = getWormData(gameState, worm);
+        return data.distance - gameState.wormBodyImmunityHandler.cellDistance[cell] <= IMMUNITY_DISTANCE;
     }
 
-    function update(worm) {
-        var data = getWormData(worm);
+    function update(gameState, worm) {
+        var data = getWormData(gameState, worm);
         data.distance += shapeSpatialRelations.distanceSquared(worm.head, data.position);
         data.position = worm.head;
     }

@@ -28,7 +28,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
     function pushBodyPart(gameState, worm) {
         var changedCells = playAreaHandler.applyWormHead(gameState, worm);
-        wormBodyImmunityHandler.setImmunityCells(worm, changedCells);
+        wormBodyImmunityHandler.setImmunityCells(gameState, worm, changedCells);
     }
 
     function update(gameState, deltaTime, player, worm) {
@@ -54,7 +54,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             var yDiff = Math.sin(worm.direction) * worm.speed * deltaTime;
 
             setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
-            wormBodyImmunityHandler.update(worm);
+            wormBodyImmunityHandler.update(gameState, worm);
         }
 
         function collisionDetection() {
