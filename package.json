@@ -6,13 +6,20 @@
     "type": "git",
     "url": "https://github.com/achtungonline/core.git"
   },
-  "author": [{
-    "name": "Lucas Wiener",
-    "email": "lucas@wiener.se"
-  }, {
-    "name": "Mathias Lindblom",
-    "email": "ommatte@gmail.com"
-  }],
+  "author": [
+    {
+      "name": "Lucas Wiener",
+      "email": "lucas@wiener.se"
+    },
+    {
+      "name": "Mathias Lindblom",
+      "email": "ommatte@gmail.com"
+    },
+    {
+      "name": "Erik Odenman",
+      "email": "erik.odenman@gmail.com"
+    }
+  ],
   "dependencies": {
     "seedrandom": "^2.4.2"
   },
