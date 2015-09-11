@@ -5,8 +5,6 @@ var startPhase = module.exports = {};
 startPhase.type = "startPhase";
 
 startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils, random) {
-    var originalWormSpeeds = []; //TODO: Should be removed, replaced with immobilize effect/powerup
-
     function setPlayersStartingPositions(players, map) {
         function isCollidingWithWorms(worms, shape) {
             for (var i in worms) {
@@ -51,7 +49,6 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
 
     function immobilizePlayers(players) {
         playerUtils.forEachAliveWorm(players, function (player, worm) {
-            originalWormSpeeds[worm.id] = worm.speed;
             wormHandler.setSpeed(worm, 0);
         });
     }
@@ -81,7 +78,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
 
     function end(gameState) {
         playerUtils.forEachAliveWorm(gameState.players, function setOriginalPlayerSpeeds(player, worm) {
-            wormHandler.setSpeed(worm, originalWormSpeeds[worm.id]);
+            wormHandler.setSpeed(worm, worm.defaultSpeed);
         });
     }
 
