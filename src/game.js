@@ -17,10 +17,17 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
     }
 
     function pause() {
-        if (!gameEngine.isRunning()) {
+        if (!gameEngine.isActive()) {
             throw Error("Trying to pause a game that is not running");
         }
-        gameEngine.pause();
+        gameEngine.pause(gameState);
+    }
+
+    function resume() {
+        if(!gameEngine.isActive()) {
+            throw Error("Trying to resume a game that is not running");
+        }
+        gameEngine.resume(gameState);
     }
 
     return {
@@ -28,6 +35,7 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
         start: start,
         setPlayerSteering: setPlayerSteering,
         pause: pause,
+        resume: resume,
         on: gameEngine.on.bind(gameEngine),
         events: gameEngine.events
     };

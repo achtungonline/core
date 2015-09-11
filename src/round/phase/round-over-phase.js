@@ -13,7 +13,7 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
     }
 
     function update(deltaTime) {
-        if (isRunning()) {
+        if (isActive()) {
             return;
         }
         runtime -= deltaTime;
@@ -22,7 +22,7 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
         }
     }
 
-    function isRunning() {
+    function isActive() {
         return (runtime !== undefined && runtime > 0);
     }
 
@@ -31,6 +31,6 @@ roundOverPhase.RoundOverPhase = function RoundOverPhase() {
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning
+        isActive: isActive
     };
 };

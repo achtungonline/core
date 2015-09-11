@@ -5,6 +5,8 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         worms: worms,
         map: map,
         playArea: playArea,
-        playAreaUpdateBuffer: playAreaUpdateBuffer
+        playAreaUpdateBuffer: playAreaUpdateBuffer,
+        gameActive: false,
+        gamePaused: false
     };
 };

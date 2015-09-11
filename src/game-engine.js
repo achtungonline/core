@@ -7,15 +7,12 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
     events.GAME_UPDATED = "gameUpdated";
     events.GAME_OVER = "gameOver";
 
-    var run;
-    var paused;
-
     roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType) {
         eventEmitter.emit(roundHandler.events.NEW_PHASE_STARTED, phaseType);
     });
 
     function start(gameState) {
-        run = true;
+        gameState.gameActive = true;
         var deltaTimeCall = deltaTimeHandler.start();
         roundHandler.start(gameState);
         deltaTimeCall(function onUpdateTick(deltaTime) {
@@ -23,21 +20,25 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
         });
     }
 
-    function switchPaused() {
-        paused = !paused;
+    function pause(gameState) {
+        gameState.gamePaused = false;
     }
 
-    function stopGame() {
+    function resume(gameState) {
+        gameState.gamePaused = true;
+    }
+
+    function stopGame(gameState) {
         eventEmitter.emit(events.GAME_OVER);
-        run = false;
+        gameState.gameActive = false;
     }
 
     function update(gameState, deltaTime, deltaTimeCall) {
-        if (isRunning() && !isPaused() && deltaTime > 0) {
+        if (isActive(gameState) && !isPaused(gameState) && deltaTime > 0) {
             eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
             roundHandler.update(gameState, deltaTime);
 
-            if (!roundHandler.isRunning()) {
+            if (!roundHandler.isActive()) {
                 stopGame();
             }
 
@@ -45,26 +46,28 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
             playAreaHandler.resetUpdateBuffer(gameState);
         }
 
-        if (isRunning()) {
+        if (isActive(gameState)) {
             deltaTimeCall(function onUpdateTick(deltaTime) {
                 update(gameState, deltaTime, deltaTimeCall);
             });
         }
     }
 
-    function isRunning() {
-        return run;
+    function isActive(gameState) {
+        return gameState.gameActive;
     }
 
-    function isPaused() {
-
+    function isPaused(gameState) {
+        return gameState.gamePaused;
     }
 
     return {
         start: start,
         stop: stopGame,
-        switchPaused: switchPaused,
-        isRunning: isRunning,
+        pause: pause,
+        resume: resume,
+        isActive: isActive,
+        isPaused: isPaused,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
     };

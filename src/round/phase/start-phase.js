@@ -66,7 +66,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
     }
 
     function update(gameState, deltaTime) {
-        if (!isRunning()) {
+        if (!isActive()) {
             return;
         }
 
@@ -76,7 +76,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
 
         runtime -= deltaTime;
 
-        if(!isRunning()) {
+        if(!isActive()) {
             end(gameState);
         }
     }
@@ -87,7 +87,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         });
     }
 
-    function isRunning() {
+    function isActive() {
         return (runtime !== undefined && runtime > 0);
     }
 
@@ -95,6 +95,6 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning
+        isActive: isActive
     };
 };

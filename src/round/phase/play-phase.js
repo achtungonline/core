@@ -19,7 +19,7 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
     }
 
     function update(gameState, deltaTime) {
-        if (!isRunning()) {
+        if (!isActive()) {
             return;
         }
 
@@ -29,7 +29,7 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
 
     }
 
-    function isRunning() {
+    function isActive() {
         return run;
     }
 
@@ -37,7 +37,7 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
         type: type,
         start: start,
         update: update,
-        isRunning: isRunning
+        isActive: isActive
     };
 };
 
