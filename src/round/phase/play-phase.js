@@ -11,7 +11,6 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
 
         if (alivePlayers.length <= 1) {
             run = false;
-
         }
     });
 

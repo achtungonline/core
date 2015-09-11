@@ -8,8 +8,9 @@ var AIHandlerFactory = require("./player/ai/ai-handler-factory.js");
 var GameState = require("./game-state.js");
 var PlayArea = require("./play-area/play-area.js");
 var PlayAreaHandler = require("./play-area/play-area-handler.js");
+var Random = require("./util/random.js");
 
-module.exports = function GameFactory(requestUpdateTick) {
+module.exports = function GameFactory(deltaTimeHandler) {
     var mapFactory = MapFactory();
 
     function create(playerSetup, map, random) {
@@ -43,11 +44,12 @@ module.exports = function GameFactory(requestUpdateTick) {
 
         var roundHandler = roundHandlerFactory.create();
 
-        var gameEngine = GameEngine(requestUpdateTick, roundHandler, playAreaHandler);
+        var gameEngine = GameEngine(deltaTimeHandler, roundHandler, playAreaHandler);
 
         var game = Game(gameState, gameEngine, playerHandler);
 
-        var aiHandler = AIHandlerFactory(game, playAreaHandler, random).create();
+        var aiRandom = Random(random.getSeed()); // Give AI their own random so that they don't interfere with stuff
+        var aiHandler = AIHandlerFactory(game, playAreaHandler, aiRandom).create();
         playerSetup.AIPlayers.forEach(function (aiPlayer) {
             aiHandler.addAIPlayer(aiPlayer);
         });

@@ -1,12 +1,12 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHandler) {
+module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};
+    events.GAME_UPDATE_STARTING = "gameUpdateStarting";
     events.GAME_UPDATED = "gameUpdated";
     events.GAME_OVER = "gameOver";
 
-    var previousTime;
     var run;
     var paused;
 
@@ -16,9 +16,11 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHa
 
     function start(gameState) {
         run = true;
-        previousTime = getCurrentTime();
+        var deltaTimeCall = deltaTimeHandler.start();
         roundHandler.start(gameState);
-        update(gameState);
+        deltaTimeCall(function onUpdateTick(deltaTime) {
+            update(gameState, deltaTime, deltaTimeCall);
+        });
     }
 
     function switchPaused() {
@@ -30,40 +32,24 @@ module.exports = function GameEngine(requestUpdateTick, roundHandler, playAreaHa
         run = false;
     }
 
-    function getCurrentTime() {
-        return Date.now();
-    }
+    function update(gameState, deltaTime, deltaTimeCall) {
+        if (isRunning() && !isPaused() && deltaTime > 0) {
+            eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
+            roundHandler.update(gameState, deltaTime);
 
-    function update(gameState) {
-        function updatePrevTimeAndGetDeltaTime() {
-            var DELTA_TIME_DIVIDER = 1000;
+            if (!roundHandler.isRunning()) {
+                stopGame();
+            }
 
-            var currentTime = getCurrentTime();
-            deltaTime = (currentTime - previousTime) / DELTA_TIME_DIVIDER; //Delta time is in seconds.
-
-            previousTime = currentTime;
-
-            return deltaTime;
+            eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
+            playAreaHandler.resetUpdateBuffer(gameState);
         }
 
-        var deltaTime = updatePrevTimeAndGetDeltaTime();
-
-        if (!isRunning() || isPaused() || deltaTime === 0) {
-            return;
+        if (isRunning()) {
+            deltaTimeCall(function onUpdateTick(deltaTime) {
+                update(gameState, deltaTime, deltaTimeCall);
+            });
         }
-
-        roundHandler.update(gameState, deltaTime);
-
-        if (!roundHandler.isRunning()) {
-            stopGame();
-        }
-
-        eventEmitter.emit(events.GAME_UPDATED);
-        playAreaHandler.resetUpdateBuffer(gameState);
-
-        requestUpdateTick(function onUpdateTick() {
-            update(gameState);
-        });
     }
 
     function isRunning() {
