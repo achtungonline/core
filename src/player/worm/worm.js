@@ -7,6 +7,10 @@ module.exports = function Worm(id, head, direction, speed, turningSpeed, alive) 
         defaultSpeed: speed,
         turningSpeed: turningSpeed,
         defaultTurningSpeed: turningSpeed,
-        alive: alive
+        alive: alive,
+        jump: {
+            remainingJumpTime: 0,
+            timeSinceLastJump: 0
+        }
     };
 };

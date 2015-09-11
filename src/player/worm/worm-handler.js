@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, bodyPartDecider) {
+module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, jumpHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};
 
@@ -38,13 +38,12 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         function updateBody() {
-            var bodyPart = clone(worm.head);
-            if (worm.speed) { // Never jump when standing still
-                bodyPart = bodyPartDecider.decide(deltaTime, worm, bodyPart);
-            }
-            if (!bodyPart) {
+            if (worm.speed <= 0 || jumpHandler.isJumping(worm)) {
+                // Never jump when standing still
                 return;
             }
+
+            var bodyPart = clone(worm.head);
             pushBodyPart(gameState, worm, bodyPart);
             return bodyPart;
         }
@@ -62,6 +61,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             collisionHandler.wormWormCollisionDetection(gameState, player, worm);
         }
 
+        jumpHandler.update(deltaTime, worm);
         updateBody();
         updateDirection();
         updatePosition();
