@@ -5,8 +5,6 @@ var startPhase = module.exports = {};
 startPhase.type = "startPhase";
 
 startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils, random) {
-    var runtime;
-    var type = startPhase.type;
     var originalWormSpeeds = []; //TODO: Should be removed, replaced with immobilize effect/powerup
 
     function setPlayersStartingPositions(players, map) {
@@ -59,14 +57,14 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
     }
 
     function start(gameState) {
-        runtime = PHASE_DURATION;
+        gameState.phaseTimer= PHASE_DURATION;
         setPlayersStartingPositions(gameState.players, gameState.map);
         setPlayersStartingDirections(gameState.players);
         immobilizePlayers(gameState.players);
     }
 
     function update(gameState, deltaTime) {
-        if (!isActive()) {
+        if (!isActive(gameState)) {
             return;
         }
 
@@ -74,9 +72,9 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
             wormHandler.update(gameState, deltaTime, player, worm);
         });
 
-        runtime -= deltaTime;
+        gameState.phaseTimer -= deltaTime;
 
-        if(!isActive()) {
+        if(!isActive(gameState)) {
             end(gameState);
         }
     }
@@ -87,12 +85,12 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         });
     }
 
-    function isActive() {
-        return (runtime !== undefined && runtime > 0);
+    function isActive(gameState) {
+        return gameState.phaseTimer > 0;
     }
 
     return {
-        type: type,
+        type: startPhase.type,
         start: start,
         update: update,
         isActive: isActive

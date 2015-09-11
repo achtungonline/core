@@ -38,7 +38,7 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
             eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
             roundHandler.update(gameState, deltaTime);
 
-            if (!roundHandler.isActive()) {
+            if (!roundHandler.isActive(gameState)) {
                 stopGame();
             }
 

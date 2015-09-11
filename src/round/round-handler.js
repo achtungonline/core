@@ -28,7 +28,7 @@ module.exports = function RoundHandler(phases) {
     }
 
     function update(gameState, deltaTime) {
-        if (!isRunning()) {
+        if (!isActive(gameState)) {
             return;
         }
         function isLastPhase() {
@@ -37,7 +37,7 @@ module.exports = function RoundHandler(phases) {
 
         getCurrentPhase().update(gameState, deltaTime);
 
-        if (!getCurrentPhase().isActive()) {
+        if (!getCurrentPhase().isActive(gameState)) {
             if (isLastPhase()) {
                 // Do not start a new phase if it is the last
                 return;
@@ -50,14 +50,14 @@ module.exports = function RoundHandler(phases) {
         return phases[currentPhaseIndex];
     }
 
-    function isRunning() {
-        return getCurrentPhase().isActive();
+    function isActive(gameState) {
+        return getCurrentPhase().isActive(gameState);
     }
 
     return {
         start: start,
         update: update,
-        isActive: isRunning,
+        isActive: isActive,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
     };

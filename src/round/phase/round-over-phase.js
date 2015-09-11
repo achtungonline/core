@@ -5,30 +5,24 @@ var roundOverPhase = module.exports = {};
 roundOverPhase.type = "roundOverPhase";
 
 roundOverPhase.RoundOverPhase = function RoundOverPhase() {
-    var type = roundOverPhase.type;
-    var runtime;
 
-    function start() {
-        runtime = PHASE_DURATION;
+    function start(gameState) {
+        gameState.phaseTimer = PHASE_DURATION;
     }
 
-    function update(deltaTime) {
-        if (isActive()) {
+    function update(gameState, deltaTime) {
+        if (isActive(gameState)) {
             return;
         }
-        runtime -= deltaTime;
-        if (runtime < 0) {
-            runtime = false;
-        }
+        gameState.phaseruntime -= deltaTime;
     }
 
-    function isActive() {
-        return (runtime !== undefined && runtime > 0);
+    function isActive(gameState) {
+        return gameState.phaseTimer > 0;
     }
-
 
     return {
-        type: type,
+        type: roundOverPhase.type,
         start: start,
         update: update,
         isActive: isActive

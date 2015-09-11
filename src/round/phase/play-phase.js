@@ -3,23 +3,21 @@ var playPhase = module.exports = {};
 playPhase.type = "playPhase";
 
 playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils) {
-    var type = playPhase.type;
-    var run;
 
     playerHandler.on(playerHandler.events.PLAYER_DIED, function onPlayerDied(gameState, player) {
         var alivePlayers = playerUtils.getAlivePlayers(gameState.players);
 
         if (alivePlayers.length <= 1) {
-            run = false;
+            gameState.phaseTimer = -1;
         }
     });
 
-    function start() {
-        run = true;
+    function start(gameState) {
+        gameState.phaseTimer = 1;
     }
 
     function update(gameState, deltaTime) {
-        if (!isActive()) {
+        if (!isActive(gameState)) {
             return;
         }
 
@@ -29,12 +27,12 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
 
     }
 
-    function isActive() {
-        return run;
+    function isActive(gameState) {
+        return gameState.phaseTimer > 0;
     }
 
     return {
-        type: type,
+        type: playPhase.type,
         start: start,
         update: update,
         isActive: isActive
