@@ -9,7 +9,7 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         gameActive: false,
         gamePaused: false,
         phaseTimer: 0,
-        wormBodyImmunityHandler:
+        immunityData:
         {
             wormData: {},
             cellDistance: {}

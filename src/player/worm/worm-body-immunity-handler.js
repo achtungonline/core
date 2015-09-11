@@ -13,9 +13,9 @@ module.exports = function WormBodyImmunityHandler() {
     }
 
     function getWormData(gameState, worm) {
-        var data = gameState.wormBodyImmunityHandler.wormData[worm.id];
+        var data = gameState.immunityData.wormData[worm.id];
         if (!data) {
-            data = gameState.wormBodyImmunityHandler.wormData[worm.id] = createWormData(worm);
+            data = gameState.immunityData.wormData[worm.id] = createWormData(worm);
         }
         return data;
     }
@@ -26,13 +26,13 @@ module.exports = function WormBodyImmunityHandler() {
     function setImmunityCells(gameState, worm, cells) {
         var data = getWormData(gameState, worm);
         cells.forEach(function (cell) {
-            gameState.wormBodyImmunityHandler.cellDistance[cell.index] = data.distance;
+            gameState.immunityData.cellDistance[cell.index] = data.distance;
         });
     }
 
     function isImmuneCell(gameState, worm, cell) {
         var data = getWormData(gameState, worm);
-        return data.distance - gameState.wormBodyImmunityHandler.cellDistance[cell] <= IMMUNITY_DISTANCE;
+        return data.distance - gameState.immunityData.cellDistance[cell] <= IMMUNITY_DISTANCE;
     }
 
     function update(gameState, worm) {
