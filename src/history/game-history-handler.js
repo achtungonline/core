@@ -41,7 +41,7 @@ module.exports = function GameHistoryHandler() {
     function applyUpdate(gameState, update) {
         update.steering.forEach(function ApplySteering(steering, index) {
             gameState.players[index].steering = steering;
-        })
+        });
     }
 
     return {
