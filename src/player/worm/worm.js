@@ -11,6 +11,7 @@ module.exports = function Worm(id, head, direction, speed, turningSpeed, alive) 
         jump: {
             remainingJumpTime: 0,
             timeSinceLastJump: 0
-        }
+        },
+        immunityData: undefined
     };
 };

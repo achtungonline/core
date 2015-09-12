@@ -1,44 +1,44 @@
 var shapeSpatialRelations = require("../../geometry/shape-spatial-relations.js");
 var forEach = require("./../../util/for-each.js");
-
 var IMMUNITY_DISTANCE = 100;
 
 module.exports = function WormBodyImmunityHandler() {
 
-    function createWormData(worm) {
+
+    function createWormImmunityData(worm) {
         var data = {};
-        data.distance = 0;
-        data.position = worm.head;
+        data.distanceTravelled = 0;
+        data.prevPosition = worm.head;
+        data.cellsDistanceTravelled = {};
         return data;
     }
 
-    function getWormData(gameState, worm) {
-        var data = gameState.immunityData.wormData[worm.id];
-        if (!data) {
-            data = gameState.immunityData.wormData[worm.id] = createWormData(worm);
+    function getWormImmunityData(worm) {
+        if (!worm.immunityData) {
+            worm.immunityData = createWormImmunityData(worm);
         }
-        return data;
+        return worm.immunityData;
     }
 
     /*
     bodyParts should be a list in the format returned from PlayAreaHandler.getUpdateBuffer()
      */
-    function setImmunityCells(gameState, worm, cells) {
-        var data = getWormData(gameState, worm);
+    function setImmunityCells(worm, cells) {
+        var data = getWormImmunityData(worm);
         cells.forEach(function (cell) {
-            gameState.immunityData.cellDistance[cell.index] = data.distance;
+            worm.immunityData.cellsDistanceTravelled[cell.index] = data.distanceTravelled;
         });
     }
 
-    function isImmuneCell(gameState, worm, cell) {
-        var data = getWormData(gameState, worm);
-        return data.distance - gameState.immunityData.cellDistance[cell] <= IMMUNITY_DISTANCE;
+    function isImmuneCell(worm, cell) {
+        var data = getWormImmunityData(worm);
+        return data.distanceTravelled - data.cellsDistanceTravelled[cell] <= IMMUNITY_DISTANCE;
     }
 
-    function update(gameState, worm) {
-        var data = getWormData(gameState, worm);
-        data.distance += shapeSpatialRelations.distanceSquared(worm.head, data.position);
-        data.position = worm.head;
+    function update(worm) {
+        var data = getWormImmunityData(worm);
+        data.distanceTravelled += shapeSpatialRelations.distanceSquared(worm.head, data.prevPosition);
+        data.prevPosition = worm.head;
     }
 
     return {

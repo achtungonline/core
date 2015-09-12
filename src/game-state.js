@@ -8,11 +8,6 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         playAreaUpdateBuffer: playAreaUpdateBuffer,
         gameActive: false,
         gamePaused: false,
-        phaseTimer: 0,
-        immunityData:
-        {
-            wormData: {},
-            cellDistance: {}
-        }
+        phaseTimer: 0
     };
 };
