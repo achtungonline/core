@@ -7,11 +7,12 @@ var Game = require("./game.js");
 var AIHandlerFactory = require("./player/ai/ai-handler-factory.js");
 var GameState = require("./game-state.js");
 var PlayArea = require("./play-area/play-area.js");
-var PlayAreaHandler = require("./play-area/play-area-handler.js");
+var PlayAreaHandlerFactory = require("./play-area/play-area-handler-factory.js");
 var Random = require("./util/random.js");
 
 module.exports = function GameFactory(deltaTimeHandler) {
     var mapFactory = MapFactory();
+    var playAreaHandlerFactory = PlayAreaHandlerFactory();
 
     function create(playerSetup, map, random) {
 
@@ -28,7 +29,7 @@ module.exports = function GameFactory(deltaTimeHandler) {
         });
 
         var playArea = PlayArea.createPlayArea(map.width, map.height);
-        var playAreaHandler = PlayAreaHandler();
+        var playAreaHandler = playAreaHandlerFactory.create();
 
         var gameState = GameState(players, worms, map, playArea, []);
 
