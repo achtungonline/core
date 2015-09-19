@@ -58,7 +58,9 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
         function collisionDetection() {
             collisionHandler.wormMapCollisionDetection(gameState, player, worm);
-            collisionHandler.wormWormCollisionDetection(gameState, player, worm);
+            if (!jumpHandler.isJumping(worm)) {
+                collisionHandler.wormWormCollisionDetection(gameState, player, worm);
+            }
         }
 
         jumpHandler.update(deltaTime, worm);
