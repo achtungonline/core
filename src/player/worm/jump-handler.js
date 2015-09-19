@@ -12,7 +12,11 @@ module.exports = function JumpHandler(timeBasedChanceTrigger, jumpLength, jumpMi
             worm.jump.timeSinceLastJump += deltaTime;
         }
         function startJumping() {
-            worm.jump.remainingJumpTime = jumpLength;
+            if (worm.speed > 0) {
+                worm.jump.remainingJumpTime = jumpLength / worm.speed;
+            } else {
+                worm.jump.remainingJumpTime = 0;
+            }
             worm.jump.timeSinceLastJump = 0;
         }
 
