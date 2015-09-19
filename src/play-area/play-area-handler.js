@@ -1,6 +1,5 @@
 var PlayArea = require("./play-area.js");
 var GridUtils = require("./../grid/grid-utils.js");
-var ShapeToGridConverter = require("./../geometry/shape-to-grid-converter.js");
 
 var UpdateBufferData = function UpdateBufferData(index, value) {
     var data = {};
@@ -9,9 +8,7 @@ var UpdateBufferData = function UpdateBufferData(index, value) {
     return data;
 };
 
-module.exports = function PlayAreaHandler() {
-
-    var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
+module.exports = function PlayAreaHandler(gridUtils, shapeToGridConverter) {
 
     function applyShape(gameState, shape, value) {
         var playArea = gameState.playArea;
