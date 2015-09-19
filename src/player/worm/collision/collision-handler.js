@@ -2,10 +2,11 @@ var EventEmitter = require("events").EventEmitter;
 var ShapeToGridConverter = require("./../../../geometry/shape-to-grid-converter.js");
 var PlayArea = require("./../../../play-area/play-area.js");
 
-module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHandler, mapUtils) {
+module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHandler, mapUtils, shapeSpatialRelations) {
     var events = {};
     events.WORM_MAP_COLLISION = "wormMapCollision";
     events.WORM_WORM_COLLISION = "wormWormCollision";
+    events.WORM_POWER_UP_COLLISION = "wormPowerUpCollision";
 
     var eventEmitter = new EventEmitter();
     var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
@@ -30,13 +31,23 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
         });
     }
 
-    function wormPowerUpCollisionDetection(player) {
-        //    TODO
+    function wormPowerUpCollisionDetection(gameState, player, worm) {
+        var powerUps = gameState.powerUps;
+        var collidedPowerUps = [];
+        powerUps.forEach(function(powerUp) {
+            if(shapeSpatialRelations.intersects(worm.head, powerUp.shape)) {
+                collidedPowerUps.push(powerUp);
+            }
+        });
+        collidedPowerUps.forEach(function(powerUp) {
+            eventEmitter.emit(events.WORM_POWER_UP_COLLISION, gameState, player, worm, powerUp);
+        });
     }
 
     return {
         wormMapCollisionDetection: wormMapCollisionDetection,
         wormWormCollisionDetection: wormWormCollisionDetection,
+        wormPowerUpCollisionDetection: wormPowerUpCollisionDetection,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
     };

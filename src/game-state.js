@@ -3,6 +3,8 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
     return {
         players: players,
         worms: worms,
+        powerUps: [],
+        effects: [],
         map: map,
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,

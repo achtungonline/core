@@ -1,4 +1,5 @@
 var seedrandom = require("seedrandom");
+var forEach = require("./for-each.js");
 
 module.exports = function Random(seed) {
 
@@ -16,9 +17,20 @@ module.exports = function Random(seed) {
     function randInt(low, high) {
         return Math.floor(random() * (high - low) + low);
     }
+    function randomElementIndex(list) {
+        return randInt(0, list.length);
+    }
 
     function randomElement(list) {
-        return list[randInt(0, list.length)];
+        return list[randomElementIndex(list)];
+    }
+
+    function randomObjectProperty(object) {
+        var list = [];
+        forEach(object, function(value, property) {
+            list.push(property);
+        });
+        return randomElement(list);
     }
 
     return {
@@ -26,6 +38,8 @@ module.exports = function Random(seed) {
         getSeed: getSeed,
         random: random,
         randInt: randInt,
-        randomElement: randomElement
+        randomElementIndex: randomElementIndex,
+        randomElement: randomElement,
+        randomObjectProperty: randomObjectProperty
     };
 };

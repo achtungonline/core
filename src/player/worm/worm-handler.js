@@ -57,6 +57,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         function collisionDetection() {
+            collisionHandler.wormPowerUpCollisionDetection(gameState, player, worm);
             collisionHandler.wormMapCollisionDetection(gameState, player, worm);
             if (!jumpHandler.isJumping(worm)) {
                 collisionHandler.wormWormCollisionDetection(gameState, player, worm);
@@ -83,8 +84,13 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         worm.speed = speed;
     }
 
+    function changeSpeed(worm, speedChange) {
+        setSpeed(worm, worm.speed + speedChange);
+    }
+
     return {
         setSpeed: setSpeed,
+        changeSpeed: changeSpeed,
         setDirection: setDirection,
         setHead: setHead,
         update: update,

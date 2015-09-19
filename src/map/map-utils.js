@@ -31,3 +31,8 @@ utils.getRandomPositionInsidePlayableArea = function (map, shape, random) {
     }
     throw Error("Failed to find a position inside playable area for the given shape");
 };
+
+utils.getShapeRandomlyInsidePlayableArea = function (map, shape, random) {
+    var newPos = utils.getRandomPositionInsidePlayableArea(map, shape, random);
+    return shapeModifierI.setPosition(shape, newPos.x, newPos.y);
+};

@@ -17,10 +17,8 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            var newWormPos = mapUtils.getRandomPositionInsidePlayableArea(map, worm.head, random);
-            return shapeModifierI.setPosition(worm.head, newWormPos.x, newWormPos.y);
+            return mapUtils.getShapeRandomlyInsidePlayableArea(map, worm.head, random);
         }
-
 
         var updatedWorms = [];
         playerUtils.forEachAliveWorm(players, function (player, worm) {

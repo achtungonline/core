@@ -2,7 +2,7 @@ var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils) {
+playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, powerUpHandler, playerUtils) {
 
     playerHandler.on(playerHandler.events.PLAYER_DIED, function onPlayerDied(gameState, player) {
         var alivePlayers = playerUtils.getAlivePlayers(gameState.players);
@@ -24,7 +24,7 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, playerUtils
         playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
             wormHandler.update(gameState, deltaTime, player, worm);
         });
-
+        powerUpHandler.update(deltaTime, gameState);
     }
 
     function isActive(gameState) {

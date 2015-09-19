@@ -1,8 +1,8 @@
 var PhaseFactory = require("./phase-factory.js");
 var RoundHandler = require("./round-handler.js");
 
-module.exports = function RoundHandlerFactory(wormHandler, playerHandler, random) {
-    var phaseFactory = PhaseFactory(wormHandler, playerHandler, random);
+module.exports = function RoundHandlerFactory(wormHandler, playerHandler, powerUpHandler, random) {
+    var phaseFactory = PhaseFactory(wormHandler, playerHandler, powerUpHandler, random);
 
     function create() {
         var phases = [];

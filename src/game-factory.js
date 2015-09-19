@@ -8,6 +8,9 @@ var AIHandlerFactory = require("./player/ai/ai-handler-factory.js");
 var GameState = require("./game-state.js");
 var PlayArea = require("./play-area/play-area.js");
 var PlayAreaHandlerFactory = require("./play-area/play-area-handler-factory.js");
+var WormBodyImmunityHandler = require("./player/worm/worm-body-immunity-handler.js");
+var CollisionHandlerFactory = require("./player/worm/collision/collision-handler-factory.js");
+var PowerUpHandlerFactory = require("./power-up/power-up-handler-factory.js");
 var Random = require("./util/random.js");
 
 module.exports = function GameFactory(deltaTimeHandler) {
@@ -37,11 +40,17 @@ module.exports = function GameFactory(deltaTimeHandler) {
             playAreaHandler.applyObstacleShape(gameState, blockingShape);
         });
 
-        var wormHandlerFactory = WormHandlerFactory(playAreaHandler, random);
+        var wormBodyImmunityHandler = WormBodyImmunityHandler();
+        var collisionHandler = CollisionHandlerFactory(playAreaHandler, wormBodyImmunityHandler).create();
+
+        var wormHandlerFactory = WormHandlerFactory(collisionHandler, wormBodyImmunityHandler,playAreaHandler, random);
         var wormHandler = wormHandlerFactory.create();
 
+        var powerUpHandlerFactory = PowerUpHandlerFactory(collisionHandler, random);
+        var powerUpHandler = powerUpHandlerFactory.create();
+
         var playerHandler = PlayerHandler(wormHandler);
-        var roundHandlerFactory = RoundHandlerFactory(wormHandler, playerHandler, random);
+        var roundHandlerFactory = RoundHandlerFactory(wormHandler, playerHandler, powerUpHandler, random);
 
         var roundHandler = roundHandlerFactory.create();
 
