@@ -83,16 +83,11 @@ containmentFunctions[circleType][rectangleType] = function circleRectangleContai
         return false;
     }
 
-    var rectOnRight = (innerRectangle.x > outerCircle.x ? 1 : -1);
-    var rectOnTop = (innerRectangle.y > outerCircle.y ? 1 : -1);
-
-    var dist = getXYDist(outerCircle, innerRectangle);
-
     //here we select the rectangles corner point furthest away from the circle center
-    dist.x += rectOnRight * innerRectangle.width / 2;
-    dist.y += rectOnTop * innerRectangle.height / 2;
+    var distX = Math.max(Math.abs(outerCircle.centerX - innerRectangle.x), Math.abs(outerCircle.centerX - innerRectangle.maxX));
+    var distY = Math.max(Math.abs(outerCircle.centerY - innerRectangle.y), Math.abs(outerCircle.centerY - innerRectangle.maxY));
 
-    return outerCircle.radius*outerCircle.radius < dist.x*dist.x + dist.y*dist.y;
+    return distX*distX + distY*distY <= outerCircle.radius*outerCircle.radius;
 };
 
 containmentFunctions[rectangleType][circleType] = function rectangleCircleContainment(outerRectangle, innerCircle) {
