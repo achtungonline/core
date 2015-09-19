@@ -6,9 +6,10 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
     events.GAME_UPDATE_STARTING = "gameUpdateStarting";
     events.GAME_UPDATED = "gameUpdated";
     events.GAME_OVER = "gameOver";
+    events.NEW_PHASE_STARTED = "newPhaseStarted";
 
     roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType) {
-        eventEmitter.emit(roundHandler.events.NEW_PHASE_STARTED, phaseType);
+        eventEmitter.emit(events.NEW_PHASE_STARTED, phaseType);
     });
 
     function start(gameState) {
