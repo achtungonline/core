@@ -2,10 +2,10 @@ var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, powerUpHandler, playerUtils) {
+playPhase.PlayPhase = function PlayPhase(deps) {
 
-    playerHandler.on(playerHandler.events.PLAYER_DIED, function onPlayerDied(gameState, player) {
-        var alivePlayers = playerUtils.getAlivePlayers(gameState.players);
+    deps.playerHandler.on(deps.playerHandler.events.PLAYER_DIED, function onPlayerDied(gameState, player) {
+        var alivePlayers = deps.playerUtils.getAlivePlayers(gameState.players);
 
         if (alivePlayers.length <= 1) {
             gameState.phaseTimer = -1;
@@ -21,10 +21,11 @@ playPhase.PlayPhase = function PlayPhase(wormHandler, playerHandler, powerUpHand
             return;
         }
 
-        playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
-            wormHandler.update(gameState, deltaTime, player, worm);
+        deps.playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
+            deps.wormHandler.update(gameState, deltaTime, player, worm);
         });
-        powerUpHandler.update(deltaTime, gameState);
+        deps.powerUpHandler.update(deltaTime, gameState);
+        deps.effectHandler.update(deltaTime, gameState);
     }
 
     function isActive(gameState) {

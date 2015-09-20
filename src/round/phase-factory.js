@@ -15,15 +15,31 @@ var playerUtils = require("./../player/player-utils.js");
  * @returns {{createStartPhase: createStartPhase, createPlayPhase: createPlayPhase, createRoundOverPhase: createRoundOverPhase}}
  * @constructor
  */
-module.exports = function PhaseFactory(wormHandler, playerHandler, powerUpHandler, random) {
+module.exports = function PhaseFactory(deps) {
     var shapeModifierIFactory = ShapeModifierIFactory();
 
     function createStartPhase() {
-        return StartPhase(wormHandler, shapeModifierIFactory.create(), shapeSpatialRelations, mapUtils, playerUtils, random);
+        var dependencies = {
+            wormHandler: deps.wormHandler,
+            shapeModifierI: shapeModifierIFactory.create(),
+            shapeSpatialRelations: shapeSpatialRelations,
+            mapUtils: mapUtils,
+            playerUtils: playerUtils,
+            random: deps.random
+        };
+
+        return StartPhase(dependencies);
     }
 
     function createPlayPhase() {
-        return PlayPhase(wormHandler, playerHandler, powerUpHandler, playerUtils);
+        var dependencies = {
+            wormHandler: deps.wormHandler,
+            playerHandler: deps.playerHandler,
+            powerUpHandler: deps.powerUpHandler,
+            effectHandler: deps.effectHandler,
+            playerUtils: playerUtils
+        };
+        return PlayPhase(dependencies);
     }
 
     function createRoundOverPhase() {

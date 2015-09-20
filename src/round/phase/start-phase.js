@@ -4,12 +4,12 @@ var startPhase = module.exports = {};
 
 startPhase.type = "startPhase";
 
-startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSpatialRelations, mapUtils, playerUtils, random) {
+startPhase.StartPhase = function StartPhase(deps) {
     function setPlayersStartingPositions(players, map) {
         function isCollidingWithWorms(worms, shape) {
             for (var i in worms) {
                 var worm = worms[i];
-                if (shapeSpatialRelations.intersects(worm.head, shape)) {
+                if (deps.shapeSpatialRelations.intersects(worm.head, shape)) {
                     return true;
                 }
             }
@@ -17,11 +17,11 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            return mapUtils.getShapeRandomlyInsidePlayableArea(map, worm.head, random);
+            return deps.mapUtils.getShapeRandomlyInsidePlayableArea(map, worm.head, deps.random);
         }
 
         var updatedWorms = [];
-        playerUtils.forEachAliveWorm(players, function (player, worm) {
+        deps.playerUtils.forEachAliveWorm(players, function (player, worm) {
             var newHead = getWormHeadInsidePlayableMapArea(worm);
             var counter = 0;
             while (isCollidingWithWorms(updatedWorms, newHead)) {
@@ -31,7 +31,7 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
                 newHead = getWormHeadInsidePlayableMapArea(worm);
                 counter++;
             }
-            wormHandler.setHead(worm, newHead);
+            deps.wormHandler.setHead(worm, newHead);
             updatedWorms.push(worm);
         });
     }
@@ -39,15 +39,15 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
     function setPlayersStartingDirections(players) {
         players.forEach(function (player) {
             player.worms.forEach(function (worm) {
-                var direction = random.random() * Math.PI * 2;
-                wormHandler.setDirection(worm, direction);
+                var direction = deps.random.random() * Math.PI * 2;
+                deps.wormHandler.setDirection(worm, direction);
             });
         });
     }
 
     function immobilizePlayers(players) {
-        playerUtils.forEachAliveWorm(players, function (player, worm) {
-            wormHandler.setSpeed(worm, 0);
+        deps.playerUtils.forEachAliveWorm(players, function (player, worm) {
+            deps.wormHandler.setSpeed(worm, 0);
         });
     }
 
@@ -63,8 +63,8 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
             return;
         }
 
-        playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
-            wormHandler.update(gameState, deltaTime, player, worm);
+        deps.playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
+            deps.wormHandler.update(gameState, deltaTime, player, worm);
         });
 
         gameState.phaseTimer -= deltaTime;
@@ -75,8 +75,8 @@ startPhase.StartPhase = function StartPhase(wormHandler, shapeModifierI, shapeSp
     }
 
     function end(gameState) {
-        playerUtils.forEachAliveWorm(gameState.players, function setOriginalPlayerSpeeds(player, worm) {
-            wormHandler.setSpeed(worm, worm.defaultSpeed);
+        deps.playerUtils.forEachAliveWorm(gameState.players, function setOriginalPlayerSpeeds(player, worm) {
+            deps.wormHandler.setSpeed(worm, worm.defaultSpeed);
         });
     }
 

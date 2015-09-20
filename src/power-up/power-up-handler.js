@@ -1,22 +1,23 @@
-var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 var circleShape = require("./../geometry/shape/circle.js");
 var PowerUp = require("./power-up.js");
+var clone = require("./../util/clone.js");
 
-module.exports = function PowerUpHandler(powerUpFunctionMap, collisionHandler, timeBasedChanceTrigger, shapeSpatialRelations, idGenerator, mapUtils, random) {
+var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
+var POWER_UP_SHAPE = circleShape.Circle(40);
 
-    collisionHandler.on(collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, player, worm, powerUp) {
+module.exports = function PowerUpHandler(deps) {
+
+    deps.collisionHandler.on(deps.collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, player, worm, powerUp) {
         var powerUps = gameState.powerUps;
         for (var i = 0; i < powerUps.length; i++) {
             if (powerUps[i].id === powerUp.id) {
-                //var effect = powerUpFunctionMap[powerUp.type].activate(worm);
+                deps.effectsFunctionMap[powerUp.effectType].activate(gameState, worm);
 
                 powerUps.splice(i, 1);
-                console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " de-spawned.");
+                console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " was taken.");
                 return;
             }
         }
-
-        //gameState.effects.push(effect);
     });
 
 
@@ -25,7 +26,7 @@ module.exports = function PowerUpHandler(powerUpFunctionMap, collisionHandler, t
             function isCollidingWithWorms(shape) {
                 for (var i in gameState.worms) {
                     var worm = gameState.worms[i];
-                    if (shapeSpatialRelations.intersects(worm.head, shape)) {
+                    if (deps.shapeSpatialRelations.intersects(worm.head, shape)) {
                         return true;
                     }
                 }
@@ -35,7 +36,7 @@ module.exports = function PowerUpHandler(powerUpFunctionMap, collisionHandler, t
             function isCollidingWithPowerUps(shape) {
                 for (var i in gameState.powerUps) {
                     var powerUp = gameState.powerUps[i];
-                    if (shapeSpatialRelations.intersects(powerUp.shape, shape)) {
+                    if (deps.shapeSpatialRelations.intersects(powerUp.shape, shape)) {
                         return true;
                     }
                 }
@@ -43,7 +44,7 @@ module.exports = function PowerUpHandler(powerUpFunctionMap, collisionHandler, t
             }
 
             function getPowerUpShapeInsidePlayableMapArea(powerUp) {
-                return mapUtils.getShapeRandomlyInsidePlayableArea(gameState.map, powerUp.shape, random);
+                return deps.mapUtils.getShapeRandomlyInsidePlayableArea(gameState.map, powerUp.shape, deps.random);
             }
 
 
@@ -62,8 +63,8 @@ module.exports = function PowerUpHandler(powerUpFunctionMap, collisionHandler, t
 
 
         function attemptSpawnRandomPowerUp() {
-            var powerUpType = random.randomObjectProperty(powerUpFunctionMap);
-            var powerUp = PowerUp(idGenerator(), powerUpType, circleShape.Circle(15, 0, 0));//powerUpFunctionMap[powerUpType]();
+            var effectType = deps.random.randomObjectProperty(deps.effectsFunctionMap);
+            var powerUp = PowerUp(deps.idGenerator(), effectType, clone(POWER_UP_SHAPE));
             powerUp = attemptGetPowerUpWithRandomPos(powerUp);
             if (powerUp !== undefined) {
                 console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " spawned.");
@@ -71,7 +72,7 @@ module.exports = function PowerUpHandler(powerUpFunctionMap, collisionHandler, t
             }
         }
 
-        timeBasedChanceTrigger.update(deltaTime, attemptSpawnRandomPowerUp);
+        deps.timeBasedChanceTrigger.update(deltaTime, attemptSpawnRandomPowerUp);
     }
 
     return {
