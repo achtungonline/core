@@ -12,19 +12,23 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
         gameEngine.start(gameState);
     }
 
+    function stop() {
+        gameEngine.stop(gameState);
+    }
+
     function setPlayerSteering(player, steering) {
         playerHandler.setSteering(player, steering);
     }
 
     function pause() {
-        if (!gameEngine.isActive()) {
+        if (!gameEngine.isActive(gameState)) {
             throw Error("Trying to pause a game that is not running");
         }
         gameEngine.pause(gameState);
     }
 
     function resume() {
-        if(!gameEngine.isActive()) {
+        if(!gameEngine.isActive(gameState)) {
             throw Error("Trying to resume a game that is not running");
         }
         gameEngine.resume(gameState);
@@ -36,6 +40,7 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
         setPlayerSteering: setPlayerSteering,
         pause: pause,
         resume: resume,
+        stop: stop,
         on: gameEngine.on.bind(gameEngine),
         events: gameEngine.events
     };

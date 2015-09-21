@@ -19,7 +19,7 @@ module.exports = function RoundHandler(phases) {
 
     function startCurrentPhase(gameState) {
         getCurrentPhase().start(gameState);
-        eventEmitter.emit(events.NEW_PHASE_STARTED, getCurrentPhase().type);
+        eventEmitter.emit(events.NEW_PHASE_STARTED, getCurrentPhase().type, gameState);
     }
 
     function startNextPhase(gameState) {

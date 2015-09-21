@@ -8,39 +8,43 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
     events.GAME_OVER = "gameOver";
     events.NEW_PHASE_STARTED = "newPhaseStarted";
 
-    roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType) {
+    roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType, gameState) {
         eventEmitter.emit(events.NEW_PHASE_STARTED, phaseType);
+        if(phaseType === "roundOverPhase") {
+            stop(gameState);
+        }
     });
+
 
     function start(gameState) {
         gameState.gameActive = true;
-        var deltaTimeCall = deltaTimeHandler.start();
+        deltaTimeHandler.start(gameState);
         roundHandler.start(gameState);
-        deltaTimeCall(function onUpdateTick(deltaTime) {
-            update(gameState, deltaTime, deltaTimeCall);
+        deltaTimeHandler.update(gameState, function onUpdateTick(deltaTime) {
+            update(gameState, deltaTime);
         });
     }
 
     function pause(gameState) {
-        gameState.gamePaused = false;
-    }
-
-    function resume(gameState) {
         gameState.gamePaused = true;
     }
 
-    function stopGame(gameState) {
+    function resume(gameState) {
+        gameState.gamePaused = false;
+    }
+
+    function stop(gameState) {
         eventEmitter.emit(events.GAME_OVER);
         gameState.gameActive = false;
     }
 
-    function update(gameState, deltaTime, deltaTimeCall) {
+    function update(gameState, deltaTime) {
         if (isActive(gameState) && !isPaused(gameState) && deltaTime > 0) {
             eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
             roundHandler.update(gameState, deltaTime);
 
             if (!roundHandler.isActive(gameState)) {
-                stopGame();
+                stop();
             }
 
             eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
@@ -48,8 +52,8 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
         }
 
         if (isActive(gameState)) {
-            deltaTimeCall(function onUpdateTick(deltaTime) {
-                update(gameState, deltaTime, deltaTimeCall);
+            deltaTimeHandler.update(gameState, function onUpdateTick(deltaTime) {
+                update(gameState, deltaTime);
             });
         }
     }
@@ -64,7 +68,7 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
 
     return {
         start: start,
-        stop: stopGame,
+        stop: stop,
         pause: pause,
         resume: resume,
         isActive: isActive,

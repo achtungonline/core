@@ -10,20 +10,18 @@ module.exports = function GameHistoryHandler() {
             }
         });
 
-        game.on("newPhaseStarted", function (phaseType) {
-            if (phaseType === ROUND_OVER_TYPE) {
-                console.log("Game history logged " + gameHistory.updates.length + " updates");
-                running = false;
-            }
+        game.on(game.events.GAME_OVER, function () {
+            console.log("Game history logged " + gameHistory.updates.length + " updates");
+            running = false;
         });
     }
 
     function replayGameHistory(game, gameHistory) {
-        var updateIndex = 0;
+        game.gameState.replayUpdateIndex = 0;
         game.on(game.events.GAME_UPDATE_STARTING, function (gameState, deltaTime) {
-            if (updateIndex < gameHistory.updates.length) {
-                applyUpdate(gameState, gameHistory.updates[updateIndex]);
-                updateIndex++;
+            if (gameState.replayUpdateIndex < gameHistory.updates.length) {
+                applyUpdate(gameState, gameHistory.updates[gameState.replayUpdateIndex]);
+                gameState.replayUpdateIndex++;
             }
         });
     }
