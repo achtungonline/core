@@ -80,6 +80,10 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         worm.direction = direction;
     }
 
+    function changeSize(worm, sizeChange) {
+        setHead(worm, shapeModifierI.changeSize(worm.head, sizeChange));
+    }
+
     function setSpeed(worm, speed) {
         worm.speed = speed;
     }
@@ -91,6 +95,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
     return {
         setSpeed: setSpeed,
         changeSpeed: changeSpeed,
+        changeSize: changeSize,
         setDirection: setDirection,
         setHead: setHead,
         update: update,
