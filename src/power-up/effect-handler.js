@@ -1,9 +1,12 @@
 var EventEmitter = require("events").EventEmitter;
+var forEach = require("../util/for-each.js");
 
-module.exports = function EffectHandler() {
-    var eventEmitter = new EventEmitter();
-    var events = {};
-    events.EFFECT_ENDED = "effectEnded";
+module.exports = function EffectHandler(deps) {
+
+    var effectTypes = [];
+    forEach(deps.effectsFunctionMap, function (effect, type) {
+        effectTypes.push(type);
+    });
 
     function update(deltaTime, gameState) {
         var effects = gameState.effects;
@@ -12,19 +15,22 @@ module.exports = function EffectHandler() {
             effect.duration -= deltaTime;
             if (effect.duration <= 0) {
                 effects.splice(i, 1);
-                eventEmitter.emit(events.EFFECT_ENDED, gameState, effect);
+                deps.effectsFunctionMap[effect.type].deactivate(gameState, effect);
             }
         }
     }
 
-    function addEffect(gameState, effect) {
-        gameState.effects.push(effect);
+    function activateEffect(gameState, worm, effectType) {
+        deps.effectsFunctionMap[effectType].activate(gameState, worm);
+    }
+
+    function getEffectTypes() {
+        return effectTypes;
     }
 
     return {
         update: update,
-        addEffect: addEffect,
-        on: eventEmitter.on.bind(eventEmitter),
-        events: events
+        activateEffect: activateEffect,
+        getEffectTypes: getEffectTypes
     };
 };

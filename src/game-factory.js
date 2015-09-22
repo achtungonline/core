@@ -11,7 +11,7 @@ var PlayAreaHandlerFactory = require("./play-area/play-area-handler-factory.js")
 var WormBodyImmunityHandler = require("./player/worm/worm-body-immunity-handler.js");
 var CollisionHandlerFactory = require("./player/worm/collision/collision-handler-factory.js");
 var PowerUpHandlerFactory = require("./power-up/power-up-handler-factory.js");
-var EffectHandler = require("./power-up/effect-handler.js");
+var EffectHandlerFactory = require("./power-up/effect-handler-factory.js");
 var Random = require("./util/random.js");
 
 module.exports = function GameFactory(deltaTimeHandler) {
@@ -49,7 +49,10 @@ module.exports = function GameFactory(deltaTimeHandler) {
 
         var playerHandler = PlayerHandler(wormHandler);
 
-        var effectHandler = EffectHandler();
+        var effectHandlerFactory = EffectHandlerFactory( {
+            wormHandler: wormHandler
+        });
+        var effectHandler = effectHandlerFactory.create();
 
         var powerUpHandlerFactory = PowerUpHandlerFactory( {
             wormHandler: wormHandler,

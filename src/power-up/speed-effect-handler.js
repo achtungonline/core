@@ -8,13 +8,6 @@ me.type = SPEED_TYPE;
 
 me.SpeedEffectHandler = function SpeedEffectHandler(deps) {
 
-    deps.effectHandler.on(deps.effectHandler.events.EFFECT_ENDED, function (gameState, effect) {
-        if (effect.type === SPEED_TYPE) {
-            var worm = effect.worm;
-            deactivate(worm, effect);
-        }
-    });
-
     function activate(gameState, worm) {
         deps.wormHandler.changeSpeed(worm, CHANGE);
         var effect = {
@@ -23,14 +16,15 @@ me.SpeedEffectHandler = function SpeedEffectHandler(deps) {
             worm: worm,
             type: SPEED_TYPE
         };
-        deps.effectHandler.addEffect(gameState, effect);
+        gameState.effects.push(effect);
     }
 
-    function deactivate(worm, effect) {
-        deps.wormHandler.changeSpeed(worm, -effect.change);
+    function deactivate(gameState, effect) {
+        deps.wormHandler.changeSpeed(effect.worm, -effect.change);
     }
 
     return {
-        activate: activate
+        activate: activate,
+        deactivate: deactivate
     };
 };

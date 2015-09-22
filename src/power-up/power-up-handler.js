@@ -11,7 +11,7 @@ module.exports = function PowerUpHandler(deps) {
         var powerUps = gameState.powerUps;
         for (var i = 0; i < powerUps.length; i++) {
             if (powerUps[i].id === powerUp.id) {
-                deps.effectsFunctionMap[powerUp.effectType].activate(gameState, worm);
+                deps.effectHandler.activateEffect(gameState, worm, powerUp.effectType);
 
                 powerUps.splice(i, 1);
                 console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " was taken.");
@@ -63,7 +63,7 @@ module.exports = function PowerUpHandler(deps) {
 
 
         function attemptSpawnRandomPowerUp() {
-            var effectType = deps.random.randomObjectProperty(deps.effectsFunctionMap);
+            var effectType = deps.random.randomElement(deps.effectHandler.getEffectTypes());
             var powerUp = PowerUp(deps.idGenerator(), effectType, clone(POWER_UP_SHAPE));
             powerUp = attemptGetPowerUpWithRandomPos(powerUp);
             if (powerUp !== undefined) {
