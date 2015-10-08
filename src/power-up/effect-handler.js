@@ -21,7 +21,10 @@ module.exports = function EffectHandler(deps) {
     }
 
     function activateEffect(gameState, worm, effectType) {
-        deps.effectsFunctionMap[effectType].activate(gameState, worm);
+        var effect = deps.effectsFunctionMap[effectType].activate(gameState, worm);
+        if (effect) {
+            gameState.effects.push(effect);
+        }
     }
 
     function getEffectTypes() {

@@ -10,13 +10,12 @@ me.FatEffectHandler = function FatEffectHandler(deps) {
 
     function activate(gameState, worm) {
         deps.wormHandler.changeSize(worm, CHANGE);
-        var effect = {
+        return {
             duration: DURATION,
             change: CHANGE,
             worm: worm,
             type: FAT_TYPE
         };
-        gameState.effects.push(effect);
     }
 
     function deactivate(gameState, effect) {
