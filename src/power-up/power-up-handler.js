@@ -7,7 +7,7 @@ var POWER_UP_SHAPE = circleShape.Circle(40);
 
 module.exports = function PowerUpHandler(deps) {
 
-    deps.collisionHandler.on(deps.collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, player, worm, powerUp) {
+    deps.collisionHandler.on(deps.collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, worm, powerUp) {
         var powerUps = gameState.powerUps;
         for (var i = 0; i < powerUps.length; i++) {
             if (powerUps[i].id === powerUp.id) {

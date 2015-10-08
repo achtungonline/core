@@ -5,11 +5,17 @@ var startPhase = module.exports = {};
 startPhase.type = "startPhase";
 
 startPhase.StartPhase = function StartPhase(deps) {
-    function setPlayersStartingPositions(players, map) {
+    var wormFactory = deps.wormFactory;
+    var shapeSpatialRelations = deps.shapeSpatialRelations;
+    var mapUtils = deps.mapUtils;
+    var playerUtils = deps.playerUtils;
+    var wormHandler = deps.wormHandler;
+
+    function setWormStartingPositions(worms, map) {
         function isCollidingWithWorms(worms, shape) {
             for (var i in worms) {
                 var worm = worms[i];
-                if (deps.shapeSpatialRelations.intersects(worm.head, shape)) {
+                if (shapeSpatialRelations.intersects(worm.head, shape)) {
                     return true;
                 }
             }
@@ -17,11 +23,11 @@ startPhase.StartPhase = function StartPhase(deps) {
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            return deps.mapUtils.getShapeRandomlyInsidePlayableArea(map, worm.head, deps.random);
+            return mapUtils.getShapeRandomlyInsidePlayableArea(map, worm.head, deps.random);
         }
 
         var updatedWorms = [];
-        deps.playerUtils.forEachAliveWorm(players, function (player, worm) {
+        playerUtils.forEachAliveWorm(worms, function (worm) {
             var newHead = getWormHeadInsidePlayableMapArea(worm);
             var counter = 0;
             while (isCollidingWithWorms(updatedWorms, newHead)) {
@@ -31,31 +37,36 @@ startPhase.StartPhase = function StartPhase(deps) {
                 newHead = getWormHeadInsidePlayableMapArea(worm);
                 counter++;
             }
-            deps.wormHandler.setHead(worm, newHead);
+            wormHandler.setHead(worm, newHead);
             updatedWorms.push(worm);
         });
     }
 
-    function setPlayersStartingDirections(players) {
-        players.forEach(function (player) {
-            player.worms.forEach(function (worm) {
-                var direction = deps.random.random() * Math.PI * 2;
-                deps.wormHandler.setDirection(worm, direction);
-            });
+    function setWormStartingDirections(worms) {
+        worms.forEach(function (worm) {
+            var direction = deps.random.random() * Math.PI * 2;
+            wormHandler.setDirection(worm, direction);
         });
     }
 
-    function immobilizePlayers(players) {
-        deps.playerUtils.forEachAliveWorm(players, function (player, worm) {
-            deps.wormHandler.setSpeed(worm, 0);
+    function immobilizeWorms(worms) {
+        playerUtils.forEachAliveWorm(worms, function (worm) {
+            wormHandler.setSpeed(worm, 0);
+        });
+    }
+
+    function createWorms(gameState) {
+        playerUtils.forEachAlivePlayer(gameState.players, function (player) {
+            gameState.worms.push(wormFactory.create(player.id));
         });
     }
 
     function start(gameState) {
-        gameState.phaseTimer= PHASE_DURATION;
-        setPlayersStartingPositions(gameState.players, gameState.map);
-        setPlayersStartingDirections(gameState.players);
-        immobilizePlayers(gameState.players);
+        gameState.phaseTimer = PHASE_DURATION;
+        createWorms(gameState);  //TODO: Might want to do this and setWormStartingPos together
+        setWormStartingPositions(gameState.worms, gameState.map);
+        setWormStartingDirections(gameState.worms);
+        immobilizeWorms(gameState.worms);
     }
 
     function update(gameState, deltaTime) {
@@ -63,20 +74,20 @@ startPhase.StartPhase = function StartPhase(deps) {
             return;
         }
 
-        deps.playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
-            deps.wormHandler.update(gameState, deltaTime, player, worm);
+        playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
+            wormHandler.update(gameState, deltaTime, worm);
         });
 
         gameState.phaseTimer -= deltaTime;
 
-        if(!isActive(gameState)) {
+        if (!isActive(gameState)) {
             end(gameState);
         }
     }
 
     function end(gameState) {
-        deps.playerUtils.forEachAliveWorm(gameState.players, function setOriginalPlayerSpeeds(player, worm) {
-            deps.wormHandler.setSpeed(worm, worm.defaultSpeed);
+        playerUtils.forEachAliveWorm(gameState.worms, function setOriginalPlayerSpeeds(worm) {
+            wormHandler.setSpeed(worm, worm.defaultSpeed);
         });
     }
 

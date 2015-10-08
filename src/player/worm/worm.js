@@ -1,13 +1,14 @@
-module.exports = function Worm(id, head, direction, speed, turningSpeed, alive) {
+module.exports = function Worm(args) {
     return {
-        id: id,
-        head: head,
-        direction: direction,
-        speed: speed,
-        defaultSpeed: speed,
-        turningSpeed: turningSpeed,
-        defaultTurningSpeed: turningSpeed,
-        alive: alive,
+        id: args.id,
+        playerId: args.playerId,
+        head: args.head,
+        direction: args.direction,
+        speed: args.speed,
+        defaultSpeed: args.speed,
+        turningSpeed: args.turningSpeed,
+        defaultTurningSpeed: args.turningSpeed,
+        alive: args.alive,
         jump: {
             remainingJumpTime: 0,
             timeSinceLastJump: 0

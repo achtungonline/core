@@ -1,4 +1,5 @@
 var EventEmitter = require("events").EventEmitter;
+var playerUtils = require("../player-utils.js");
 
 module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, jumpHandler) {
     var eventEmitter = new EventEmitter();
@@ -6,24 +7,24 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
     events.WORM_DIED = "wormDied";
 
-    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, player, worm) {
+    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, worm) {
         if (worm.alive) {
-            kill(gameState, player, worm);
+            kill(gameState, worm);
         }
     });
 
-    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(gameState, player, worm, otherWormID) {
+    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(gameState, worm, otherWormID) {
         if (worm.alive) {
-            kill(gameState, player, worm);
+            kill(gameState, worm);
         }
     });
 
-    function kill(gameState, player, worm) {
+    function kill(gameState, worm) {
         if (!worm.alive) {
             throw Error("Trying to kill worm that is already dead");
         }
         worm.alive = false;
-        eventEmitter.emit(events.WORM_DIED, gameState, player, worm);
+        eventEmitter.emit(events.WORM_DIED, gameState, worm);
     }
 
     function pushBodyPart(gameState, worm) {
@@ -31,9 +32,9 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         wormBodyImmunityHandler.setImmunityCells(worm, changedCells);
     }
 
-    function update(gameState, deltaTime, player, worm) {
+    function update(gameState, deltaTime, worm) {
         function updateDirection() {
-            var direction = worm.direction + player.steering * worm.turningSpeed * deltaTime;
+            var direction = worm.direction + playerUtils.getPlayerById(gameState.players, worm.playerId).steering * worm.turningSpeed * deltaTime;
             setDirection(worm, direction);
         }
 
@@ -57,10 +58,11 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         function collisionDetection() {
-            collisionHandler.wormPowerUpCollisionDetection(gameState, player, worm);
-            collisionHandler.wormMapCollisionDetection(gameState, player, worm);
+
+            collisionHandler.wormPowerUpCollisionDetection(gameState, worm);
+            collisionHandler.wormMapCollisionDetection(gameState, worm);
             if (!jumpHandler.isJumping(worm)) {
-                collisionHandler.wormWormCollisionDetection(gameState, player, worm);
+                collisionHandler.wormWormCollisionDetection(gameState, worm);
             }
         }
 

@@ -8,22 +8,18 @@ utils.forEachAlivePlayer = function forEachAlivePlayer(players, callback) {
     });
 };
 
-utils.forEachAliveWorm = function forEachAliveWorm(players, callback) {
-    utils.forEachAlivePlayer(players, function (player) {
-        utils.forEachAlivePlayerWorm(player, function (worm) {
-            callback(player, worm);
-        });
+utils.forEachAliveWorm = function forEachAliveWorm(worms, callback, playerId) {
+    worms.forEach(function(worm) {
+        if(worm.alive && (playerId === undefined || worm.playerId === playerId)) {
+            callback(worm);
+        }
     });
 };
 
-utils.forEachAlivePlayerWorm = function forEachAlivePlayerWorm(player, callback) {
-    if (player.alive) {
-        player.worms.forEach(function (worm) {
-            if (worm.alive) {
-                callback(worm);
-            }
-        });
-    }
+utils.getAliveWorms = function getAliveWorms(worms, playerId) {
+    return worms.filter(function(worm) {
+        return worm.alive && (playerId === undefined || worm.playerId === playerId);
+    });
 };
 
 utils.getAlivePlayers = function getAlivePlayers(players) {
@@ -32,4 +28,10 @@ utils.getAlivePlayers = function getAlivePlayers(players) {
         alivePlayers.push(player);
     });
     return alivePlayers;
+};
+
+utils.getPlayerById = function getPlayerById(players, playerId) {
+    return players.find(function(player) {
+        return player.id === playerId;
+    });
 };

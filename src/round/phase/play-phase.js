@@ -21,8 +21,8 @@ playPhase.PlayPhase = function PlayPhase(deps) {
             return;
         }
 
-        deps.playerUtils.forEachAliveWorm(gameState.players, function (player, worm) {
-            deps.wormHandler.update(gameState, deltaTime, player, worm);
+        deps.playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
+            deps.wormHandler.update(gameState, deltaTime, worm);
         });
         deps.powerUpHandler.update(deltaTime, gameState);
         deps.effectHandler.update(deltaTime, gameState);

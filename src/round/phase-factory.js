@@ -25,7 +25,8 @@ module.exports = function PhaseFactory(deps) {
             shapeSpatialRelations: shapeSpatialRelations,
             mapUtils: mapUtils,
             playerUtils: playerUtils,
-            random: deps.random
+            random: deps.random,
+            wormFactory: deps.wormFactory
         };
 
         return StartPhase(dependencies);

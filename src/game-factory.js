@@ -12,6 +12,8 @@ var WormBodyImmunityHandler = require("./player/worm/worm-body-immunity-handler.
 var CollisionHandlerFactory = require("./player/worm/collision/collision-handler-factory.js");
 var PowerUpHandlerFactory = require("./power-up/power-up-handler-factory.js");
 var EffectHandlerFactory = require("./power-up/effect-handler-factory.js");
+var WormFactory = require("./player/worm/worm-factory.js");
+var idGenerator = require("./util/id-generator.js");
 var Random = require("./util/random.js");
 
 module.exports = function GameFactory(deltaTimeHandler) {
@@ -25,16 +27,10 @@ module.exports = function GameFactory(deltaTimeHandler) {
             map = mapFactory.createSquare(800);
         }
 
-        var worms = [];
-        players.forEach(function (player) {
-            player.worms.forEach(function (worm) {
-                worms.push(worm);
-            });
-        });
-
         var playArea = PlayArea.createPlayArea(map.width, map.height);
         var playAreaHandler = playAreaHandlerFactory.create();
 
+        var worms = []; // The worms get created in startPhase
         var gameState = GameState(players, worms, map, playArea, []);
 
         map.blockingShapes.forEach(function (blockingShape) {
@@ -62,7 +58,10 @@ module.exports = function GameFactory(deltaTimeHandler) {
         });
         var powerUpHandler = powerUpHandlerFactory.create();
 
+        var wormFactory = WormFactory(idGenerator.indexCounterId(0));
+
         var roundHandlerFactory = RoundHandlerFactory({
+            wormFactory: wormFactory,
             wormHandler: wormHandler,
             playerHandler: playerHandler,
             powerUpHandler: powerUpHandler,

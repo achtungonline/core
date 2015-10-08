@@ -1,9 +1,9 @@
 var Player = require("./player.js").Player;
 
-module.exports = function PlayerFactory(idGenerator, wormFactory) {
+module.exports = function PlayerFactory(idGenerator) {
 
     function create() {
-        return Player(idGenerator(), wormFactory.create(), true);
+        return Player(idGenerator(), true);
     }
 
     function createPlayers(numberOfPlayers) {

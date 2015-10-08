@@ -6,18 +6,22 @@ var PlayArea = require("../../play-area/play-area.js");
 var Trajectory = require("../../geometry/trajectory/trajectory.js");
 var Curve = require("../../geometry/trajectory/curve.js");
 
+var playerUtils = require("../../player/player-utils.js");
+
 var TYPE = "pathCheckerAi";
 
 var SIMULATION_DELTA = 0.15;
 
+//TODO Remove Player from all (most) functions
 module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandler, random) {
 
-    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, player, worm) {
-        player.aiData.simulationCollision = true;
+    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, worm) {
+        playerUtils.getPlayerById(gameState.players, worm.playerId).aiData.simulationCollision = true;
     });
 
     function update(gameState, deltaTime, player) {
         var aiData = player.aiData;
+
         function setDefaultDataValues() {
 
             aiData.timeUntilNextSimulation = 0;
@@ -25,11 +29,16 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
             aiData.simulationCollision = false;
         }
 
-        if(aiData.trajectory === undefined) {
+        if (aiData.trajectory === undefined) {
             setDefaultDataValues();
         }
         aiData.timeUntilNextSimulation -= deltaTime;
-        var worm = player.worms[0];
+        var aliveWorms = playerUtils.getAliveWorms(gameState.worms, player.id);
+        if(aliveWorms.length === 0) {
+            return;
+        }
+        var worm = aliveWorms[0];
+
         if (aiData.timeUntilNextSimulation < 0) {
             if (worm.speed === 0) {
                 aiData.trajectory = getBestStraightTrajectory(gameState, player, worm);
@@ -51,9 +60,9 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
                 game.setPlayerSteering(player, STEERING.STRAIGHT);
             }
         }
-        player.worms.forEach(function (worm) {
+        playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
             worm.trajectory = aiData.trajectory;
-        });
+        }, player.id);
     }
 
     function getBestSunFanTrajectory(gameState, player, worm) {
@@ -137,7 +146,7 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
             clonedWorm.direction = direction;
 
             // Map collision detection
-            collisionHandler.wormMapCollisionDetection(gameState, player, clonedWorm);
+            collisionHandler.wormMapCollisionDetection(gameState, clonedWorm);
             if (!player.aiData.simulationCollision) {
                 // Worm collision detection
                 var cells = shapeToGridConverter.convert(clonedHead, playArea, RoundingModes.INTERSECTION);

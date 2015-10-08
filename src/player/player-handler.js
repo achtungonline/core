@@ -1,19 +1,20 @@
 var EventEmitter = require("events").EventEmitter;
 var any = require("../util/any.js");
+var playerUtils = require("./player-utils.js");
 
 module.exports = function PlayerHandler(wormHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};
     events.PLAYER_DIED = "playerDied";
 
-    wormHandler.on(wormHandler.events.WORM_DIED, function (gameState, player, worm) {
-        function isAnyWormAlive(player) {
-            return any(player.worms, function (worm) {
-                return worm.alive;
-            });
+    wormHandler.on(wormHandler.events.WORM_DIED, function (gameState, worm) {
+        var player = playerUtils.getPlayerById(gameState.players, worm.playerId);
+
+        function isAnyWormAlive() {
+            return playerUtils.getAliveWorms(gameState.worms, worm.playerId).length > 0;
         }
 
-        function kill(player) {
+        function kill() {
             if (!player.alive) {
                 throw Error("Trying to kill player that is already dead");
             }
@@ -25,16 +26,13 @@ module.exports = function PlayerHandler(wormHandler) {
             throw Error("A worm died for a already dead player.");
         }
 
-        if (!isAnyWormAlive(player)) {
-            kill(player);
+        if (!isAnyWormAlive()) {
+            kill();
         }
     });
 
     function setSteering(player, steering) {
         player.steering = steering;
-        player.worms.forEach(function (worm) {
-            worm.trajectory = [{steering: player.steering, time: 1}];
-        });
     }
 
     return {

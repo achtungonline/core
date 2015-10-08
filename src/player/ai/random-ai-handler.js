@@ -1,6 +1,8 @@
 var UPDATE_TICKS = 30;
 var TYPE = "randomAi";
 
+var playerUtils = require("../../player/player-utils.js");
+
 module.exports = function RandomAI(game, random) {
 
     function update(gameState, deltaTime, player) {
@@ -12,9 +14,9 @@ module.exports = function RandomAI(game, random) {
             game.setPlayerSteering(player, random.randInt(-1, 2));
             player.aiData.updateTicks = 0;
         }
-        player.worms.forEach(function (worm) {
+        playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
             worm.trajectory = [{steering: player.steering, time: 1}];
-        });
+        }, player.id);
     }
 
     return {

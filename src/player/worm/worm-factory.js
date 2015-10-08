@@ -8,9 +8,17 @@ var TURNING_SPEED = 1.75;
 module.exports = function WormFactory(idGenerator) {
     var shapeFactory = ShapeFactory();
 
-    function create() {
-        return Worm(idGenerator(), shapeFactory.createCircle(WORM_RADIUS, 10, 10), 0, WORM_SPEED, TURNING_SPEED, true);
-        //return Worm(idGenerator(), shapeFactory.createRectangle(WORM_RADIUS*2, WORM_RADIUS*2, 10, 10), 0, WORM_SPEED, TURNING_SPEED, true);
+    function create(playerId) {
+        var args = {
+            id: idGenerator(),
+            playerId: playerId,
+            head: shapeFactory.createCircle(WORM_RADIUS, 10, 10),
+            direction: 0,
+            speed: WORM_SPEED,
+            turningSpeed: TURNING_SPEED,
+            alive: true
+        };
+        return Worm(args);
     }
 
     return {
