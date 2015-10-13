@@ -35,3 +35,9 @@ utils.getPlayerById = function getPlayerById(players, playerId) {
         return player.id === playerId;
     });
 };
+
+utils.getWormById = function getWormById(worms, wormId) {
+    return worms.find(function(worm) {
+        return worm.id === wormId;
+    });
+};

@@ -46,7 +46,8 @@ module.exports = function GameFactory(deltaTimeHandler) {
         var playerHandler = PlayerHandler(wormHandler);
 
         var effectHandlerFactory = EffectHandlerFactory( {
-            wormHandler: wormHandler
+            wormHandler: wormHandler,
+            random: random
         });
         var effectHandler = effectHandlerFactory.create();
 

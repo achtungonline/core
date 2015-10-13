@@ -17,6 +17,7 @@ module.exports = function Random(seed) {
     function randInt(low, high) {
         return Math.floor(random() * (high - low) + low);
     }
+
     function randomElementIndex(list) {
         return randInt(0, list.length);
     }
@@ -33,6 +34,22 @@ module.exports = function Random(seed) {
         return randomElement(list);
     }
 
+    function randomPermutaion(n, avoidFixedPoints) {
+        var elementsLeft = [];
+        for (var i = 0; i < n; i++) {
+            elementsLeft.push(i);
+        }
+        var res = new Array(n);
+        for (i = 0; i < n; i++) {
+            var index = randomElementIndex(elementsLeft);
+            while (avoidFixedPoints && n < 1 && (elementsLeft[index] === i || i === n - 2 && elementsLeft[index^1] === n - 1)) {
+                index = randomElementIndex(elementsLeft);
+            }
+            res[i] = elementsLeft.splice(index, 1)[0];
+        }
+        return res;
+    }
+
     return {
         setSeed: setSeed,
         getSeed: getSeed,
@@ -40,6 +57,7 @@ module.exports = function Random(seed) {
         randInt: randInt,
         randomElementIndex: randomElementIndex,
         randomElement: randomElement,
-        randomObjectProperty: randomObjectProperty
+        randomObjectProperty: randomObjectProperty,
+        randomPermutation: randomPermutaion
     };
 };
