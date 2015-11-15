@@ -94,9 +94,19 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         setSpeed(worm, worm.speed + speedChange);
     }
 
+    function setTurningSpeed(worm, turningSpeed) {
+        worm.turningSpeed = turningSpeed;
+    }
+
+    function changeTurningSpeed(worm, turningSpeedChange) {
+        setTurningSpeed(worm, worm.turningSpeed + turningSpeedChange);
+    }
+
     return {
         setSpeed: setSpeed,
         changeSpeed: changeSpeed,
+        setTurningSpeed: setTurningSpeed,
+        changeTurningSpeed: changeTurningSpeed,
         changeSize: changeSize,
         setDirection: setDirection,
         setHead: setHead,
