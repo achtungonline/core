@@ -42,7 +42,7 @@ module.exports = function Random(seed) {
         var res = new Array(n);
         for (i = 0; i < n; i++) {
             var index = randomElementIndex(elementsLeft);
-            while (avoidFixedPoints && n < 1 && (elementsLeft[index] === i || i === n - 2 && elementsLeft[index^1] === n - 1)) {
+            while (avoidFixedPoints && n > 1 && (elementsLeft[index] === i || i === n - 2 && elementsLeft[index^1] === n - 1)) {
                 index = randomElementIndex(elementsLeft);
             }
             res[i] = elementsLeft.splice(index, 1)[0];
