@@ -1,5 +1,5 @@
-var shapeSpatialRelations = require("../../geometry/shape-spatial-relations.js");
-var forEach = require("./../../util/for-each.js");
+var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
+var forEach = require("../util/for-each.js");
 var IMMUNITY_DISTANCE = 100;
 
 module.exports = function WormBodyImmunityHandler() {

@@ -1,5 +1,5 @@
 var Worm = require("./worm.js");
-var ShapeFactory = require("./../../geometry/shape-factory.js");
+var ShapeFactory = require("../geometry/shape-factory.js");
 
 var WORM_RADIUS = 2;
 var WORM_SPEED = 50;

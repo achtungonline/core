@@ -1,5 +1,5 @@
 var EventEmitter = require("events").EventEmitter;
-var playerUtils = require("../player-utils.js");
+var playerUtils = require("../player/player-utils.js");
 
 module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, jumpHandler) {
     var eventEmitter = new EventEmitter();
@@ -115,4 +115,3 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         events: events
     };
 };
-

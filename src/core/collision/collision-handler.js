@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
-var ShapeToGridConverter = require("./../../../geometry/shape-to-grid-converter.js");
-var PlayArea = require("./../../../play-area/play-area.js");
+var ShapeToGridConverter = require("../geometry/shape-to-grid-converter.js");
+var PlayArea = require("../play-area/play-area.js");
 
 module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHandler, mapUtils, shapeSpatialRelations) {
     var events = {};

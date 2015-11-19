@@ -1,8 +1,8 @@
-var ShapeModifierIFactory = require("./../../geometry/shape-modifier-immutable-factory.js");
+var ShapeModifierIFactory = require("../geometry/shape-modifier-immutable-factory.js");
 var WormHandler = require("./worm-handler.js");
 var JumpHandlerFactory = require("./jump-handler-factory.js");
 
-var clone = require("./../../util/clone.js");
+var clone = require("../util/clone.js");
 
 module.exports = function WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, random) {
     var shapeModifierIFactory = ShapeModifierIFactory();

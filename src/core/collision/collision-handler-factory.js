@@ -1,7 +1,7 @@
 var CollisionHandler = require("./collision-handler.js");
 
-var mapUtils = require("./../../../map/map-utils");
-var shapeSpatialRelations = require("./../../../geometry/shape-spatial-relations.js");
+var mapUtils = require("../map/map-utils");
+var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
 
 module.exports = function CollisionHandlerFactory(playAreaHandler, wormBodyImmunityHandler) {
     function create() {
