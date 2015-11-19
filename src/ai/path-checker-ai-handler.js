@@ -1,12 +1,12 @@
-var STEERING = require("../player.js").steering;
-var clone = require("../../util/clone.js");
-var shapeToGridConverter = require("../../geometry/shape-to-grid-converter.js").createShapeToGridConverter();
-var RoundingModes = require("../../geometry/shape-to-grid-converter.js").RoundingModes;
-var PlayArea = require("../../play-area/play-area.js");
-var Trajectory = require("../../geometry/trajectory/trajectory.js");
-var Curve = require("../../geometry/trajectory/curve.js");
+var STEERING = require("../core/player/player.js").steering;
+var clone = require("../core/util/clone.js");
+var shapeToGridConverter = require("../core/geometry/shape-to-grid-converter.js").createShapeToGridConverter();
+var RoundingModes = require("../core/geometry/shape-to-grid-converter.js").RoundingModes;
+var PlayArea = require("../core/play-area/play-area.js");
+var Trajectory = require("../core/geometry/trajectory/trajectory.js");
+var Curve = require("../core/geometry/trajectory/curve.js");
 
-var playerUtils = require("../../player/player-utils.js");
+var playerUtils = require("../core/player/player-utils.js");
 
 var TYPE = "pathCheckerAi";
 

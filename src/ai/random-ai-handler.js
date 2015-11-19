@@ -1,7 +1,7 @@
 var UPDATE_TICKS = 30;
 var TYPE = "randomAi";
 
-var playerUtils = require("../../player/player-utils.js");
+var playerUtils = require("../core/player/player-utils.js");
 
 module.exports = function RandomAI(game, random) {
 

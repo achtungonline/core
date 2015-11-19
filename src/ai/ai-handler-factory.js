@@ -1,5 +1,5 @@
-var TrajectoryHandler = require("../../geometry/trajectory/trajectory-handler.js");
-var CollisionHandlerFactory = require("../worm/collision/collision-handler-factory.js");
+var TrajectoryHandler = require("../core/geometry/trajectory/trajectory-handler.js");
+var CollisionHandlerFactory = require("../core/player/worm/collision/collision-handler-factory.js");
 var AIHandler = require("./ai-handler.js");
 
 var PathCheckerAIHandler = require("./path-checker-ai-handler.js");
