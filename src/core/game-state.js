@@ -9,7 +9,6 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,
         gameActive: false,
-        gamePaused: false,
         phaseTimer: 0
     };
 };

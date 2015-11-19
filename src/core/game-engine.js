@@ -1,6 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 
-module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHandler) {
+module.exports = function GameEngine(roundHandler, playAreaHandler) {
     var eventEmitter = new EventEmitter();
     var events = {};
     events.GAME_UPDATE_STARTING = "gameUpdateStarting";
@@ -18,19 +18,11 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
 
     function start(gameState) {
         gameState.gameActive = true;
-        deltaTimeHandler.start(gameState);
+        // deltaTimeHandler.start(gameState);
         roundHandler.start(gameState);
-        deltaTimeHandler.update(gameState, function onUpdateTick(deltaTime) {
-            update(gameState, deltaTime);
-        });
-    }
-
-    function pause(gameState) {
-        gameState.gamePaused = true;
-    }
-
-    function resume(gameState) {
-        gameState.gamePaused = false;
+        // deltaTimeHandler.update(gameState, function onUpdateTick(deltaTime) {
+        //     update(gameState, deltaTime);
+        // });
     }
 
     function stop(gameState) {
@@ -38,8 +30,16 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
         gameState.gameActive = false;
     }
 
+    // function pause(gameState) {
+    //     gameState.gamePaused = true;
+    // }
+    //
+    // function resume(gameState) {
+    //     gameState.gamePaused = false;
+    // }
+
     function update(gameState, deltaTime) {
-        if (isActive(gameState) && !isPaused(gameState) && deltaTime > 0) {
+        if (isActive(gameState) && deltaTime > 0) {
             eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
             roundHandler.update(gameState, deltaTime);
 
@@ -51,29 +51,30 @@ module.exports = function GameEngine(deltaTimeHandler, roundHandler, playAreaHan
             playAreaHandler.resetUpdateBuffer(gameState);
         }
 
-        if (isActive(gameState)) {
-            deltaTimeHandler.update(gameState, function onUpdateTick(deltaTime) {
-                update(gameState, deltaTime);
-            });
-        }
+        // if (isActive(gameState)) {
+        //     deltaTimeHandler.update(gameState, function onUpdateTick(deltaTime) {
+        //         update(gameState, deltaTime);
+        //     });
+        // }
     }
 
     function isActive(gameState) {
         return gameState.gameActive;
     }
 
-    function isPaused(gameState) {
-        return gameState.gamePaused;
-    }
+    // function isPaused(gameState) {
+    //     return gameState.gamePaused;
+    // }
 
     return {
         start: start,
         stop: stop,
-        pause: pause,
-        resume: resume,
+        // pause: pause,
+        // resume: resume,
         isActive: isActive,
-        isPaused: isPaused,
+        // isPaused: isPaused,
         on: eventEmitter.on.bind(eventEmitter),
-        events: events
+        events: events,
+        update: update
     };
 };

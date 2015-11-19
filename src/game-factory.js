@@ -16,7 +16,7 @@ var WormFactory = require("./core/worm/worm-factory.js");
 var idGenerator = require("./core/util/id-generator.js");
 var Random = require("./core/util/random.js");
 
-module.exports = function GameFactory(deltaTimeHandler) {
+module.exports = function GameFactory() {
     var mapFactory = MapFactory();
     var playAreaHandlerFactory = PlayAreaHandlerFactory();
 
@@ -72,7 +72,7 @@ module.exports = function GameFactory(deltaTimeHandler) {
 
         var roundHandler = roundHandlerFactory.create();
 
-        var gameEngine = GameEngine(deltaTimeHandler, roundHandler, playAreaHandler);
+        var gameEngine = GameEngine(roundHandler, playAreaHandler);
 
         var game = Game(gameState, gameEngine, playerHandler);
 
