@@ -1,10 +1,11 @@
 var Player = require("./player.js").Player;
 
-module.exports = function PlayerFactory(idGenerator) {
+module.exports = function PlayerFactory(idGenerator) { //TODO think about a better solution with idGenerator
 
-    function create() {
-        return Player(idGenerator(), true);
+    function create(id) {
+        return Player(id !== undefined ? id : idGenerator(), true);
     }
+
 
     function createPlayers(numberOfPlayers) {
         var players = [];

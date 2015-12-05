@@ -15,14 +15,21 @@ var EffectHandlerFactory = require("./core/power-up/effect-handler-factory.js");
 var WormFactory = require("./core/worm/worm-factory.js");
 var idGenerator = require("./core/util/id-generator.js");
 var Random = require("./core/util/random.js");
-
+var PlayerFactory = require("./core/player/player-factory.js");
+var playerUtils = require("./core/player/player-utils");
 module.exports = function GameFactory() {
     var mapFactory = MapFactory();
     var playAreaHandlerFactory = PlayAreaHandlerFactory();
+    var playerFactory = PlayerFactory();
 
-    function create(playerSetup, map, random) {
+    function create(options) {
+        var map = options.map;
+        var playerConfigs = options.playerConfigs;
+        var random = options.random;
 
-        var players = playerSetup.humanPlayers.concat(playerSetup.AIPlayers);
+        var players = playerConfigs.map(function (playerConfig) {
+            return playerFactory.create(playerConfig.id);
+        });
         if (!map) {
             map = mapFactory.createSquare(800);
         }
@@ -45,13 +52,13 @@ module.exports = function GameFactory() {
 
         var playerHandler = PlayerHandler(wormHandler);
 
-        var effectHandlerFactory = EffectHandlerFactory( {
+        var effectHandlerFactory = EffectHandlerFactory({
             wormHandler: wormHandler,
             random: random
         });
         var effectHandler = effectHandlerFactory.create();
 
-        var powerUpHandlerFactory = PowerUpHandlerFactory( {
+        var powerUpHandlerFactory = PowerUpHandlerFactory({
             wormHandler: wormHandler,
             effectHandler: effectHandler,
             collisionHandler: collisionHandler,
@@ -76,9 +83,14 @@ module.exports = function GameFactory() {
 
         var game = Game(gameState, gameEngine, playerHandler);
 
-        var aiRandom = Random(random.getSeed()); // Give AI their own random so that they don't interfere with stuff
+        var aiRandom = Random(random.getSeed()); // Give AI their own random so that they don't interfere with stuff. Replay does not play AI...
         var aiHandler = AIHandlerFactory(game, playAreaHandler, aiRandom).create();
-        playerSetup.AIPlayers.forEach(function (aiPlayer) {
+
+        playerConfigs.filter(function (playerConfig) {
+            return playerConfig.type === 'bot';
+        }).map(function (playerConfig) {
+            return playerUtils.getPlayerById(players, playerConfig.id);
+        }).forEach(function (aiPlayer) {
             aiHandler.addAIPlayer(aiPlayer);
         });
 
