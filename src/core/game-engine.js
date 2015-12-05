@@ -1,13 +1,8 @@
 var EventEmitter = require("events").EventEmitter;
+var events = require("./game-engine-events");
 
 module.exports = function GameEngine(roundHandler, playAreaHandler) {
     var eventEmitter = new EventEmitter();
-    var events = {};
-    events.GAME_UPDATE_STARTING = "gameUpdateStarting";
-    events.GAME_UPDATED = "gameUpdated";
-    events.GAME_OVER = "gameOver";
-    events.NEW_PHASE_STARTED = "newPhaseStarted";
-
     roundHandler.on(roundHandler.events.NEW_PHASE_STARTED, function (phaseType, gameState) {
         eventEmitter.emit(events.NEW_PHASE_STARTED, phaseType);
         if(phaseType === "roundOverPhase") {
