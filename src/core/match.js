@@ -18,8 +18,8 @@ module.exports = function Match(options) {
             game.events.forEach(function (event) {
                 game.on(event, function () {
                     eventEmitter.emit.apply(eventEmitter, [event].concat(Array.prototype.slice.call(arguments)));
-                })
-            })
+                });
+            });
         }
 
         if (currentGame && currentGame.isActive()) {
@@ -38,7 +38,9 @@ module.exports = function Match(options) {
     }
 
     function endCurrentGame() {
-        currentGame && currentGame.stop();
+        if(currentGame) {
+            currentGame.stop();
+        }
     }
 
     function end() {
@@ -46,7 +48,15 @@ module.exports = function Match(options) {
     }
 
     function update(deltaTime) {
-        currentGame.update(deltaTime)
+        currentGame.update(deltaTime);
+    }
+
+    function isActive() {
+        return !!currentGame; //TODO check again when score is implemented
+    }
+
+    function isCurrentGameActive() {
+        return currentGame && currentGame.isActive();
     }
 
     function setPlayerSteering(player, steering) { //TODO take ID instead of player
@@ -59,8 +69,11 @@ module.exports = function Match(options) {
         endCurrentGame: endCurrentGame,
         end: end,
         update: update,
+        isActive: isActive,
+        isCurrentGameActive: isCurrentGameActive,
         setPlayerSteering: setPlayerSteering,
-        on: eventEmitter.bind(eventEmitter),
-        events: events
+        on: eventEmitter.on.bind(eventEmitter),
+        events: events,
+        matchConfig: matchConfig // TODO: Unsure if this is good.
     };
 };
