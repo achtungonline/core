@@ -3,7 +3,7 @@ var ROUND_OVER_TYPE = require("../round/phase/round-over-phase.js").type;
 module.exports = function GameHistoryHandler() {
 
     function recordGameHistory(game, gameHistory) {
-        var running = true;
+        var running = true; //TODO remove, use game.isActive()
         game.on(game.events.GAME_UPDATE_STARTING, function (gameState, deltaTime) {
             if (running) {
                 updateGameHistory(gameHistory, gameState, deltaTime);
@@ -13,16 +13,6 @@ module.exports = function GameHistoryHandler() {
         game.on(game.events.GAME_OVER, function () {
             console.log("Game history logged " + gameHistory.updates.length + " updates");
             running = false;
-        });
-    }
-
-    function replayGameHistory(game, gameHistory) {
-        game.gameState.replayUpdateIndex = 0;
-        game.on(game.events.GAME_UPDATE_STARTING, function (gameState, deltaTime) {
-            if (gameState.replayUpdateIndex < gameHistory.updates.length) {
-                applyUpdate(gameState, gameHistory.updates[gameState.replayUpdateIndex]);
-                gameState.replayUpdateIndex++;
-            }
         });
     }
 
@@ -36,15 +26,8 @@ module.exports = function GameHistoryHandler() {
         gameHistory.updates.push(newUpdate);
     }
 
-    function applyUpdate(gameState, update) {
-        update.steering.forEach(function ApplySteering(steering, index) {
-            gameState.players[index].steering = steering;
-        });
-    }
-
     return {
-        recordGameHistory: recordGameHistory,
-        replayGameHistory: replayGameHistory
+        recordGameHistory: recordGameHistory
     };
 
 };
