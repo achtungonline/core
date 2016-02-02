@@ -1,5 +1,6 @@
 var events = require("./match-events");
 var EventEmitter = require("events").EventEmitter;
+var forEach = require("./util/for-each");
 
 module.exports = function Match(options) {
     var random = options.random;
@@ -15,7 +16,7 @@ module.exports = function Match(options) {
 
     function startNextGame() {
         function redirectGameEvents(game) {
-            game.events.forEach(function (event) {
+            forEach(game.events, function (event) {
                 game.on(event, function () {
                     eventEmitter.emit.apply(eventEmitter, [event].concat(Array.prototype.slice.call(arguments)));
                 });
