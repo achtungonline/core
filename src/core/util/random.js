@@ -1,9 +1,8 @@
-var seedrandom = require("seedrandom");
 var forEach = require("./for-each.js");
 
 module.exports = function Random(seed) {
 
-    seed = seed || Math.seedrandom();
+    seed = seed || Math.random();
     var random = seedrandom(seed);
 
     function setSeed(seed) {
