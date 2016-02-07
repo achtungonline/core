@@ -2,11 +2,14 @@ var forEach = require("./for-each.js");
 
 module.exports = function Random(seed) {
 
-    seed = seed || Math.random();
-    var random = seedrandom(seed);
+    var currentSeed = seed || Math.random() + 1; //TODO: remove local state (ML)
+    function random() {
+        var x = Math.sin(currentSeed++) * 10000;
+        return x - Math.floor(x);
+    }
 
     function setSeed(seed) {
-        random = seedrandom(seed);
+        currentSeed = seed;
     }
 
     function getSeed() {
@@ -47,7 +50,7 @@ module.exports = function Random(seed) {
             res[i] = elementsLeft.splice(index, 1)[0];
         }
         return res;
-        
+
     }
 
     return {
