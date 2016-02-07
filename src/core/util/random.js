@@ -47,6 +47,7 @@ module.exports = function Random(seed) {
             res[i] = elementsLeft.splice(index, 1)[0];
         }
         return res;
+        
     }
 
     return {
