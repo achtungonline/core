@@ -3,8 +3,36 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
     return {
         players: players,
         worms: worms,
-        powerUps: [],
-        effects: [],
+        //  {
+        //      id,
+        //      playerId,
+        //      head,
+        //      direction,
+        //      speed,
+        //      turningSpeed,
+        //      alive,
+        //      jump: {
+        //          remainingJumpTime: 0,
+        //          timeSinceLastJump: 0
+        //      },
+        //      immunityData: undefined
+        //      }
+        powerUps: [
+        //  {
+        //      id
+        //      shape
+        //      effectType
+        //      effectStrength
+        //  }
+        ],
+        effects: [
+        //  {
+        //      type,
+        //      duration,
+        //      wormId,
+        //      strength,
+        //  }
+        ],
         map: map,
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,

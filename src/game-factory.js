@@ -48,16 +48,16 @@ module.exports = function GameFactory() {
         var wormBodyImmunityHandler = WormBodyImmunityHandler();
         var collisionHandler = CollisionHandlerFactory(playAreaHandler, wormBodyImmunityHandler).create();
 
-        var wormHandlerFactory = WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, random);
-        var wormHandler = wormHandlerFactory.create();
-
-        var playerHandler = PlayerHandler(wormHandler);
-
         var effectHandlerFactory = EffectHandlerFactory({
-            wormHandler: wormHandler,
             random: random
         });
         var effectHandler = effectHandlerFactory.create();
+
+
+        var wormHandlerFactory = WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, random, effectHandler);
+        var wormHandler = wormHandlerFactory.create();
+
+        var playerHandler = PlayerHandler(wormHandler);
 
         var powerUpHandlerFactory = PowerUpHandlerFactory({
             wormHandler: wormHandler,

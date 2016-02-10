@@ -6,14 +6,14 @@ var fastTurnSpeedEffect = require("./effect-handlers/fast-turn-speed-effect-hand
 
 module.exports = function EffectHandlerFactory(deps) {
     function create() {
-        var effectsFunctionMap = {};
-        effectsFunctionMap[speedEffect.type] = speedEffect.SpeedEffectHandler({wormHandler: deps.wormHandler});
-        effectsFunctionMap[fatEffect.type] = fatEffect.FatEffectHandler({wormHandler: deps.wormHandler});
-        effectsFunctionMap[wormSwitchEffect.type] = wormSwitchEffect.WormSwitchEffectHandler({random: deps.random});
-        effectsFunctionMap[fastTurnSpeedEffect.type] = fastTurnSpeedEffect.FastTurnEffectHandler({wormHandler: deps.wormHandler});
+        var effectHandlersMap = {};
+        effectHandlersMap[speedEffect.type] = speedEffect.SpeedEffectHandler();
+        //effectHandlersMap[fatEffect.type] = fatEffect.FatEffectHandler();
+        //effectHandlersMap[wormSwitchEffect.type] = wormSwitchEffect.WormSwitchEffectHandler({random: deps.random});
+        //effectHandlersMap[fastTurnSpeedEffect.type] = fastTurnSpeedEffect.FastTurnEffectHandler();
 
         var dependencies = {
-            effectsFunctionMap: effectsFunctionMap
+            effectHandlersMap: effectHandlersMap
         };
 
         return EffectHandler(dependencies);

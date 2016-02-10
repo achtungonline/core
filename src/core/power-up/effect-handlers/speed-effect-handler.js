@@ -1,5 +1,5 @@
-var CHANGE = 25;
-var DURATION = 3;
+var STRENGTH = 25;
+var DURATION = 5;
 var SPEED_TYPE = "speed";
 
 var me = module.exports = {};
@@ -8,23 +8,24 @@ me.type = SPEED_TYPE;
 
 me.SpeedEffectHandler = function SpeedEffectHandler(deps) {
 
-    function activate(gameState, worm) {
-        deps.wormHandler.changeSpeed(worm, CHANGE);
-        var effect = {
-            duration: DURATION,
-            change: CHANGE,
-            worm: worm,
-            type: SPEED_TYPE
-        };
-        gameState.effects.push(effect);
+    function transformSpeed(gameState, effect, wormSpeed) {
+        return wormSpeed - effect.strength;
     }
 
-    function deactivate(gameState, effect) {
-        deps.wormHandler.changeSpeed(effect.worm, -effect.change);
+    function activate(gameState, wormId) {
+        return {
+            duration: DURATION,
+            strength: STRENGTH,
+            wormId: wormId,
+            type: SPEED_TYPE,
+            transformSpeed: true
+        };
     }
 
     return {
-        activate: activate,
-        deactivate: deactivate
+        activate,
+        deactivate: function () {
+        },
+        transformSpeed
     };
 };
