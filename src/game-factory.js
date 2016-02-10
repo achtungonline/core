@@ -1,4 +1,4 @@
-var PhaseHandlerFactory = require("./core/round/phase-handler-factory.js");
+var PhaseHandlerFactory = require("./core/phase/phase-handler-factory.js");
 var MapFactory = require("./core/map/map-factory.js");
 var GameEngine = require("./core/game-engine.js");
 var WormHandlerFactory = require("./core/worm/worm-handler-factory.js");
@@ -17,6 +17,7 @@ var idGenerator = require("./core/util/id-generator.js");
 var Random = require("./core/util/random.js");
 var PlayerFactory = require("./core/player/player-factory.js");
 var playerUtils = require("./core/player/player-utils");
+
 module.exports = function GameFactory() {
     var mapFactory = MapFactory();
     var playAreaHandlerFactory = PlayAreaHandlerFactory();

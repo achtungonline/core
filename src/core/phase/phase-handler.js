@@ -2,11 +2,13 @@ var EventEmitter = require("events").EventEmitter;
 
 /**
  * Responsible for the different phases during the game.
- * notStartedPhase | startPhase | playPhase | roundOverPhase
+ *  * A phase is a sort of logical concept within a game round. Such as the starting phase when the worms don't move and the play phase which is when they start moving.
+ * Phases: notStartedPhase | startPhase | playPhase | roundOverPhase
  * @param phases
  * @returns {{start: start, update: update, isActive: isActive, on: (*|function(this:(*|EventEmitter))), events: {}}}
  * @constructor
  */
+
 module.exports = function PhaseHandler(phases) {
     var eventEmitter = new EventEmitter();
     var events = {};
@@ -19,7 +21,6 @@ module.exports = function PhaseHandler(phases) {
 
     function startCurrentPhase(gameState) {
         getCurrentPhase().start(gameState);
-        console.log(gameState.phase);
         gameState.phase = getCurrentPhase().type;
         eventEmitter.emit(events.NEW_PHASE_STARTED, getCurrentPhase().type, gameState);
     }

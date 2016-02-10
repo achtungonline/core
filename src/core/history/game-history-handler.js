@@ -1,4 +1,4 @@
-var ROUND_OVER_TYPE = require("../round/phase/round-over-phase.js").type;
+var ROUND_OVER_TYPE = require("../phase/round-over-phase.js").type;
 
 module.exports = function GameHistoryHandler() {
 
