@@ -6,7 +6,7 @@ var EventEmitter = require("events").EventEmitter;
  * @returns {{start: start, update: update, isActive: isActive, on: (*|function(this:(*|EventEmitter))), events: {}}}
  * @constructor
  */
-module.exports = function RoundHandler(phases) {
+module.exports = function RoundHandler(phases) { //TODO: rename phaseHandler
     var eventEmitter = new EventEmitter();
     var events = {};
     events.NEW_PHASE_STARTED = "newPhaseStarted";
