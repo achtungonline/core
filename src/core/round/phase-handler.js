@@ -1,16 +1,16 @@
 var EventEmitter = require("events").EventEmitter;
 
 /**
- * Responsible for a game round.
+ * Responsible for the different phases during the game.
+ * notStartedPhase | startPhase | playPhase | roundOverPhase
  * @param phases
  * @returns {{start: start, update: update, isActive: isActive, on: (*|function(this:(*|EventEmitter))), events: {}}}
  * @constructor
  */
-module.exports = function RoundHandler(phases) { //TODO: rename phaseHandler
+module.exports = function PhaseHandler(phases) {
     var eventEmitter = new EventEmitter();
     var events = {};
     events.NEW_PHASE_STARTED = "newPhaseStarted";
-
     var currentPhaseIndex = 0;
 
     function start(gameState) {
@@ -19,6 +19,8 @@ module.exports = function RoundHandler(phases) { //TODO: rename phaseHandler
 
     function startCurrentPhase(gameState) {
         getCurrentPhase().start(gameState);
+        console.log(gameState.phase);
+        gameState.phase = getCurrentPhase().type;
         eventEmitter.emit(events.NEW_PHASE_STARTED, getCurrentPhase().type, gameState);
     }
 

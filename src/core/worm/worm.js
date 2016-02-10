@@ -5,9 +5,7 @@ module.exports = function Worm(args) {
         head: args.head,
         direction: args.direction,
         speed: args.speed,
-        defaultSpeed: args.speed,
         turningSpeed: args.turningSpeed,
-        defaultTurningSpeed: args.turningSpeed,
         alive: args.alive,
         jump: {
             remainingJumpTime: 0,

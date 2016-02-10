@@ -49,12 +49,6 @@ startPhase.StartPhase = function StartPhase(deps) {
         });
     }
 
-    function immobilizeWorms(worms) {
-        playerUtils.forEachAliveWorm(worms, function (worm) {
-            wormHandler.setSpeed(worm, 0);
-        });
-    }
-
     function createWorms(gameState) {
         playerUtils.forEachAlivePlayer(gameState.players, function (player) {
             gameState.worms.push(wormFactory.create(player.id));
@@ -66,7 +60,6 @@ startPhase.StartPhase = function StartPhase(deps) {
         createWorms(gameState);  //TODO: Might want to do this and setWormStartingPos together
         setWormStartingPositions(gameState.worms, gameState.map);
         setWormStartingDirections(gameState.worms);
-        immobilizeWorms(gameState.worms);
     }
 
     function update(gameState, deltaTime) {
@@ -86,9 +79,10 @@ startPhase.StartPhase = function StartPhase(deps) {
     }
 
     function end(gameState) {
-        playerUtils.forEachAliveWorm(gameState.worms, function setOriginalPlayerSpeeds(worm) {
-            wormHandler.setSpeed(worm, worm.defaultSpeed);
-        });
+        //TODO set not startPhase
+        //playerUtils.forEachAliveWorm(gameState.worms, function setOriginalPlayerSpeeds(worm) {
+        //    wormHandler.setSpeed(worm, worm.defaultSpeed);
+        //});
     }
 
     function isActive(gameState) {

@@ -1,5 +1,5 @@
 var PhaseFactory = require("./phase-factory.js");
-var RoundHandler = require("./round-handler.js");
+var PhaseHandler = require("./phase-handler.js");
 
 module.exports = function RoundHandlerFactory(deps) {
     var phaseFactory = PhaseFactory(deps);
@@ -9,7 +9,7 @@ module.exports = function RoundHandlerFactory(deps) {
         phases.push(phaseFactory.createStartPhase());
         phases.push(phaseFactory.createPlayPhase());
         phases.push(phaseFactory.createRoundOverPhase());
-        return RoundHandler(phases);
+        return PhaseHandler(phases);
     }
 
     return {

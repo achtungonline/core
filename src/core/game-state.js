@@ -10,6 +10,6 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         playAreaUpdateBuffer: playAreaUpdateBuffer,
         gameActive: false,
         phaseTimer: 0,                              // Time left until next phase starts (only interesting between startPhase and playPhase)
-        phase: 'noPhase'                            // notStartedPhase | startPhase | playPhase | roundOverPhase
+        phase: "notStartedPhase"                    // notStartedPhase | startPhase | playPhase | roundOverPhase
     };
 };

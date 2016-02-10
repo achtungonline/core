@@ -69,7 +69,10 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         jumpHandler.update(deltaTime, worm);
         updateBody();
         updateDirection();
-        updatePosition();
+        if (gameState.phase === "playPhase") {
+            // We stand still during the start-phase
+            updatePosition();
+        }
         collisionDetection();
     }
 
@@ -82,32 +85,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         worm.direction = direction;
     }
 
-    function changeSize(worm, sizeChange) {
-        setHead(worm, shapeModifierI.changeSize(worm.head, sizeChange));
-    }
-
-    function setSpeed(worm, speed) {
-        worm.speed = speed;
-    }
-
-    function changeSpeed(worm, speedChange) {
-        setSpeed(worm, worm.speed + speedChange);
-    }
-
-    function setTurningSpeed(worm, turningSpeed) {
-        worm.turningSpeed = turningSpeed;
-    }
-
-    function changeTurningSpeed(worm, turningSpeedChange) {
-        setTurningSpeed(worm, worm.turningSpeed + turningSpeedChange);
-    }
-
     return {
-        setSpeed: setSpeed,
-        changeSpeed: changeSpeed,
-        setTurningSpeed: setTurningSpeed,
-        changeTurningSpeed: changeTurningSpeed,
-        changeSize: changeSize,
         setDirection: setDirection,
         setHead: setHead,
         update: update,
