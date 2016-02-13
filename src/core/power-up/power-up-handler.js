@@ -12,7 +12,12 @@ module.exports = function PowerUpHandler(deps) {
         var powerUps = gameState.powerUps;
         for (var i = 0; i < powerUps.length; i++) {
             if (powerUps[i].id === powerUp.id) {
-                deps.effectHandler.activateEffect(gameState, worm.id, powerUp.id);
+                if (powerUp.affects === "self" || powerUp.affects === "all") {
+                    deps.effectHandler.activateEffect(gameState, worm.id, powerUp.id);
+                }
+                if (powerUp.affects === "others" || powerUp.affects === "all") {
+                    gameStateFunctions.getEnemyWorms(gameState, worm.id).forEach(w => deps.effectHandler.activateEffect(gameState, w.id, powerUp.id));
+                }
 
                 powerUps.splice(i, 1);
                 console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " was taken.");

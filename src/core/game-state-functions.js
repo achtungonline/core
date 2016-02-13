@@ -64,6 +64,10 @@ function getEffect(gameState, effectId) {
     return gameState.effects.find(e => e.id === effectId);
 }
 
+function getEnemyWorms(gamesState, wormId) {
+    return gamesState.worms.filter(w => w.playerId !== getWorm(gamesState, wormId).playerId);
+}
+
 function getPowerUp(gameState, powerUpId) {
     return gameState.powerUps.find(p => p.id === powerUpId);
 }
@@ -116,6 +120,7 @@ module.exports = {
     getEffect: getEffect,
     getEffectDefinitions: effectDefinitions,
     getPowerUpDefinitions: powerUpDefinitions,
+    getEnemyWorms: getEnemyWorms,
     getPowerUp: getPowerUp,
     getWorm: getWorm,
     getWormSize: getWormSize,
