@@ -1,10 +1,6 @@
-var ShapeModifierIFactory = require("./geometry/shape-modifier-immutable-factory.js");
-var shapeModifierIFactory = ShapeModifierIFactory();
-var shapeModifierI = shapeModifierIFactory.create(); //TODO: Fix this (ML)
-
-
 var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
+var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
 
 /**
  * A bunch of functions for reading and updating data on the gameState
@@ -12,34 +8,49 @@ var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
 
 
 var effectDefinitions = {};
-effectDefinitions["speed"] = speedEffectDefinition;
-effectDefinitions["size"] = sizeEffectDefinition;
+effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
+effectDefinitions[sizeEffectDefinition.type] = sizeEffectDefinition;
+effectDefinitions[turningSpeedEffectDefinition.type] = turningSpeedEffectDefinition;
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
     name: "Speed",
-    effectType: "speed",
+    effectType: speedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 3 / 2,
     affects: "self"
 };
 powerUpDefinitions["slow"] = {
     name: "Slow",
-    effectType: "speed",
+    effectType: speedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2 / 3,
     affects: "others"
 };
 powerUpDefinitions["fat"] = {
     name: "Fat",
-    effectType: "size",
+    effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2,
     affects: "self"
 };
 powerUpDefinitions["slim"] = {
     name: "Slim",
-    effectType: "size",
+    effectType: sizeEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 0.5,
+    affects: "others"
+};
+powerUpDefinitions["quickTurn"] = {
+    name: "Quick Turn",
+    effectType: turningSpeedEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 2,
+    affects: "self"
+};
+powerUpDefinitions["slowTurn"] = {
+    name: "Slow Turn",
+    effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 0.5,
     affects: "others"
@@ -77,9 +88,14 @@ function getWormSpeed(gameState, wormId) {
     return (newSpeed < 0) ? 0 : newSpeed;
 }
 
+function getWormTurningSpeed(gameState, wormId) {
+    var newTurningSpeed = transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).turningSpeed, 'changeTurningSpeed');
+    return (newTurningSpeed < 0) ? 0 : newTurningSpeed;
+}
+
 /**
  * Transform the given initValue based on effects owned by wormId. Each effect owned by wormId that has the function effectFunctionName in its definition will be called and the value will be changed in a pipe-line fashion.
- * Available effectFunctionNames: "changeSpeed"
+ * Available effectFunctionNames: "changeSpeed", "changeTurningSpeed", "changeSize"
  */
 function transformValueUsingEffects(gameState, wormId, initValue, effectFunctionName) {
     return getEffectsWithFunction(gameState, wormId, effectFunctionName).reduce(function (accValue, effect) {
@@ -104,5 +120,6 @@ module.exports = {
     getWorm: getWorm,
     getWormSize: getWormSize,
     getWormSpeed: getWormSpeed,
+    getWormTurningSpeed: getWormTurningSpeed,
     getWormEffects: getWormEffects
 };

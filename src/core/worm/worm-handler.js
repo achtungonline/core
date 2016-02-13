@@ -40,7 +40,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         function updateDirection() {
-            var direction = worm.direction + playerUtils.getPlayerById(gameState.players, worm.playerId).steering * worm.turningSpeed * deltaTime;
+            var direction = worm.direction + playerUtils.getPlayerById(gameState.players, worm.playerId).steering * gameStateFunctions.getWormTurningSpeed(gameState, worm.id) * deltaTime;
             setDirection(worm, direction);
         }
 
