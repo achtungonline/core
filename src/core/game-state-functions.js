@@ -1,25 +1,47 @@
+var ShapeModifierIFactory = require("./geometry/shape-modifier-immutable-factory.js");
+var shapeModifierIFactory = ShapeModifierIFactory();
+var shapeModifierI = shapeModifierIFactory.create(); //TODO: Fix this (ML)
+
+
+var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
+var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
+
 /**
  * A bunch of functions for reading and updating data on the gameState
  */
 
-var speedEffectDefinition = require("./power-up/effect-definitions/speed-effect.js");
 
 var effectDefinitions = {};
 effectDefinitions["speed"] = speedEffectDefinition;
+effectDefinitions["size"] = sizeEffectDefinition;
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
     name: "Speed",
     effectType: "speed",
     effectDuration: 5,
-    effectStrength: 1,
+    effectStrength: 3 / 2,
     affects: "self"
 };
 powerUpDefinitions["slow"] = {
     name: "Slow",
     effectType: "speed",
     effectDuration: 5,
-    effectStrength: -1,
+    effectStrength: 2 / 3,
+    affects: "others"
+};
+powerUpDefinitions["fat"] = {
+    name: "Fat",
+    effectType: "size",
+    effectDuration: 5,
+    effectStrength: 2,
+    affects: "self"
+};
+powerUpDefinitions["slim"] = {
+    name: "Slim",
+    effectType: "size",
+    effectDuration: 5,
+    effectStrength: 0.5,
     affects: "others"
 };
 
@@ -44,9 +66,15 @@ function getWormEffects(gameState, wormId) {
         return effect.wormId === wormId;
     });
 }
+function getWormSize(gameState, wormId) {
+    var newSize = transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).size, 'changeSize');
+    return (newSize < 1) ? 1 : newSize
+}
+
 
 function getWormSpeed(gameState, wormId) {
-    return transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).speed, 'changeSpeed');
+    var newSpeed = transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).speed, 'changeSpeed');
+    return (newSpeed < 0) ? 0 : newSpeed;
 }
 
 /**
@@ -74,6 +102,7 @@ module.exports = {
     getPowerUpDefinitions: powerUpDefinitions,
     getPowerUp: getPowerUp,
     getWorm: getWorm,
+    getWormSize: getWormSize,
     getWormSpeed: getWormSpeed,
     getWormEffects: getWormEffects
 };

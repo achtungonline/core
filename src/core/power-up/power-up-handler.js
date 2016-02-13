@@ -65,7 +65,7 @@ module.exports = function PowerUpHandler(deps) {
 
         function attemptSpawnRandomPowerUp() {
             var powerUpDefinition = deps.random.randomObjectValue(gameStateFunctions.getPowerUpDefinitions);
-            var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration);
+            var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
             powerUp = attemptGetPowerUpWithRandomPos(powerUp);
             if (powerUp !== undefined) {
                 console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " spawned.");

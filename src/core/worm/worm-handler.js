@@ -34,10 +34,16 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
     }
 
     function update(gameState, deltaTime, worm) {
+        function updateHead() {
+            var wormSize = gameStateFunctions.getWormSize(gameState, worm.id);
+            worm.head = shapeModifierI.setSize(worm.head, wormSize, wormSize);
+        }
+
         function updateDirection() {
             var direction = worm.direction + playerUtils.getPlayerById(gameState.players, worm.playerId).steering * worm.turningSpeed * deltaTime;
             setDirection(worm, direction);
         }
+
 
         function updateBody() {
             var bodyPart = clone(worm.head);
@@ -62,6 +68,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             }
         }
 
+        updateHead();
         jumpHandler.update(deltaTime, worm);
         if (gameState.phase === "playPhase" && gameStateFunctions.getWormSpeed(gameState, worm.id) > 0 && !jumpHandler.isJumping(worm)) {
             // No body update during the start phase and also only render the body if we are not standing still
@@ -69,7 +76,6 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
         updateDirection();
         if (gameState.phase === "playPhase") {
-            // We stand still during the start-phase
             updatePosition();
         }
         collisionDetection();

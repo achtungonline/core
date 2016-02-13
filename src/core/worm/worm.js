@@ -3,6 +3,7 @@ module.exports = function Worm(args) {
         id: args.id,
         playerId: args.playerId,
         head: args.head,
+        size: args.size,
         direction: args.direction,
         speed: args.speed,
         turningSpeed: args.turningSpeed,

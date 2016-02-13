@@ -2,7 +2,7 @@ var Shape = require("./shape.js");
 
 var circleShape = module.exports = {};
 
-circleShape.type = 1;
+circleShape.type = "circle";
 
 circleShape.Circle = function(radius, x, y) {
     var area = Math.PI * radius * radius;

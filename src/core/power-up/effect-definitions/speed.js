@@ -11,11 +11,11 @@ function activate(gameState, strength, duration, wormId) {
 }
 
 function changeSpeed(gameState, effect, wormSpeed) {
-    return wormSpeed + wormSpeed * (0.5 * effect.strength);
+    return wormSpeed * effect.strength;
 }
 
 module.exports = {
     type: TYPE,
     activate: activate,
-    changeSpeed
+    changeSpeed: changeSpeed
 };

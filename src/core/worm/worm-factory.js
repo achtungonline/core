@@ -13,6 +13,7 @@ module.exports = function WormFactory(idGenerator) {
             id: idGenerator(),
             playerId: playerId,
             head: shapeFactory.createCircle(WORM_RADIUS, 10, 10),
+            size: WORM_RADIUS * 2,
             direction: 0,
             speed: WORM_SPEED,
             turningSpeed: TURNING_SPEED,

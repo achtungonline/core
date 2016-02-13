@@ -3,25 +3,25 @@ var rectType = require("./shape/rectangle.js").type;
 
 module.exports = function ShapeModifierImmutable(shapeFactory) {
 
-    var changeSizeFunctions = getChangeSizeFunctions();
+    var setSizeFunctions = getSetSizeFunctions();
 
-    function getChangeSizeFunctions() {
+    function getSetSizeFunctions() {
         var functions = {};
 
-        functions[circleType] = function changeCircleSize(circle, diameterDiff) {
-            var radiusDiff = diameterDiff / 2;
-            var newRadius = circle.radius + radiusDiff;
+        functions[circleType] = function setCircleSize(circle, newDiameter) {
+            var newRadius = newDiameter / 2;
+            var radiusDiff = newRadius - circle.radius;
             if (newRadius < 0) {
                 throw Error("Changing size of a circle from size: " + circle.radius + " to: " + newRadius);
             }
             return shapeFactory.createCircle(newRadius, circle.x - radiusDiff, circle.y - radiusDiff);
         };
-        functions[rectType] = function changeRectSize(rect, widthDiff, heightDiff) {
-            if (heightDiff === undefined) {
-                heightDiff = widthDiff;
+        functions[rectType] = function setRectSize(rect, newWidth, newHeight) {
+            if (newHeight === undefined) {
+                newHeight = newWidth;
             }
-            var newWidth = rect.width + widthDiff;
-            var newHeight = rect.height + heightDiff;
+            var widthDiff = newWidth - rect.width;
+            var heightDiff = newHeight - rect.height;
             if (newWidth < 0 || newHeight < 0) {
                 throw Error("Changing size of rectangle from w/h: " + rect.width + "/" + rect.height + "  to: " + newWidth + "/" + newHeight);
             }
@@ -31,9 +31,14 @@ module.exports = function ShapeModifierImmutable(shapeFactory) {
         return functions;
     }
 
-    function changeSize(shape) {
-        var changeSizeFunction = changeSizeFunctions[shape.type];
-        return changeSizeFunction.apply(this, arguments);
+    function changeSize(shape, boundingBoxWidthDiff, boundingBoxHeightDiff) {
+        var changeSizeFunction = setSizeFunctions[shape.type];
+        return changeSizeFunction(shape, shape.boundingBox.width + boundingBoxWidthDiff, shape.boundingBox.height + boundingBoxHeightDiff);
+    }
+
+    function setSize(shape, boundingBoxWidth, boundingBoxHeight) {
+        var changeSizeFunction = setSizeFunctions[shape.type];
+        return changeSizeFunction(shape, boundingBoxWidth, boundingBoxHeight);
     }
 
     var setPositionFunctions = getSetPositionFunctions();
@@ -65,6 +70,7 @@ module.exports = function ShapeModifierImmutable(shapeFactory) {
     return {
         move: move,
         setPosition: setPosition,
-        changeSize: changeSize
+        changeSize: changeSize,
+        setSize: setSize
     };
 };
