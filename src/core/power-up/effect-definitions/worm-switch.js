@@ -1,10 +1,11 @@
 var playerUtils = require("../../player/player-utils.js");
+var random = require("../../util/random");
 
 var TYPE = "wormSwitch";
 
 function activate(gameState, strength, duration, wormId) {
     var aliveWorms = playerUtils.getAliveWorms(gameState.worms);
-    var perm = Math.random.randomPermutation(aliveWorms.length, true); //TODO must fix random here (ML)
+    var perm = random.randomPermutation(gameState, aliveWorms.length, true); //TODO must fix random here (ML)
     for (var i = 0; i < perm.length; i++) {
         if (perm[i] !== -1) {
             var index = i;

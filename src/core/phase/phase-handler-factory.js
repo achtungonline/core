@@ -20,7 +20,6 @@ module.exports = function RoundHandlerFactory(deps) {
             shapeSpatialRelations: shapeSpatialRelations,
             mapUtils: mapUtils,
             playerUtils: playerUtils,
-            random: deps.random,
             wormFactory: deps.wormFactory
         };
 

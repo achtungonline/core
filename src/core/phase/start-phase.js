@@ -1,6 +1,7 @@
 var PHASE_DURATION = 2.5; // seconds
 
 var startPhase = module.exports = {};
+var random = require("./../util/random.js");
 
 startPhase.type = "startPhase";
 
@@ -11,7 +12,7 @@ startPhase.StartPhase = function StartPhase(deps) {
     var playerUtils = deps.playerUtils;
     var wormHandler = deps.wormHandler;
 
-    function setWormStartingPositions(worms, map) {
+    function setWormStartingPositions(gameState, worms, map) {
         function isCollidingWithWorms(worms, shape) {
             for (var i in worms) {
                 var worm = worms[i];
@@ -23,7 +24,7 @@ startPhase.StartPhase = function StartPhase(deps) {
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            return mapUtils.getShapeRandomlyInsidePlayableArea(map, worm.head, deps.random);
+            return mapUtils.getShapeRandomlyInsidePlayableArea(gameState, map, worm.head);
         }
 
         var updatedWorms = [];
@@ -42,9 +43,9 @@ startPhase.StartPhase = function StartPhase(deps) {
         });
     }
 
-    function setWormStartingDirections(worms) {
+    function setWormStartingDirections(gameState, worms) {
         worms.forEach(function (worm) {
-            var direction = deps.random.random() * Math.PI * 2;
+            var direction = random.random(gameState) * Math.PI * 2;
             wormHandler.setDirection(worm, direction);
         });
     }
@@ -58,8 +59,8 @@ startPhase.StartPhase = function StartPhase(deps) {
     function start(gameState) {
         gameState.phaseTimer = PHASE_DURATION;
         createWorms(gameState);  //TODO: Might want to do this and setWormStartingPos together
-        setWormStartingPositions(gameState.worms, gameState.map);
-        setWormStartingDirections(gameState.worms);
+        setWormStartingPositions(gameState, gameState.worms, gameState.map);
+        setWormStartingDirections(gameState, gameState.worms);
     }
 
     function update(gameState, deltaTime) {

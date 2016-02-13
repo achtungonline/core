@@ -5,6 +5,7 @@ var RoundingModes = require("../core/geometry/shape-to-grid-converter.js").Round
 var PlayArea = require("../core/play-area/play-area.js");
 var Trajectory = require("../core/geometry/trajectory/trajectory.js");
 var Curve = require("../core/geometry/trajectory/curve.js");
+var random = require("../core/util/random.js");
 
 var playerUtils = require("../core/player/player-utils.js");
 
@@ -13,7 +14,8 @@ var TYPE = "pathCheckerAi";
 var SIMULATION_DELTA = 0.15;
 
 //TODO Remove Player from all (most) functions
-module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandler, random) {
+module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandler) {
+    var seedState = {seed: 10}; //TODO: Local state. AI needs its own "state" with a seed. In order to not affect the core seed
 
     collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, worm) {
         playerUtils.getPlayerById(gameState.players, worm.playerId).aiData.simulationCollision = true;
@@ -45,7 +47,7 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
             } else {
                 aiData.trajectory = getBestSunFanTrajectory(gameState, player, worm);
             }
-            aiData.timeUntilNextSimulation = random.randInt(200, 300) / 1000.0;
+            aiData.timeUntilNextSimulation = random.randInt(seedState, 200, 300) / 1000.0;
         } else {
             if (worm.speed > 0) {
                 trajectoryHandler.removeDeltaTime(aiData.trajectory, deltaTime);
@@ -78,7 +80,7 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
                 bestTrajectories.push(trajectory);
             }
         });
-        return random.randomElement(bestTrajectories);
+        return random.randomElement(seedState, bestTrajectories);
     }
 
     function getBestStraightTrajectory(gameState, player, worm) {

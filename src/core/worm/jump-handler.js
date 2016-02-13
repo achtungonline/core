@@ -4,13 +4,15 @@ module.exports = function JumpHandler(timeBasedChanceTrigger, jumpLength, jumpMi
         return worm.jump.remainingJumpTime > 0;
     }
 
-    function update(deltaTime, worm) {
+    function update(gameState, deltaTime, worm) {
         function updateRemainingJumpTime() {
             worm.jump.remainingJumpTime -= deltaTime;
         }
+
         function updateTimeSinceLastJump() {
             worm.jump.timeSinceLastJump += deltaTime;
         }
+
         function startJumping() {
             if (worm.speed > 0) {
                 worm.jump.remainingJumpTime = jumpLength / worm.speed;
@@ -31,7 +33,7 @@ module.exports = function JumpHandler(timeBasedChanceTrigger, jumpLength, jumpMi
             return;
         }
 
-        timeBasedChanceTrigger.update(deltaTime, startJumping);
+        timeBasedChanceTrigger.update(gameState, deltaTime, startJumping);
     }
 
     return {

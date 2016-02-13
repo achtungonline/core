@@ -6,7 +6,7 @@ var idGenerator = require("./../util/id-generator.js").indexCounterId(0);
 
 module.exports = function PowerUpHandlerFactory(deps) {
     function create() {
-        var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(0.3), deps.random);
+        var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(0.3));
 
         var dependencies = {
             effectHandler: deps.effectHandler,
@@ -14,8 +14,7 @@ module.exports = function PowerUpHandlerFactory(deps) {
             timeBasedChanceTrigger: timeBasedChanceTrigger,
             shapeSpatialRelations: shapeSpatialRelations,
             idGenerator: idGenerator,
-            mapUtils: mapUtils,
-            random: deps.random
+            mapUtils: mapUtils
         };
 
         return PowerUpHandler(dependencies);

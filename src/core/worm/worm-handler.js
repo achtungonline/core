@@ -69,7 +69,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         updateHead();
-        jumpHandler.update(deltaTime, worm);
+        jumpHandler.update(gameState, deltaTime, worm);
         if (gameState.phase === "playPhase" && gameStateFunctions.getWormSpeed(gameState, worm.id) > 0 && !jumpHandler.isJumping(worm)) {
             // No body update during the start phase and also only render the body if we are not standing still
             updateBody();

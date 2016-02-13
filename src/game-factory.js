@@ -14,7 +14,6 @@ var PowerUpHandlerFactory = require("./core/power-up/power-up-handler-factory.js
 var EffectHandlerFactory = require("./core/power-up/effect-handler-factory.js");
 var WormFactory = require("./core/worm/worm-factory.js");
 var idGenerator = require("./core/util/id-generator.js");
-var Random = require("./core/util/random.js");
 var PlayerFactory = require("./core/player/player-factory.js");
 var playerUtils = require("./core/player/player-utils");
 
@@ -25,8 +24,8 @@ module.exports = function GameFactory() {
 
     function create(options) {
         var map = options.map;
+        var seed = options.seed;
         var playerConfigs = options.playerConfigs;
-        var random = options.random;
 
         var players = playerConfigs.map(function (playerConfig) {
             return playerFactory.create(playerConfig.id);
@@ -39,7 +38,7 @@ module.exports = function GameFactory() {
         var playAreaHandler = playAreaHandlerFactory.create();
 
         var worms = []; // The worms get created in startPhase
-        var gameState = GameState(players, worms, map, playArea, [], random.getSeed());
+        var gameState = GameState(players, worms, map, playArea, [], seed);
 
         map.blockingShapes.forEach(function (blockingShape) {
             playAreaHandler.applyObstacleShape(gameState, blockingShape);
@@ -48,13 +47,11 @@ module.exports = function GameFactory() {
         var wormBodyImmunityHandler = WormBodyImmunityHandler();
         var collisionHandler = CollisionHandlerFactory(playAreaHandler, wormBodyImmunityHandler).create();
 
-        var effectHandlerFactory = EffectHandlerFactory({
-            random: random
-        });
+        var effectHandlerFactory = EffectHandlerFactory();
         var effectHandler = effectHandlerFactory.create();
 
 
-        var wormHandlerFactory = WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, random, effectHandler);
+        var wormHandlerFactory = WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, effectHandler);
         var wormHandler = wormHandlerFactory.create();
 
         var playerHandler = PlayerHandler(wormHandler);
@@ -62,30 +59,27 @@ module.exports = function GameFactory() {
         var powerUpHandlerFactory = PowerUpHandlerFactory({
             wormHandler: wormHandler,
             effectHandler: effectHandler,
-            collisionHandler: collisionHandler,
-            random: random
+            collisionHandler: collisionHandler
         });
         var powerUpHandler = powerUpHandlerFactory.create();
 
         var wormFactory = WormFactory(idGenerator.indexCounterId(0));
 
-        var roundHandlerFactory = PhaseHandlerFactory({
+        var phaseHandlerFactory = PhaseHandlerFactory({
             wormFactory: wormFactory,
             wormHandler: wormHandler,
             playerHandler: playerHandler,
             powerUpHandler: powerUpHandler,
-            effectHandler: effectHandler,
-            random: random
+            effectHandler: effectHandler
         });
 
-        var roundHandler = roundHandlerFactory.create();
+        var roundHandler = phaseHandlerFactory.create();
 
         var gameEngine = GameEngine(roundHandler, playAreaHandler);
 
         var game = Game(gameState, gameEngine, playerHandler);
 
-        var aiRandom = Random(random.getSeed()); // Give AI their own random so that they don't interfere with stuff. Replay does not play AI...
-        var aiHandler = AIHandlerFactory(game, playAreaHandler, aiRandom).create();
+        var aiHandler = AIHandlerFactory(game, playAreaHandler).create();
 
         playerConfigs.filter(function (playerConfig) {
             return playerConfig.type === 'bot';

@@ -3,7 +3,7 @@ var EventEmitter = require("events").EventEmitter;
 var forEach = require("./util/for-each");
 
 module.exports = function Match(options) {
-    var random = options.random;
+    var seed = options.seed;
     var gameFactory = options.gameFactory;
     var matchConfig = options.matchConfig;
 
@@ -29,7 +29,7 @@ module.exports = function Match(options) {
 
         if (true) { //TODO Fix this logic when score is implemented
             currentGame = gameFactory.create({
-                random: random,
+                seed: seed,
                 map: matchConfig.map,
                 playerConfigs: matchConfig.playerConfigs
             });

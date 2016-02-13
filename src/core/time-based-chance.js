@@ -1,5 +1,6 @@
-var timeBasedChance = module.exports = {};
 
+var random = require("./util/random.js");
+var timeBasedChance = module.exports = {};
 
 /**
  * Uses a time based chance calculator and at each call to update, there is a chance that that the given callback will be triggered.
@@ -7,14 +8,14 @@ var timeBasedChance = module.exports = {};
  *
  * @param timeBasedChanceCalculator
  */
-timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator, random) {
+timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator) {
 
-    function update(deltaTime, callback) {
+    function update(gameState, deltaTime, callback) {
 
         timeBasedChanceCalculator.update(deltaTime);
 
         var chance = timeBasedChanceCalculator.getCurrentChance();
-        if (chance >= random.random()) {
+        if (chance >= random.random(gameState)) {
             timeBasedChanceCalculator.reset();
             callback();
         }

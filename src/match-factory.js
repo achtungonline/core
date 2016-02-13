@@ -5,11 +5,11 @@ module.exports = function MatchFactory() {
     var gameFactory = GameFactory();
 
     function create(options) {
-        var random = options.random;
+        var seed = options.seed;
         var matchConfig = options.matchConfig;
         return Match({
             gameFactory: gameFactory,
-            random: random,
+            seed: seed,
             matchConfig: matchConfig
         });
     }

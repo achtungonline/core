@@ -1,5 +1,6 @@
 var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
 var shapeModifierI = require("./../geometry/shape-modifier-immutable-factory.js")().create();
+var random = require("./../util/random.js");
 
 var utils = module.exports = {};
 
@@ -16,13 +17,13 @@ utils.intersectsBlockingShapes = function (map, shape) {
     return false;
 };
 
-utils.getRandomPositionInsidePlayableArea = function (map, shape, random) {
+utils.getRandomPositionInsidePlayableArea = function (gameState, map, shape) {
     var pos = {};
     var i = 0;
     var shapeWithNewPos = shape;
     while (i < 100000) {
-        pos.x = random.random() * map.width;
-        pos.y = random.random() * map.height;
+        pos.x = random.random(gameState) * map.width;
+        pos.y = random.random(gameState) * map.height;
         shapeWithNewPos = shapeModifierI.setPosition(shapeWithNewPos, pos.x, pos.y);
         if (utils.isInsideMap(map, shapeWithNewPos) && !utils.intersectsBlockingShapes(map, shapeWithNewPos)) {
             return pos;
@@ -32,7 +33,7 @@ utils.getRandomPositionInsidePlayableArea = function (map, shape, random) {
     throw Error("Failed to find a position inside playable area for the given shape");
 };
 
-utils.getShapeRandomlyInsidePlayableArea = function (map, shape, random) {
-    var newPos = utils.getRandomPositionInsidePlayableArea(map, shape, random);
+utils.getShapeRandomlyInsidePlayableArea = function (gameState, map, shape) {
+    var newPos = utils.getRandomPositionInsidePlayableArea(gameState, map, shape);
     return shapeModifierI.setPosition(shape, newPos.x, newPos.y);
 };

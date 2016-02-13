@@ -1,76 +1,62 @@
 var forEach = require("./for-each.js");
 
-module.exports = function Random(seed) {
+function random(gameState) {
+    var x = Math.sin(gameState.seed++) * 10000;
+    return x - Math.floor(x);
+}
 
-    var currentSeed = seed || Math.random() + 1; //TODO: remove local state (ML)
-    function random() {
-        var x = Math.sin(currentSeed++) * 10000;
-        return x - Math.floor(x);
+function randInt(gameState, low, high) {
+    return Math.floor(random(gameState) * (high - low) + low);
+}
+
+function randomElementIndex(gameState, list) {
+    return randInt(gameState, 0, list.length);
+}
+
+function randomElement(gameState, list) {
+    return list[randomElementIndex(gameState, list)];
+}
+
+function randomObjectProperty(gameState, object) {
+    var list = [];
+    forEach(object, function (value, property) {
+        list.push(property);
+    });
+    return randomElement(gameState, list);
+}
+
+function randomObjectValue(gameState, object) {
+    var list = [];
+    forEach(object, function (value, property) {
+        list.push(property);
+    });
+    return object[randomElement(gameState, list)];
+}
+
+
+function randomPermutation(gameState, n, avoidFixedPoints) {
+    var elementsLeft = [];
+    for (var i = 0; i < n; i++) {
+        elementsLeft.push(i);
     }
-
-    function setSeed(seed) {
-        currentSeed = seed;
-    }
-
-    function getSeed() {
-        return seed;
-    }
-
-    function randInt(low, high) {
-        return Math.floor(random() * (high - low) + low);
-    }
-
-    function randomElementIndex(list) {
-        return randInt(0, list.length);
-    }
-
-    function randomElement(list) {
-        return list[randomElementIndex(list)];
-    }
-
-    function randomObjectProperty(object) {
-        var list = [];
-        forEach(object, function(value, property) {
-            list.push(property);
-        });
-        return randomElement(list);
-    }
-
-    function randomObjectValue(object) {
-        var list = [];
-        forEach(object, function(value, property) {
-            list.push(property);
-        });
-        return object[randomElement(list)];
-    }
-
-
-    function randomPermutaion(n, avoidFixedPoints) {
-        var elementsLeft = [];
-        for (var i = 0; i < n; i++) {
-            elementsLeft.push(i);
+    var res = new Array(n);
+    for (i = 0; i < n; i++) {
+        var index = randomElementIndex(gameState, elementsLeft);
+        while (avoidFixedPoints && n > 1 && (elementsLeft[index] === i || i === n - 2 && elementsLeft[index ^ 1] === n - 1)) {
+            index = randomElementIndex(gameState, elementsLeft);
         }
-        var res = new Array(n);
-        for (i = 0; i < n; i++) {
-            var index = randomElementIndex(elementsLeft);
-            while (avoidFixedPoints && n > 1 && (elementsLeft[index] === i || i === n - 2 && elementsLeft[index^1] === n - 1)) {
-                index = randomElementIndex(elementsLeft);
-            }
-            res[i] = elementsLeft.splice(index, 1)[0];
-        }
-        return res;
-
+        res[i] = elementsLeft.splice(index, 1)[0];
     }
+    return res;
 
-    return {
-        setSeed: setSeed,
-        getSeed: getSeed,
-        random: random,
-        randInt: randInt,
-        randomElementIndex: randomElementIndex,
-        randomElement: randomElement,
-        randomObjectProperty: randomObjectProperty,
-        randomObjectValue: randomObjectValue,
-        randomPermutation: randomPermutaion
-    };
+}
+
+module.exports = {
+    random: random,
+    randInt: randInt,
+    randomElementIndex: randomElementIndex,
+    randomElement: randomElement,
+    randomObjectProperty: randomObjectProperty,
+    randomObjectValue: randomObjectValue,
+    randomPermutation: randomPermutation
 };

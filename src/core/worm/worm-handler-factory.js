@@ -4,9 +4,9 @@ var JumpHandlerFactory = require("./jump-handler-factory.js");
 
 var clone = require("../util/clone.js");
 
-module.exports = function WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, random, effectHandler) {
+module.exports = function WormHandlerFactory(collisionHandler, wormBodyImmunityHandler, playAreaHandler, effectHandler) {
     var shapeModifierIFactory = ShapeModifierIFactory();
-    var jumpHandlerFactory = JumpHandlerFactory(random);
+    var jumpHandlerFactory = JumpHandlerFactory();
 
     function create() {
 

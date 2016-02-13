@@ -3,12 +3,9 @@ var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
 var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
 var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
 
-
-
 /**
  * A bunch of functions for reading and updating data on the gameState
  */
-
 
 var effectDefinitions = {};
 effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
@@ -17,48 +14,48 @@ effectDefinitions[turningSpeedEffectDefinition.type] = turningSpeedEffectDefinit
 effectDefinitions[wormSwitchEffectDefinition.type] = wormSwitchEffectDefinition;
 
 var powerUpDefinitions = {};
-//powerUpDefinitions["speed"] = {
-//    name: "Speed",
-//    effectType: speedEffectDefinition.type,
-//    effectDuration: 5,
-//    effectStrength: 3 / 2,
-//    affects: "self"
-//};
-//powerUpDefinitions["slow"] = {
-//    name: "Slow",
-//    effectType: speedEffectDefinition.type,
-//    effectDuration: 5,
-//    effectStrength: 2 / 3,
-//    affects: "others"
-//};
-//powerUpDefinitions["fat"] = {
-//    name: "Fat",
-//    effectType: sizeEffectDefinition.type,
-//    effectDuration: 5,
-//    effectStrength: 2,
-//    affects: "self"
-//};
-//powerUpDefinitions["slim"] = {
-//    name: "Slim",
-//    effectType: sizeEffectDefinition.type,
-//    effectDuration: 5,
-//    effectStrength: 0.5,
-//    affects: "others"
-//};
-//powerUpDefinitions["quickTurn"] = {
-//    name: "Quick Turn",
-//    effectType: turningSpeedEffectDefinition.type,
-//    effectDuration: 5,
-//    effectStrength: 2,
-//    affects: "self"
-//};
-//powerUpDefinitions["slowTurn"] = {
-//    name: "Slow Turn",
-//    effectType: turningSpeedEffectDefinition.type,
-//    effectDuration: 5,
-//    effectStrength: 0.5,
-//    affects: "others"
-//};
+powerUpDefinitions["speed"] = {
+    name: "Speed",
+    effectType: speedEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 3 / 2,
+    affects: "self"
+};
+powerUpDefinitions["slow"] = {
+    name: "Slow",
+    effectType: speedEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 2 / 3,
+    affects: "others"
+};
+powerUpDefinitions["fat"] = {
+    name: "Fat",
+    effectType: sizeEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 2,
+    affects: "self"
+};
+powerUpDefinitions["slim"] = {
+    name: "Slim",
+    effectType: sizeEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 0.5,
+    affects: "others"
+};
+powerUpDefinitions["quickTurn"] = {
+    name: "Quick Turn",
+    effectType: turningSpeedEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 2,
+    affects: "self"
+};
+powerUpDefinitions["slowTurn"] = {
+    name: "Slow Turn",
+    effectType: turningSpeedEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 0.5,
+    affects: "others"
+};
 //powerUpDefinitions["switcharoonie"] = {
 //    name: "Switcharoonie",
 //    effectType: turningSpeedEffectDefinition.type,
@@ -69,7 +66,7 @@ powerUpDefinitions["keyBindingsSwitch"] = {
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: -1,
-    affects: "self"
+    affects: "others"
 };
 
 
