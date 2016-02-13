@@ -8,6 +8,10 @@ module.exports = function EffectHandler(options) {
         for (var i = effects.length - 1; i >= 0; i--) {
             var effect = effects[i];
             effect.duration -= deltaTime;
+            var effectDefinition = gameStateFunctions.getEffectDefinitions[effect.type];
+            if (effectDefinition.update) {
+                effectDefinition.update(gameState, deltaTime, effect)
+            }
             if (effect.duration <= 0) {
                 effects.splice(i, 1);
             }

@@ -2,6 +2,7 @@ var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
 var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
 var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
+var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
 
 /**
  * A bunch of functions for reading and updating data on the gameState
@@ -12,61 +13,69 @@ effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
 effectDefinitions[sizeEffectDefinition.type] = sizeEffectDefinition;
 effectDefinitions[turningSpeedEffectDefinition.type] = turningSpeedEffectDefinition;
 effectDefinitions[wormSwitchEffectDefinition.type] = wormSwitchEffectDefinition;
+effectDefinitions[drunkEffectDefinition.type] = drunkEffectDefinition;
 
 var powerUpDefinitions = {};
-powerUpDefinitions["speed"] = {
-    name: "Speed",
-    effectType: speedEffectDefinition.type,
+//powerUpDefinitions["speed"] = {
+//    name: "Speed",
+//    effectType: speedEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: 3 / 2,
+//    affects: "self"
+//};
+//powerUpDefinitions["slow"] = {
+//    name: "Slow",
+//    effectType: speedEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: 2 / 3,
+//    affects: "others"
+//};
+//powerUpDefinitions["fat"] = {
+//    name: "Fat",
+//    effectType: sizeEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: 2,
+//    affects: "self"
+//};
+//powerUpDefinitions["slim"] = {
+//    name: "Slim",
+//    effectType: sizeEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: 0.5,
+//    affects: "others"
+//};
+//powerUpDefinitions["quickTurn"] = {
+//    name: "Quick Turn",
+//    effectType: turningSpeedEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: 2,
+//    affects: "self"
+//};
+//powerUpDefinitions["slowTurn"] = {
+//    name: "Slow Turn",
+//    effectType: turningSpeedEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: 0.5,
+//    affects: "others"
+//};
+//powerUpDefinitions["switcharoonie"] = {
+//    name: "Switcharoonie",
+//    effectType: wormSwitchEffectDefinition.type,
+//    affects: "all"
+//};
+//powerUpDefinitions["keyBindingsSwitch"] = {
+//    name: "Switch Keys",
+//    effectType: turningSpeedEffectDefinition.type,
+//    effectDuration: 5,
+//    effectStrength: -1,
+//    affects: "others"
+//};
+powerUpDefinitions["drunk"] = {
+    name: "Drunk",
+    effectType: drunkEffectDefinition.type,
     effectDuration: 5,
-    effectStrength: 3 / 2,
-    affects: "self"
-};
-powerUpDefinitions["slow"] = {
-    name: "Slow",
-    effectType: speedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 2 / 3,
-    affects: "others"
-};
-powerUpDefinitions["fat"] = {
-    name: "Fat",
-    effectType: sizeEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 2,
-    affects: "self"
-};
-powerUpDefinitions["slim"] = {
-    name: "Slim",
-    effectType: sizeEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 0.5,
-    affects: "others"
-};
-powerUpDefinitions["quickTurn"] = {
-    name: "Quick Turn",
-    effectType: turningSpeedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 2,
-    affects: "self"
-};
-powerUpDefinitions["slowTurn"] = {
-    name: "Slow Turn",
-    effectType: turningSpeedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 0.5,
-    affects: "others"
-};
-powerUpDefinitions["switcharoonie"] = {
-    name: "Switcharoonie",
-    effectType: wormSwitchEffectDefinition.type,
-    affects: "all"
-};
-powerUpDefinitions["keyBindingsSwitch"] = {
-    name: "Switch Keys",
-    effectType: turningSpeedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: -1,
-    affects: "others"
+    effectStrength: 1,
+    affects: "self" //TODO others
 };
 
 
@@ -90,6 +99,10 @@ function getWorm(gameState, wormId) {
     return gameState.worms.find(w => w.id === wormId);
 }
 
+function getWormDirection(gameState, wormId) {
+    return transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).direction, 'changeDirection');
+}
+
 function getWormEffects(gameState, wormId) {
     return gameState.effects.filter(function (effect) {
         return effect.wormId === wormId;
@@ -103,7 +116,7 @@ function getWormSize(gameState, wormId) {
 
 function getWormSpeed(gameState, wormId) {
     var newSpeed = transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).speed, 'changeSpeed');
-    return (newSpeed < 0) ? 0 : newSpeed;
+    return (newSpeed < 1) ? 1 : newSpeed;
 }
 
 function getWormTurningSpeed(gameState, wormId) {
@@ -136,6 +149,7 @@ module.exports = {
     getEnemyWorms: getEnemyWorms,
     getPowerUp: getPowerUp,
     getWorm: getWorm,
+    getWormDirection: getWormDirection,
     getWormSize: getWormSize,
     getWormSpeed: getWormSpeed,
     getWormTurningSpeed: getWormTurningSpeed,

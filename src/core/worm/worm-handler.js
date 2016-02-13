@@ -52,8 +52,8 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         function updatePosition() {
-            var xDiff = Math.cos(worm.direction) * gameStateFunctions.getWormSpeed(gameState, worm.id) * deltaTime;
-            var yDiff = Math.sin(worm.direction) * gameStateFunctions.getWormSpeed(gameState, worm.id) * deltaTime;
+            var xDiff = Math.cos(gameStateFunctions.getWormDirection(gameState, worm.id)) * gameStateFunctions.getWormSpeed(gameState, worm.id) * deltaTime;
+            var yDiff = Math.sin(gameStateFunctions.getWormDirection(gameState, worm.id)) * gameStateFunctions.getWormSpeed(gameState, worm.id) * deltaTime;
 
             setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
             wormBodyImmunityHandler.update(worm);
