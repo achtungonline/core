@@ -1,4 +1,5 @@
 var gameStateFunctions = require("../game-state-functions.js");
+var clone = require("../util/clone.js");
 
 module.exports = function EffectHandler(options) {
 
@@ -14,10 +15,20 @@ module.exports = function EffectHandler(options) {
     }
 
     function activateEffect(gameState, wormId, powerUpId) {
+
         var powerUp = gameStateFunctions.getPowerUp(gameState, powerUpId);
         var effect = gameStateFunctions.getEffectDefinitions[powerUp.effectType].activate(gameState, powerUp.effectStrength, powerUp.effectDuration, wormId);
         if (effect) {
-            gameStateFunctions.addEffect(gameState, effect);
+            if (powerUp.affects === "self" || powerUp.affects === "all") {
+                gameStateFunctions.addEffect(gameState, effect);
+            }
+            if (powerUp.affects === "others" || powerUp.affects === "all") {
+                gameStateFunctions.getEnemyWorms(gameState, wormId).forEach(function (worm) {
+                    var clonedEffect = clone(effect);
+                    clonedEffect.wormId = worm.id;
+                    gameStateFunctions.addEffect(gameState, clonedEffect);
+                })
+            }
         }
     }
 
