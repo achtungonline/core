@@ -39,7 +39,7 @@ module.exports = function GameFactory() {
         var playAreaHandler = playAreaHandlerFactory.create();
 
         var worms = []; // The worms get created in startPhase
-        var gameState = GameState(players, worms, map, playArea, []);
+        var gameState = GameState(players, worms, map, playArea, [], random.getSeed());
 
         map.blockingShapes.forEach(function (blockingShape) {
             playAreaHandler.applyObstacleShape(gameState, blockingShape);
