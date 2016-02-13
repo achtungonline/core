@@ -1,6 +1,7 @@
 var circleShape = require("./../geometry/shape/circle.js");
 var PowerUp = require("./power-up.js");
 var clone = require("./../util/clone.js");
+var gameStateFunctions = require("./../game-state-functions.js");
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 var POWER_UP_SHAPE = circleShape.Circle(40);
@@ -11,7 +12,7 @@ module.exports = function PowerUpHandler(deps) {
         var powerUps = gameState.powerUps;
         for (var i = 0; i < powerUps.length; i++) {
             if (powerUps[i].id === powerUp.id) {
-                deps.effectHandler.activateEffect(gameState, worm, powerUp.effectType);
+                deps.effectHandler.activateEffect(gameState, worm.id, powerUp.id);
 
                 powerUps.splice(i, 1);
                 console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " was taken.");
@@ -63,7 +64,7 @@ module.exports = function PowerUpHandler(deps) {
 
 
         function attemptSpawnRandomPowerUp() {
-            var effectType = deps.random.randomElement(deps.effectHandler.getEffectTypes());
+            var effectType = deps.random.randomObjectProperty(gameStateFunctions.getEffectDefinitions);
             var powerUp = PowerUp(deps.idGenerator(), effectType, clone(POWER_UP_SHAPE));
             powerUp = attemptGetPowerUpWithRandomPos(powerUp);
             if (powerUp !== undefined) {

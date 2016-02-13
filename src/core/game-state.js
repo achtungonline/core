@@ -20,17 +20,19 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         powerUps: [
         //  {
         //      id
+        //      name
         //      shape
         //      effectType
-        //      effectStrength
+        //      effectStrength                      // Higher means more potent, negative could mean reversed. For speed effect, -1 means decreased speed for example
+        //      effectDuration                      // The duration for the effect, if it has one
         //  }
         ],
-        effects: [
+        effects: [                                  // Effects only gets created from worms going into powerUps
         //  {
         //      type,
-        //      duration,
+        //      remainingDuration,
         //      wormId,
-        //      strength,
+        //      strength,                           // Comes from the power-ups effectStrength
         //  }
         ],
         map: map,

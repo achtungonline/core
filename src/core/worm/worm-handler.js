@@ -1,5 +1,6 @@
 var EventEmitter = require("events").EventEmitter;
 var playerUtils = require("../player/player-utils.js");
+var gameStateFunctions = require("../game-state-functions.js");
 
 module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, jumpHandler, effectHandler) {
     var eventEmitter = new EventEmitter();
@@ -45,8 +46,8 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         function updatePosition() {
-            var xDiff = Math.cos(worm.direction) * getSpeed(gameState, worm) * deltaTime;
-            var yDiff = Math.sin(worm.direction) * getSpeed(gameState, worm) * deltaTime;
+            var xDiff = Math.cos(worm.direction) * gameStateFunctions.getWormSpeed(gameState, worm.id) * deltaTime;
+            var yDiff = Math.sin(worm.direction) * gameStateFunctions.getWormSpeed(gameState, worm.id) * deltaTime;
 
             setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
             wormBodyImmunityHandler.update(worm);
@@ -62,7 +63,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
 
         jumpHandler.update(deltaTime, worm);
-        if (gameState.phase === "playPhase" && getSpeed(gameState, worm) > 0 || jumpHandler.isJumping(worm)) {
+        if (gameState.phase === "playPhase" && gameStateFunctions.getWormSpeed(gameState, worm.id) > 0 && !jumpHandler.isJumping(worm)) {
             // No body update during the start phase and also only render the body if we are not standing still
             updateBody();
         }
@@ -81,10 +82,6 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
     function setDirection(worm, direction) {
         worm.direction = direction;
-    }
-
-    function getSpeed(gameState, worm) {
-        return effectHandler.effectTransform(gameState, worm.id, "transformSpeed", worm.speed);
     }
 
     return {
