@@ -5,10 +5,23 @@
 var speedEffectDefinition = require("./power-up/effect-definitions/speed-effect.js");
 
 var effectDefinitions = {};
-effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
-//effectHandlersMap[fatEffect.type] = fatEffect.FatEffectHandler();
-//effectHandlersMap[wormSwitchEffect.type] = wormSwitchEffect.WormSwitchEffectHandler({random: deps.random});
-//effectHandlersMap[fastTurnSpeedEffect.type] = fastTurnSpeedEffect.FastTurnEffectHandler();
+effectDefinitions["speed"] = speedEffectDefinition;
+
+var powerUpDefinitions = {};
+powerUpDefinitions["speed"] = {
+    name: "Speed",
+    effectType: "speed",
+    effectDuration: 5,
+    effectStrength: 1,
+    affects: "self"
+};
+powerUpDefinitions["slow"] = {
+    name: "Slow",
+    effectType: "speed",
+    effectDuration: 5,
+    effectStrength: -1,
+    affects: "others"
+};
 
 function addEffect(gameState, effect) {
     gameState.effects.push(effect)
@@ -58,6 +71,7 @@ module.exports = {
     addEffect: addEffect,
     getEffect: getEffect,
     getEffectDefinitions: effectDefinitions,
+    getPowerUpDefinitions: powerUpDefinitions,
     getPowerUp: getPowerUp,
     getWorm: getWorm,
     getWormSpeed: getWormSpeed,

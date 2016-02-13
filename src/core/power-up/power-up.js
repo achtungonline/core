@@ -1,9 +1,10 @@
-module.exports = function PowerUp(id, effectType, shape, effectStrength, effectDuration) {
+module.exports = function PowerUp(id, name, effectType, shape, effectStrength, effectDuration) {
     var powerUp = {};
     powerUp.id = id;
+    powerUp.name = name;
     powerUp.shape = shape;
     powerUp.effectType = effectType;
-    powerUp.effectStrength = effectStrength || 1;
-    powerUp.effectDuration = effectDuration || 5;
+    powerUp.effectStrength = effectStrength;
+    powerUp.effectDuration = effectDuration;
     return powerUp;
 };

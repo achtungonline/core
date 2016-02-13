@@ -36,6 +36,15 @@ module.exports = function Random(seed) {
         return randomElement(list);
     }
 
+    function randomObjectValue(object) {
+        var list = [];
+        forEach(object, function(value, property) {
+            list.push(property);
+        });
+        return object[randomElement(list)];
+    }
+
+
     function randomPermutaion(n, avoidFixedPoints) {
         var elementsLeft = [];
         for (var i = 0; i < n; i++) {
@@ -61,6 +70,7 @@ module.exports = function Random(seed) {
         randomElementIndex: randomElementIndex,
         randomElement: randomElement,
         randomObjectProperty: randomObjectProperty,
+        randomObjectValue: randomObjectValue,
         randomPermutation: randomPermutaion
     };
 };
