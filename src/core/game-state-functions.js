@@ -3,6 +3,8 @@ var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
 var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
 var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
 var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
+var clearEffectDefinition = require("./power-up/effect-definitions/clear.js");
+
 
 /**
  * A bunch of functions for reading and updating data on the gameState
@@ -14,6 +16,7 @@ effectDefinitions[sizeEffectDefinition.type] = sizeEffectDefinition;
 effectDefinitions[turningSpeedEffectDefinition.type] = turningSpeedEffectDefinition;
 effectDefinitions[wormSwitchEffectDefinition.type] = wormSwitchEffectDefinition;
 effectDefinitions[drunkEffectDefinition.type] = drunkEffectDefinition;
+effectDefinitions[clearEffectDefinition.type] = clearEffectDefinition;
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
@@ -35,14 +38,14 @@ powerUpDefinitions["fat"] = {
     effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2,
-    affects: "self"
+    affects: "others"
 };
 powerUpDefinitions["slim"] = {
     name: "Slim",
     effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 0.5,
-    affects: "others"
+    affects: "self"
 };
 powerUpDefinitions["quickTurn"] = {
     name: "Quick Turn",
@@ -75,7 +78,14 @@ powerUpDefinitions["drunk"] = {
     effectType: drunkEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 1,
-    affects: "self" //TODO others
+    affects: "others"
+};
+powerUpDefinitions["clear"] = {
+    name: "Clear",
+    effectType: clearEffectDefinition.type,
+    effectDuration: 5,
+    effectStrength: 1,
+    affects: "all"
 };
 
 

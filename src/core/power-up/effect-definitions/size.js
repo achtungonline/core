@@ -5,8 +5,7 @@ function activate(gameState, strength, duration, wormId) {
         duration: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE,
-        changeSize: true
+        type: TYPE
     };
 }
 
