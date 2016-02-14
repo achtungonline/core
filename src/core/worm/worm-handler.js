@@ -63,14 +63,14 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
             collisionHandler.wormPowerUpCollisionDetection(gameState, worm);
             collisionHandler.wormMapCollisionDetection(gameState, worm);
-            if (!jumpHandler.isJumping(worm)) {
+            if (!gameStateFunctions.isWormJumping(gameState, worm.id)) {
                 collisionHandler.wormWormCollisionDetection(gameState, worm);
             }
         }
 
         updateHead();
         jumpHandler.update(gameState, deltaTime, worm);
-        if (gameState.phase === "playPhase" && gameStateFunctions.getWormSpeed(gameState, worm.id) > 0 && !jumpHandler.isJumping(worm)) {
+        if (gameState.phase === "playPhase" && gameStateFunctions.getWormSpeed(gameState, worm.id) > 0 && !gameStateFunctions.isWormJumping(gameState, worm.id)) {
             // No body update during the start phase and also only render the body if we are not standing still
             updateBody();
         }
