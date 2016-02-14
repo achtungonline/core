@@ -1,15 +1,24 @@
 var events = require("./match-events");
 var EventEmitter = require("events").EventEmitter;
+var gameStateFunctions = require("./game-state-functions.js");
 
 module.exports = function Match(options) {
+    var matchState = options.matchState;
     var gameFactory = options.gameFactory;
     var matchConfig = options.matchConfig;
 
     var eventEmitter = new EventEmitter();
+    events = {
+        MATCH_OVER: "matchOver"
+    };
     var currentGame;
 
     function getCurrentGame() {
         return currentGame;
+    }
+
+    function isMaxScoreReached() {
+        return currentGame.gameState.players.filter(p => matchState.score[p.id] >= matchState.maxScore).length > 0;
     }
 
     function prepareNextGame(seed) {
@@ -18,13 +27,29 @@ module.exports = function Match(options) {
             map: matchConfig.map,
             playerConfigs: matchConfig.playerConfigs
         });
+
+        currentGame.on(currentGame.events.PLAYER_DIED, function (gameState, player) {
+            gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
+                matchState.score[alivePlayer.id]++;
+            });
+            console.log(matchState.score);
+        });
+
+        currentGame.on(currentGame.events.GAME_OVER, function (gameState) {
+            if (isMaxScoreReached()) {
+                eventEmitter.emit(events.MATCH_OVER);
+            }
+        });
+
         return currentGame;
     }
 
     return {
         getCurrentGame: getCurrentGame,
         prepareNextGame: prepareNextGame,
+        isMatchOver: isMaxScoreReached,
+        matchState: matchState,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
-    };
+    }
 };

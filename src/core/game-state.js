@@ -2,6 +2,11 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
 
     return {
         players: players,
+        //  {
+        //      id,
+        //      steering,
+        //      alive
+        //  }
         worms: worms,
         //  {
         //      id,

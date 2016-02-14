@@ -164,6 +164,10 @@ function getEffectsWithFunction(gameState, wormId, effectFunctionName) {
     return getWormEffects(gameState, wormId).filter(e => effectDefinitions[e.type][effectFunctionName]);
 }
 
+function getAlivePlayers(gameState) {
+    return gameState.players.filter(p => p.alive);
+}
+
 module.exports = {
     addEffect: addEffect,
     getEffect: getEffect,
@@ -177,5 +181,6 @@ module.exports = {
     getWormSpeed: getWormSpeed,
     getWormTurningSpeed: getWormTurningSpeed,
     getWormEffects: getWormEffects,
-    isWormJumping: isWormJumping
+    isWormJumping: isWormJumping,
+    getAlivePlayers: getAlivePlayers
 };
