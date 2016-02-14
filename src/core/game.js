@@ -24,11 +24,15 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
         playerHandler.setSteering(player, steering);
     }
 
+    function isGameOver() {
+        return gameState.phase === "roundOverPhase";
+    }
     return {
         gameState: gameState,
         start: start,
         stop: stop,
         isActive: gameEngine.isActive.bind(null, gameState),
+        isGameOver: isGameOver,
         update: update,
         setPlayerSteering: setPlayerSteering,
         on: gameEngine.on.bind(gameEngine),

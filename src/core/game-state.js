@@ -38,7 +38,7 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         map: map,
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,
-        gameActive: false,
+        gameActive: false,                           // TODO: might get removed and replaced with just phase
         phaseTimer: 0,                              // Time left until next phase starts (only interesting between startPhase and playPhase)
         phase: "notStartedPhase",                    // notStartedPhase | startPhase | playPhase | roundOverPhase
         seed: seed
