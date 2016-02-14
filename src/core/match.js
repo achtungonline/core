@@ -9,7 +9,8 @@ module.exports = function Match(options) {
 
     var eventEmitter = new EventEmitter();
     events = {
-        MATCH_OVER: "matchOver"
+        MATCH_OVER: "matchOver",
+        SCORE_UPDATED: "scoreUpdated"
     };
     var currentGame;
 
@@ -32,7 +33,7 @@ module.exports = function Match(options) {
             gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
                 matchState.score[alivePlayer.id]++;
             });
-            console.log(matchState.score);
+            eventEmitter.emit(events.SCORE_UPDATED, matchState);
         });
 
         currentGame.on(currentGame.events.GAME_OVER, function (gameState) {
