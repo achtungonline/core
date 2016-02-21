@@ -14,7 +14,7 @@ module.exports = function RandomAI(game) {
         }
         player.aiData.updateTicks += 1;
         if (player.aiData.updateTicks >= UPDATE_TICKS) {
-            game.setPlayerSteering(player, random.randInt(seedState, -1, 2));
+            game.setPlayerSteering(player.id, random.randInt(seedState, -1, 2));
             player.aiData.updateTicks = 0;
         }
         playerUtils.forEachAliveWorm(gameState.worms, function (worm) {

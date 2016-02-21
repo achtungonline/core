@@ -18,9 +18,13 @@ module.exports = function Match(options) {
         return currentGame;
     }
 
-    function isMaxScoreReached() {
-        return currentGame.gameState.players.filter(p => matchState.score[p.id] >= matchState.maxScore).length > 0;
+    function isMatchOver() {
+        function isMaxScoreReached() {
+            return currentGame.gameState.players.filter(p => matchState.score[p.id] >= matchState.maxScore).length > 0;
+        }
+        return currentGame && currentGame.isGameOver() && isMaxScoreReached();
     }
+
 
     function prepareNextGame(seed) {
         currentGame = gameFactory.create({
@@ -32,6 +36,12 @@ module.exports = function Match(options) {
         currentGame.on(currentGame.events.PLAYER_DIED, function (gameState, player) {
             gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
                 matchState.score[alivePlayer.id]++;
+            });
+            eventEmitter.emit(events.SCORE_UPDATED, matchState);
+        });
+        currentGame.on(currentGame.events.GAME_OVER, function (gameState) {
+            gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
+                matchState.roundsWon[alivePlayer.id]++;
             });
             eventEmitter.emit(events.SCORE_UPDATED, matchState);
         });
@@ -48,7 +58,7 @@ module.exports = function Match(options) {
     return {
         getCurrentGame: getCurrentGame,
         prepareNextGame: prepareNextGame,
-        isMatchOver: isMaxScoreReached,
+        isMatchOver: isMatchOver,
         matchState: matchState,
         on: eventEmitter.on.bind(eventEmitter),
         events: events

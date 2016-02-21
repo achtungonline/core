@@ -1,19 +1,21 @@
 var forEach = require("./util/for-each.js");
 var EventEmitter = require("events").EventEmitter;
+var gameStateFunctions = require("./game-state-functions.js");
 
 module.exports = function Game(gameState, gameEngine, playerHandler) {
     var eventEmitter = new EventEmitter();
 
     var events = {};
+
     function extendEvents(emitter) {
-        forEach(emitter.events, function(event, eventKey) {
+        forEach(emitter.events, function (event, eventKey) {
             events[eventKey] = event;
-            emitter.on(event, function() {
+            emitter.on(event, function () {
                 eventEmitter.emit.apply(eventEmitter, [event].concat(Array.prototype.slice.call(arguments)));
-                console.log("EVENT: " + event);
             });
         });
     }
+
     extendEvents(gameEngine);
     extendEvents(playerHandler);
 
@@ -29,13 +31,14 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
         gameEngine.update(gameState, deltaTime);
     }
 
-    function setPlayerSteering(player, steering) {
-        playerHandler.setSteering(player, steering);
+    function setPlayerSteering(playerId, steering) {
+        gameStateFunctions.getPlayer(gameState, playerId).steering = steering;
     }
 
     function isGameOver() {
         return gameState.phase === "roundOverPhase";
     }
+
     return {
         gameState: gameState,
         start: start,

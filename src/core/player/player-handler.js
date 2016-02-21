@@ -31,12 +31,7 @@ module.exports = function PlayerHandler(wormHandler) {
         }
     });
 
-    function setSteering(player, steering) {
-        player.steering = steering;
-    }
-
     return {
-        setSteering: setSteering,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
     };

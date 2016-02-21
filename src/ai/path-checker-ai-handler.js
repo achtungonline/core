@@ -57,11 +57,11 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         if (aiData.trajectory.length > 0) {
             // Make sure that the worm follows the generated directory. If the worms turning speed is negative (switched key bindings), we need to take that in consideration when deciding where we should turn.
             if ((aiData.trajectory[0].turningSpeed * gameStateFunctions.getWormTurningSpeed(gameState, worm.id)) < 0) {
-                game.setPlayerSteering(player, STEERING.LEFT);
+                game.setPlayerSteering(player.id, STEERING.LEFT);
             } else if (aiData.trajectory[0].turningSpeed * gameStateFunctions.getWormTurningSpeed(gameState, worm.id) > 0) {
-                game.setPlayerSteering(player, STEERING.RIGHT);
+                game.setPlayerSteering(player.id, STEERING.RIGHT);
             } else {
-                game.setPlayerSteering(player, STEERING.STRAIGHT);
+                game.setPlayerSteering(player.id, STEERING.STRAIGHT);
             }
         }
         playerUtils.forEachAliveWorm(gameState.worms, function (worm) {

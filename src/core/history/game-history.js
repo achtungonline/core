@@ -1,8 +1,8 @@
-module.exports = function GameHistory(map, numberOfPlayers, seed) {
+module.exports = function GameHistory(map, playerConfigs, seed) {
 
     return {
         map: map,
-        numberOfPlayers: numberOfPlayers,
+        playerConfigs: playerConfigs,
         seed: seed,
         updates: []
     };

@@ -115,6 +115,10 @@ function getWorm(gameState, wormId) {
     return gameState.worms.find(w => w.id === wormId);
 }
 
+function getPlayer(gameState, playerId) {
+    return gameState.players.find(p => p.id === playerId);
+}
+
 function getWormDirection(gameState, wormId) {
     return transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).direction, 'changeDirection');
 }
@@ -175,6 +179,7 @@ module.exports = {
     getPowerUpDefinitions: powerUpDefinitions,
     getEnemyWorms: getEnemyWorms,
     getPowerUp: getPowerUp,
+    getPlayer: getPlayer,
     getWorm: getWorm,
     getWormDirection: getWormDirection,
     getWormSize: getWormSize,

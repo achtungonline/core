@@ -18,10 +18,12 @@ module.exports = function MatchFactory() {
         var matchConfig = options.matchConfig;
         matchConfig.map = matchConfig.map || createDefaultMap();
         var score = {};
+        var roundsWon = {};
         matchConfig.playerConfigs.forEach(function (playerConfig) {
             score[playerConfig.id] = 0;
+            roundsWon[playerConfig.id] = 0;
         });
-        var matchState = MatchState(score, matchConfig.maxScore);
+        var matchState = MatchState(score, roundsWon, matchConfig.maxScore);
 
 
         return Match({
