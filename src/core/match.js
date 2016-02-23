@@ -18,10 +18,11 @@ module.exports = function Match(options) {
         return currentGame;
     }
 
+    function isMaxScoreReached() {
+        return currentGame.gameState.players.filter(p => matchState.score[p.id] >= matchState.maxScore).length > 0;
+    }
+
     function isMatchOver() {
-        function isMaxScoreReached() {
-            return currentGame.gameState.players.filter(p => matchState.score[p.id] >= matchState.maxScore).length > 0;
-        }
         return currentGame && currentGame.isGameOver() && isMaxScoreReached();
     }
 

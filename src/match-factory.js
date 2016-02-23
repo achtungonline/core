@@ -19,12 +19,13 @@ module.exports = function MatchFactory() {
         matchConfig.map = matchConfig.map || createDefaultMap();
         var score = {};
         var roundsWon = {};
+
         matchConfig.playerConfigs.forEach(function (playerConfig) {
             score[playerConfig.id] = 0;
             roundsWon[playerConfig.id] = 0;
         });
-        var matchState = MatchState(score, roundsWon, matchConfig.maxScore);
 
+        var matchState = MatchState(score, roundsWon, matchConfig.maxScore);
 
         return Match({
             matchState: matchState,
