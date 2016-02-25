@@ -1,6 +1,7 @@
 var events = require("./match-events");
 var EventEmitter = require("events").EventEmitter;
 var gameStateFunctions = require("./game-state-functions.js");
+var ScoreHandler = require("./score-handler.js");
 
 module.exports = function Match(options) {
     var matchState = options.matchState;
@@ -13,9 +14,14 @@ module.exports = function Match(options) {
         SCORE_UPDATED: "scoreUpdated"
     };
     var currentGame;
+    var currentScoreHandler;
 
     function getCurrentGame() {
         return currentGame;
+    }
+
+    function getCurrentScoreHandler() {
+        return currentScoreHandler;
     }
 
     function isMaxScoreReached() {
@@ -34,30 +40,14 @@ module.exports = function Match(options) {
             playerConfigs: matchConfig.playerConfigs
         });
 
-        currentGame.on(currentGame.events.PLAYER_DIED, function (gameState, player) {
-            gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
-                matchState.score[alivePlayer.id]++;
-            });
-            eventEmitter.emit(events.SCORE_UPDATED, matchState);
-        });
-        currentGame.on(currentGame.events.GAME_OVER, function (gameState) {
-            gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
-                matchState.roundsWon[alivePlayer.id]++;
-            });
-            eventEmitter.emit(events.SCORE_UPDATED, matchState);
-        });
-
-        currentGame.on(currentGame.events.GAME_OVER, function (gameState) {
-            if (isMaxScoreReached()) {
-                eventEmitter.emit(events.MATCH_OVER);
-            }
-        });
+        currentScoreHandler = ScoreHandler({game: currentGame, scoreState: matchState});
 
         return currentGame;
     }
 
     return {
         getCurrentGame: getCurrentGame,
+        getCurrentScoreHandler: getCurrentScoreHandler,
         prepareNextGame: prepareNextGame,
         isMatchOver: isMatchOver,
         matchState: matchState,

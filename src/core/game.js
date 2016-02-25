@@ -48,6 +48,7 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
         update: update,
         setPlayerSteering: setPlayerSteering,
         on: eventEmitter.on.bind(eventEmitter),
+        off: eventEmitter.removeListener.bind(eventEmitter),
         events: events
     };
 };
