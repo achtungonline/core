@@ -25,7 +25,12 @@ module.exports = function Match(options) {
     }
 
     function isMaxScoreReached() {
-        return currentGame.gameState.players.filter(p => matchState.score[p.id] >= matchState.maxScore).length > 0;
+        var scoreSortedPlayers = currentGame.gameState.players.sort((p1,p2) => matchState.score[p1.id] <= matchState.score[p2.id]);
+        if(matchState.score[scoreSortedPlayers[0].id] - matchState.score[scoreSortedPlayers[1].id] < 2) {
+            return false; // Leading player is not leading by 2 points.
+        }
+        return matchState.score[scoreSortedPlayers[0].id] >= matchState.maxScore;
+
     }
 
     function isMatchOver() {
