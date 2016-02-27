@@ -172,6 +172,10 @@ function getAlivePlayers(gameState) {
     return gameState.players.filter(p => p.alive);
 }
 
+function isPlayerAlive(gameState, playerId) {
+    return !!getAlivePlayers(gameState).find(p => p.id === playerId);
+}
+
 module.exports = {
     addEffect: addEffect,
     getEffect: getEffect,
@@ -187,5 +191,6 @@ module.exports = {
     getWormTurningSpeed: getWormTurningSpeed,
     getWormEffects: getWormEffects,
     isWormJumping: isWormJumping,
-    getAlivePlayers: getAlivePlayers
+    getAlivePlayers: getAlivePlayers,
+    isPlayerAlive: isPlayerAlive
 };

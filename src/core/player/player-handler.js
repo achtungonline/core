@@ -1,6 +1,7 @@
 var EventEmitter = require("events").EventEmitter;
 var any = require("../util/any.js");
 var playerUtils = require("./player-utils.js");
+var gameStateFunctions = require("./../game-state-functions.js");
 
 module.exports = function PlayerHandler(wormHandler) {
     var eventEmitter = new EventEmitter();
@@ -26,7 +27,7 @@ module.exports = function PlayerHandler(wormHandler) {
             throw Error("A worm died for a already dead player.");
         }
 
-        if (!isAnyWormAlive()) {
+        if (!isAnyWormAlive() && gameStateFunctions.getAlivePlayers(gameState).length > 1) {
             kill();
         }
     });
