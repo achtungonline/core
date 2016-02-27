@@ -11,7 +11,7 @@ module.exports = function MatchFactory() {
         function createDefaultMap() {
             //var mapShape = sf.createCircle(800, 0, 0);
             //var mapObstaclesShapes = [sf.createCircle(100, 100, 300), sf.createRectangle(200, 300, 500, 250)];
-            return MapFactory().createCircle(800);
+            return MapFactory().createRectangle(800);
         }
 
         var matchConfig = options.matchConfig;
