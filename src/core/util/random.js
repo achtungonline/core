@@ -1,8 +1,32 @@
 var forEach = require("./for-each.js");
+var MersenneTwister = require('mersennetwister');
+
+function toSignedInt32(x) {
+    return x | 0;
+}
+
+/**
+ * Generates a 32 bit seed by the current time.
+ */
+function generateSeed() {
+    var seed = (new Date()).getTime();
+    return toSignedInt32(seed);
+}
 
 function random(gameState) {
-    var x = Math.sin(gameState.seed++) * 10000;
-    return x - Math.floor(x);
+    function isInteger32(x) {
+        return toSignedInt32(x) === x;
+    }
+
+    var seed = gameState.seed;
+
+    if (!isInteger32(seed)) {
+        throw new Error("Invalid seed found in game state. Must be a 32 bit integer. Actual seed: " + gameState.seed);
+    }
+
+    var generator = new MersenneTwister(seed);
+    gameState.seed = toSignedInt32(generator.int());
+    return generator.random();
 }
 
 function randInt(gameState, low, high) {
@@ -52,6 +76,7 @@ function randomPermutation(gameState, n, avoidFixedPoints) {
 }
 
 module.exports = {
+    generateSeed: generateSeed,
     random: random,
     randInt: randInt,
     randomElementIndex: randomElementIndex,
