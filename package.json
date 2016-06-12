@@ -1,6 +1,6 @@
 {
   "name": "core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Core functionality shared between client and server. Basically all the logic.",
   "repository": {
     "type": "git",
