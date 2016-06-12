@@ -5,7 +5,7 @@ var gameStateFunctions = require("./game-state-functions.js");
 module.exports = function Game(gameState, gameEngine, playerHandler) {
     var eventEmitter = new EventEmitter();
 
-    var events = {};
+    var events = gameEngine.events;
 
     function extendEvents(emitter) {
         forEach(emitter.events, function (event, eventKey) {
