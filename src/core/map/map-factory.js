@@ -10,7 +10,7 @@ module.exports = function MapFactory() {
 
     function createRectangle(options) {
         var rectangle = shapeFactory.createRectangle(options.width, options.height, 0, 0);
-        return Map({name: options.name, shape: rectangle, blockingShapes: blockingShapes});
+        return Map({name: options.name, shape: rectangle, blockingShapes: options.blockingShapes});
     }
 
     function createSquare(options) {
@@ -18,7 +18,7 @@ module.exports = function MapFactory() {
     }
 
     function createCircle(options) {
-        return Map({name: options.name, shape: shapeFactory.createCircle(size / 2, 0, 0), blockingShapes: options.blockingShapes});
+        return Map({name: options.name, shape: shapeFactory.createCircle(options.size / 2, 0, 0), blockingShapes: options.blockingShapes});
     }
 
     return {
