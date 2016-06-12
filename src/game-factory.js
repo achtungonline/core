@@ -1,5 +1,4 @@
 var PhaseHandlerFactory = require("./core/phase/phase-handler-factory.js");
-var MapFactory = require("./core/map/map-factory.js");
 var GameEngine = require("./core/game-engine.js");
 var WormHandlerFactory = require("./core/worm/worm-handler-factory.js");
 var PlayerHandler = require("./core/player/player-handler.js");
@@ -18,7 +17,6 @@ var PlayerFactory = require("./core/player/player-factory.js");
 var playerUtils = require("./core/player/player-utils");
 
 module.exports = function GameFactory() {
-    var mapFactory = MapFactory();
     var playAreaHandlerFactory = PlayAreaHandlerFactory();
     var playerFactory = PlayerFactory();
 
@@ -30,9 +28,6 @@ module.exports = function GameFactory() {
         var players = playerConfigs.map(function (playerConfig) {
             return playerFactory.create(playerConfig.id);
         });
-        if (!map) {
-            map = mapFactory.createSquare(800);
-        }
 
         var playArea = PlayArea.createPlayArea(map.width, map.height);
         var playAreaHandler = playAreaHandlerFactory.create();

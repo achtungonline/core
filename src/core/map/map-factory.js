@@ -4,21 +4,21 @@ var Map = require("./map.js");
 module.exports = function MapFactory() {
     var shapeFactory = ShapeFactory();
 
-    function create(shape, blockingShapes) {
-        return Map(shape, blockingShapes);
+    function create(options) {
+        return Map(options);
     }
 
-    function createRectangle(width, height, blockingShapes) {
-        var rectangle = shapeFactory.createRectangle(width, height, 0, 0);
-        return Map(rectangle, blockingShapes);
+    function createRectangle(options) {
+        var rectangle = shapeFactory.createRectangle(options.width, options.height, 0, 0);
+        return Map({name: options.name, shape: rectangle, blockingShapes: blockingShapes});
     }
 
-    function createSquare(size, blockingShapes) {
-        return createRectangle(size, size, blockingShapes);
+    function createSquare(options) {
+        return createRectangle({name: options.name, width: options.size, height: options.size, blockingShapes: options.blockingShapes});
     }
 
-    function createCircle(size, blockingShapes) {
-        return Map(shapeFactory.createCircle(size / 2, 0, 0), blockingShapes);
+    function createCircle(options) {
+        return Map({name: options.name, shape: shapeFactory.createCircle(size / 2, 0, 0), blockingShapes: options.blockingShapes});
     }
 
     return {
