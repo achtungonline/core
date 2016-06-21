@@ -19,9 +19,11 @@ module.exports = function Match(options) {
 
     function gameOver(gameState) {
         function updateRoundsWon(gameState) {
+            var winners = [];
             gameStateFunctions.getAlivePlayers(gameState).forEach(function (alivePlayer) {
-                scoreState.roundsWon[alivePlayer.id]++;
+                winners.push(alivePlayer.id);
             });
+            scoreState.roundWinners.push(winners);
             eventEmitter.emit(events.SCORE_UPDATED, scoreState);
         }
 
