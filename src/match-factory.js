@@ -9,14 +9,13 @@ module.exports = function MatchFactory() {
 
         var matchConfig = options.matchConfig;
         var score = {};
-        var roundsWon = {};
+        var roundWinners = [];
 
         matchConfig.playerConfigs.forEach(function (playerConfig) {
             score[playerConfig.id] = 0;
-            roundsWon[playerConfig.id] = 0;
         });
 
-        var matchState = MatchState(score, roundsWon, matchConfig.maxScore);
+        var matchState = MatchState(score, roundWinners, matchConfig.maxScore);
 
         return Match({
             matchState: matchState,

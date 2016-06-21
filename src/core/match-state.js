@@ -1,8 +1,8 @@
-module.exports = function MatchState(score, roundsWon, maxScore) {
+module.exports = function MatchState(score, roundWinners, maxScore) {
 
     return {
         score: score,
-        roundsWon: roundsWon,
+        roundWinners: roundWinners,
         maxScore: maxScore
     };
 };
