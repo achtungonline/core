@@ -21,8 +21,10 @@ module.exports = function GameEngine(roundHandler, playAreaHandler) {
     }
 
     function stop(gameState) {
-        gameState.gameActive = false;
-        eventEmitter.emit(events.GAME_OVER, gameState);
+        if (gameState.gameActive) {
+            gameState.gameActive = false;
+            eventEmitter.emit(events.GAME_OVER, gameState);
+        }
     }
 
     // function pause(gameState) {
