@@ -40,6 +40,7 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
             //      strength,                           // Comes from the power-ups effectStrength
             //  }
         ],
+        wormUpdateBuffer: [],
         map: map,
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,
