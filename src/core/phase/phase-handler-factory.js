@@ -16,6 +16,7 @@ module.exports = function RoundHandlerFactory(deps) {
         var shapeModifierIFactory = ShapeModifierIFactory();
         var dependencies = {
             wormHandler: deps.wormHandler,
+            playerHandler: deps.playerHandler,
             shapeModifierI: shapeModifierIFactory.create(),
             shapeSpatialRelations: shapeSpatialRelations,
             mapUtils: mapUtils,

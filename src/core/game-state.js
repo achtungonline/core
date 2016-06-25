@@ -5,6 +5,7 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         //  {
         //      id,
         //      steering,
+        //      steeringSegments: [ {steering, startTime, duration} ],
         //      alive
         //  }
         worms: worms,
@@ -20,6 +21,9 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
         //          remainingJumpTime: 0,
         //          timeSinceLastJump: 0
         //      },
+        //      pathSegments: [
+        //          {type: straight/curve, duration, startTime, jump, playerId, startX, startY, startDirection, endX, endY, endDirection}
+        //      ]
         //      immunityData: undefined
         //      }
         powerUps: [
@@ -40,10 +44,10 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
             //      strength,                           // Comes from the power-ups effectStrength
             //  }
         ],
-        wormUpdateBuffer: [],
         map: map,
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,
+        gameTime: 0,
         gameActive: false,                           // TODO: might get removed and replaced with just phase
         phaseTimer: 0,                              // Time left until next phase starts (only interesting between startPhase and playPhase)
         phase: "notStartedPhase",                    // notStartedPhase | startPhase | playPhase | roundOverPhase

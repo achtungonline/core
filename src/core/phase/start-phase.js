@@ -11,6 +11,7 @@ startPhase.StartPhase = function StartPhase(deps) {
     var mapUtils = deps.mapUtils;
     var playerUtils = deps.playerUtils;
     var wormHandler = deps.wormHandler;
+    var playerHandler = deps.playerHandler;
 
     function setWormStartingPositions(gameState, worms, map) {
         function isCollidingWithWorms(worms, shape) {
@@ -68,6 +69,7 @@ startPhase.StartPhase = function StartPhase(deps) {
             return;
         }
 
+        playerHandler.update(gameState, deltaTime);
         playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
             wormHandler.update(gameState, deltaTime, worm);
         });

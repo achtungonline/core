@@ -8,6 +8,7 @@ module.exports = function Worm(args) {
         speed: args.speed,
         turningSpeed: args.turningSpeed,
         alive: args.alive,
+        pathSegments: [],
         jump: {
             remainingJumpTime: 0,
             timeSinceLastJump: 0

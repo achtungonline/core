@@ -32,7 +32,23 @@ module.exports = function PlayerHandler(wormHandler) {
         }
     });
 
+    function update(gameState, deltaTime) {
+        gameState.players.forEach(function (player) {
+            var lastSegment = player.steeringSegments[player.steeringSegments.length - 1];
+            if (lastSegment.steering === player.steering) {
+                lastSegment.duration += deltaTime;
+            } else {
+                player.steeringSegments.push({
+                    steering: player.steering,
+                    startTime: gameState.gameTime,
+                    duration: deltaTime
+                });
+            }
+        });
+    }
+
     return {
+        update: update,
         on: eventEmitter.on.bind(eventEmitter),
         events: events
     };

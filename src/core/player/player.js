@@ -7,10 +7,17 @@ player.steering.STRAIGHT = 0;
 
 player.Player = function (id, alive) {
     var steering = player.steering.STRAIGHT;
+    var steeringSegments = [];
+    steeringSegments.push({
+        steering: steering,
+        startTime: 0,
+        deltaTime: 0
+    });
 
     return {
         id: id,
         steering: steering,
+        steeringSegments: steeringSegments,
         alive: alive
     };
 };

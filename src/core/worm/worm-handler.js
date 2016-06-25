@@ -34,14 +34,8 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
     }
 
     function update(gameState, deltaTime, worm) {
-        function updateHead() {
-            var wormSize = gameStateFunctions.getWormSize(gameState, worm.id);
-            worm.head = shapeModifierI.setSize(worm.head, wormSize, wormSize);
-        }
-
-        function updateDirection(turningSpeed) {
-            var direction = worm.direction + turningSpeed * deltaTime;
-            setDirection(worm, direction);
+        function updateHead(size) {
+            worm.head = shapeModifierI.setSize(worm.head, size, size);
         }
 
 
@@ -51,23 +45,36 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             return bodyPart;
         }
 
-        function updatePosition(speed, turningSpeed) {
-            var direction = gameStateFunctions.getWormDirection(gameState, worm.id);
+        function updatePosition(speed, turningVelocity, direction, pathSegment) {
             var xDiff = 0;
             var yDiff = 0;
-            if (turningSpeed === 0) {
+            if (turningVelocity === 0) {
                 // Straight line
+                pathSegment.type = "straight";
                 xDiff = deltaTime * speed * Math.cos(direction);
                 yDiff = deltaTime * speed * Math.sin(direction);
             } else {
                 // Circle arc
-                var radius = speed / turningSpeed;
-                var angle = deltaTime * turningSpeed;
+                pathSegment.type = "arc";
+                var radius = speed / turningVelocity;
+                var angle = deltaTime * turningVelocity;
+
+                pathSegment.arcCenterX = pathSegment.startX - radius * Math.cos(direction - Math.PI/2);
+                pathSegment.arcCenterY = pathSegment.startY - radius * Math.sin(direction - Math.PI/2);
+                pathSegment.arcRadius = Math.abs(radius);
+                pathSegment.arcStartAngle = direction - radius/Math.abs(radius)*Math.PI/2;
+                pathSegment.arcAngleDiff = angle;
+                pathSegment.arcEndAngle = pathSegment.arcStartAngle + pathSegment.arcAngleDiff;
+
                 xDiff = -radius * (Math.cos(direction - Math.PI/2) + Math.cos(direction + Math.PI/2 + angle));
                 yDiff = -radius * (Math.sin(direction - Math.PI/2) + Math.sin(direction + Math.PI/2 + angle));
             }
-
-            setHead(worm, shapeModifierI.move(worm.head, xDiff, yDiff));
+            pathSegment.endX = pathSegment.startX + xDiff;
+            pathSegment.endY = pathSegment.startY + yDiff;
+            pathSegment.endDirection = pathSegment.startDirection + turningVelocity * deltaTime;
+            
+            worm.direction += turningVelocity * deltaTime;
+            worm.head = shapeModifierI.move(worm.head, xDiff, yDiff);
             wormBodyImmunityHandler.update(worm);
         }
 
@@ -80,33 +87,69 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             }
         }
 
-        updateHead();
         jumpHandler.update(gameState, deltaTime, worm);
-        
-        var wormMoveUpdate = {
-            type: "worm_moved",
-            wormId: worm.id,
-            speed: gameStateFunctions.getWormSpeed(gameState, worm.id),
-            turningSpeed: playerUtils.getPlayerById(gameState.players, worm.playerId).steering * gameStateFunctions.getWormTurningSpeed(gameState, worm.id),
-            jump: gameStateFunctions.isWormJumping(gameState, worm.id),
-            deltaTime: deltaTime
-        }
+
+        var steering = playerUtils.getPlayerById(gameState.players, worm.playerId).steering;
+        var direction = gameStateFunctions.getWormDirection(gameState, worm.id);
+        var speed = gameStateFunctions.getWormSpeed(gameState, worm.id);
+        var size = gameStateFunctions.getWormSize(gameState, worm.id);
+        var turningSpeed = gameStateFunctions.getWormTurningSpeed(gameState, worm.id);
+        var turningVelocity = steering * turningSpeed;
+        var jump = gameStateFunctions.isWormJumping(gameState, worm.id);
         if (gameState.phase === "startPhase") {
-            wormMoveUpdate.speed = 0;
+            speed = 0;
+        }
+        var pathSegment = {
+            duration: deltaTime,
+            startTime: gameState.gameTime,
+            startX: worm.head.centerX,
+            startY: worm.head.centerY,
+            startDirection: worm.direction,
+            jump: jump,
+            size: size,
+            speed: speed,
+            turningVelocity: turningVelocity,
+            playerId: worm.playerId
         }
 
-        if (wormMoveUpdate.speed > 0 && !wormMoveUpdate.jump) {
+        updateHead(size);
+        if (speed > 0 && !jump) {
             // No body update during the start phase and also only render the body if we are not standing still
             updateBody();
         }
-        updatePosition(wormMoveUpdate.speed, wormMoveUpdate.turningSpeed);
-        updateDirection(wormMoveUpdate.turningSpeed);
+        updatePosition(speed, turningVelocity, direction, pathSegment);
         collisionDetection();
-        if (wormMoveUpdate.speed !== 0 || wormMoveUpdate.turningSpeed !== 0) {
-            gameState.wormUpdateBuffer.push(wormMoveUpdate);
-        }
+        addWormPathSegment(worm, pathSegment);
     }
 
+
+    function addWormPathSegment(worm, segment) {
+        var segments = worm.pathSegments;
+        if (segments.length === 0) {
+            segments.push(segment);
+        } else {
+            var lastSegment = segments[segments.length - 1];
+            if (segment.type === lastSegment.type &&
+                    segment.speed === lastSegment.speed &&
+                    segment.turningVelocity === lastSegment.turningVelocity &&
+                    segment.size === lastSegment.size &&
+                    segment.playerId === lastSegment.playerId &&
+                    segment.jump === lastSegment.jump) {
+                // Continue last segment
+                lastSegment.duration += segment.duration;
+                lastSegment.endX = segment.endX;
+                lastSegment.endY = segment.endY;
+                lastSegment.endDirection = segment.endDirection;
+                if (segment.type === "arc") {
+                    lastSegment.arcEndAngle = segment.arcEndAngle;
+                    lastSegment.arcAngleDiff += segment.arcAngleDiff;
+                }
+            } else {
+                // Start new segment
+                segments.push(segment);
+            }
+        }
+    }
 
     function setHead(worm, shape) {
         worm.head = shape;
