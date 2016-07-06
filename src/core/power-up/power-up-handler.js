@@ -16,7 +16,6 @@ module.exports = function PowerUpHandler(deps) {
                 deps.effectHandler.activateEffect(gameState, worm.id, powerUp.id);
 
                 powerUps.splice(i, 1);
-                console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " was taken.");
                 return;
             }
         }
@@ -69,7 +68,6 @@ module.exports = function PowerUpHandler(deps) {
             var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
             powerUp = attemptGetPowerUpWithRandomPos(powerUp);
             if (powerUp !== undefined) {
-                console.log("power up: " + powerUp.id + " of effect type: " + powerUp.effectType + " spawned.");
                 gameState.powerUps.push(powerUp);
             }
         }
