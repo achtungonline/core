@@ -37,6 +37,7 @@ module.exports = function GameEngine(roundHandler, playAreaHandler) {
 
     function update(gameState, deltaTime) {
         if (isActive(gameState) && deltaTime > 0) {
+            gameState.gameTime += deltaTime;
             eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
             roundHandler.update(gameState, deltaTime);
 
@@ -46,7 +47,6 @@ module.exports = function GameEngine(roundHandler, playAreaHandler) {
 
             eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
             playAreaHandler.resetUpdateBuffer(gameState);
-            gameState.gameTime += deltaTime;
         }
 
         // if (isActive(gameState)) {

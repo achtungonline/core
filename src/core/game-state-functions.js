@@ -176,11 +176,11 @@ function isPlayerAlive(gameState, playerId) {
     return !!getAlivePlayers(gameState).find(p => p.id === playerId);
 }
 
-function getLatestClearTime(gameState) {
+function getLastClearTime(gameState, endTime) {
     var res = 0;
     gameState.gameEvents.forEach(function (gameEvent) {
         if (gameEvent.type === "clear") {
-            if (gameEvent.time <= gameState.gameTime && gameEvent.time > res) {
+            if (endTime === undefined || gameEvent.time <= endTime) {
                 res = gameEvent.time;
             }
         }
@@ -194,7 +194,7 @@ module.exports = {
     getEffectDefinitions: effectDefinitions,
     getPowerUpDefinitions: powerUpDefinitions,
     getEnemyWorms: getEnemyWorms,
-    getLatestClearTime: getLatestClearTime,
+    getLastClearTime: getLastClearTime,
     getPowerUp: getPowerUp,
     getPlayer: getPlayer,
     getWorm: getWorm,

@@ -101,7 +101,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         }
         var pathSegment = {
             duration: deltaTime,
-            startTime: gameState.gameTime,
+            startTime: gameState.gameTime - deltaTime,
             startX: worm.head.centerX,
             startY: worm.head.centerY,
             startDirection: worm.direction,
@@ -129,7 +129,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             segments.push(segment);
         } else {
             var lastSegment = segments[segments.length - 1];
-            if (lastSegment.startTime >= gameStateFunctions.getLatestClearTime(gameState) &&
+            if (lastSegment.startTime >= gameStateFunctions.getLastClearTime(gameState) &&
                     segment.type === lastSegment.type &&
                     segment.speed === lastSegment.speed &&
                     segment.turningVelocity === lastSegment.turningVelocity &&
