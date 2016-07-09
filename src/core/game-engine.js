@@ -44,7 +44,6 @@ module.exports = function GameEngine(roundHandler, playAreaHandler) {
             if (!roundHandler.isActive(gameState)) {
                 stop();
             }
-
             eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
             playAreaHandler.resetUpdateBuffer(gameState);
         }

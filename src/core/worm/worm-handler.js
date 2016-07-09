@@ -72,7 +72,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             pathSegment.endX = pathSegment.startX + xDiff;
             pathSegment.endY = pathSegment.startY + yDiff;
             pathSegment.endDirection = pathSegment.startDirection + turningVelocity * deltaTime;
-            
+
             worm.direction += turningVelocity * deltaTime;
             worm.head = shapeModifierI.move(worm.head, xDiff, yDiff);
             wormBodyImmunityHandler.update(worm);
@@ -111,7 +111,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
             speed: speed,
             turningVelocity: turningVelocity,
             playerId: worm.playerId
-        }
+        };
 
         updateHead(size);
         if (speed > 0 && !jump) {
