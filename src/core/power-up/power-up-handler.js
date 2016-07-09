@@ -3,6 +3,8 @@ var PowerUp = require("./power-up.js");
 var clone = require("./../util/clone.js");
 var gameStateFunctions = require("./../game-state-functions.js");
 var random = require("./../util/random.js");
+var forEach = require("./../util/for-each.js");
+
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 var POWER_UP_SHAPE = circleShape.Circle(40);
@@ -64,12 +66,32 @@ module.exports = function PowerUpHandler(deps) {
 
 
         function attemptSpawnRandomPowerUp() {
-            var powerUpDefinition = random.randomObjectValue(gameState, gameStateFunctions.getPowerUpDefinitions);
-            var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
-            powerUp = attemptGetPowerUpWithRandomPos(powerUp);
-            if (powerUp !== undefined) {
-                gameState.powerUps.push(powerUp);
-            }
+            var totalSpawnWeight = 0;
+            forEach(gameStateFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
+                totalSpawnWeight += powerUpDefinition.weightedSpawnChance;
+            });
+            var randomValue = Math.random();
+            var currentChance = 0;
+            var found = false;
+            forEach(gameStateFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
+                currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
+                if(!found && currentChance > randomValue) {
+                    found = true;
+                    var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
+                    powerUp = attemptGetPowerUpWithRandomPos(powerUp);
+                    if (powerUp !== undefined) {
+                        gameState.powerUps.push(powerUp);
+                    }
+                }
+            });
+
+
+            //var powerUpDefinition = random.randomObjectValue(gameState, gameStateFunctions.getPowerUpDefinitions);
+            //var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
+            //powerUp = attemptGetPowerUpWithRandomPos(powerUp);
+            //if (powerUp !== undefined) {
+            //    gameState.powerUps.push(powerUp);
+            //}
         }
 
         deps.timeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);

@@ -25,6 +25,7 @@ powerUpDefinitions["speed"] = {
     effectType: speedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 3 / 2,
+    weightedSpawnChance: 1,
     affects: "self"
 };
 powerUpDefinitions["slow"] = {
@@ -32,6 +33,7 @@ powerUpDefinitions["slow"] = {
     effectType: speedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2 / 3,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["fat"] = {
@@ -39,6 +41,7 @@ powerUpDefinitions["fat"] = {
     effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["slim"] = {
@@ -46,6 +49,7 @@ powerUpDefinitions["slim"] = {
     effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 0.5,
+    weightedSpawnChance: 1,
     affects: "self"
 };
 powerUpDefinitions["quickTurn"] = {
@@ -53,6 +57,7 @@ powerUpDefinitions["quickTurn"] = {
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2,
+    weightedSpawnChance: 1,
     affects: "self"
 };
 powerUpDefinitions["slowTurn"] = {
@@ -60,11 +65,13 @@ powerUpDefinitions["slowTurn"] = {
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 0.5,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["switcharoonie"] = {
     name: "Switcharoonie",
     effectType: wormSwitchEffectDefinition.type,
+    weightedSpawnChance: 0.5,
     affects: "all"
 };
 powerUpDefinitions["keyBindingsSwitch"] = {
@@ -72,6 +79,7 @@ powerUpDefinitions["keyBindingsSwitch"] = {
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: -1,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["drunk"] = {
@@ -79,11 +87,13 @@ powerUpDefinitions["drunk"] = {
     effectType: drunkEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 1,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["clear"] = {
     name: "Clear",
     effectType: clearEffectDefinition.type,
+    weightedSpawnChance: 0.25,
     affects: "all"
 };
 powerUpDefinitions["superJump"] = {
@@ -91,6 +101,7 @@ powerUpDefinitions["superJump"] = {
     effectType: superJumpEffectDefinition.type,
     effectDuration: 5,
     effectStrength: -1,
+    weightedSpawnChance: 1,
     affects: "self"
 };
 
