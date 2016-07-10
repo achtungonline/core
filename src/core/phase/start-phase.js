@@ -25,7 +25,7 @@ startPhase.StartPhase = function StartPhase(deps) {
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            return mapUtils.getShapeRandomlyInsidePlayableArea(gameState, map, worm.head);
+            return mapUtils.getShapeRandomlyInsidePlayableArea(gameState, map, worm.head, 50);
         }
 
         var updatedWorms = [];

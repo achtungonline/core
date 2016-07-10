@@ -17,7 +17,9 @@ utils.intersectsBlockingShapes = function (map, shape) {
     return false;
 };
 
-utils.getRandomPositionInsidePlayableArea = function (gameState, map, shape) {
+utils.getRandomPositionInsidePlayableArea = function (gameState, map, shape, minDistance) {
+    minDistance = minDistance || 0;
+    var shrunkenMapShape = shapeModifierI.changeSize(map.shape, -minDistance, -minDistance);
     var pos = {};
     var i = 0;
     var shapeWithNewPos = shape;
@@ -25,7 +27,7 @@ utils.getRandomPositionInsidePlayableArea = function (gameState, map, shape) {
         pos.x = random.random(gameState) * map.width;
         pos.y = random.random(gameState) * map.height;
         shapeWithNewPos = shapeModifierI.setPosition(shapeWithNewPos, pos.x, pos.y);
-        if (utils.isInsideMap(map, shapeWithNewPos) && !utils.intersectsBlockingShapes(map, shapeWithNewPos)) {
+        if (shapeSpatialRelations.contains(shrunkenMapShape, shapeWithNewPos) && !utils.intersectsBlockingShapes(map, shapeWithNewPos)) {
             return pos;
         }
         i++;
@@ -33,7 +35,7 @@ utils.getRandomPositionInsidePlayableArea = function (gameState, map, shape) {
     throw Error("Failed to find a position inside playable area for the given shape");
 };
 
-utils.getShapeRandomlyInsidePlayableArea = function (gameState, map, shape) {
-    var newPos = utils.getRandomPositionInsidePlayableArea(gameState, map, shape);
+utils.getShapeRandomlyInsidePlayableArea = function (gameState, map, shape, minDistance) {
+    var newPos = utils.getRandomPositionInsidePlayableArea(gameState, map, shape, minDistance);
     return shapeModifierI.setPosition(shape, newPos.x, newPos.y);
 };
