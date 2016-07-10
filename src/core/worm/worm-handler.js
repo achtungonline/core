@@ -89,12 +89,10 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
         jumpHandler.update(gameState, deltaTime, worm);
 
-        var steering = playerUtils.getPlayerById(gameState.players, worm.playerId).steering;
         var direction = gameStateFunctions.getWormDirection(gameState, worm.id);
         var speed = gameStateFunctions.getWormSpeed(gameState, worm.id);
         var size = gameStateFunctions.getWormSize(gameState, worm.id);
-        var turningSpeed = gameStateFunctions.getWormTurningSpeed(gameState, worm.id);
-        var turningVelocity = steering * turningSpeed;
+        var turningVelocity = gameStateFunctions.getWormTurningVelocity(gameState, worm.id);
         var jump = gameStateFunctions.isWormJumping(gameState, worm.id);
         if (gameState.phase === "startPhase") {
             speed = 0;

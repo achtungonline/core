@@ -157,6 +157,11 @@ function getWormTurningSpeed(gameState, wormId) {
     return transformValueUsingEffects(gameState, wormId, initValue, 'changeTurningSpeed');
 }
 
+function getWormTurningVelocity(gameState, wormId) {
+    var turningVelocity = getPlayer(gameState, getWorm(gameState, wormId).playerId).steering * getWormTurningSpeed(gameState, wormId);
+    return transformValueUsingEffects(gameState, wormId, turningVelocity, 'changeTurningVelocity');
+}
+
 function isWormJumping(gameState, wormId) {
     return transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).jump.remainingJumpTime > 0, 'changeIsJumping');
 }
@@ -213,6 +218,7 @@ module.exports = {
     getWormSize: getWormSize,
     getWormSpeed: getWormSpeed,
     getWormTurningSpeed: getWormTurningSpeed,
+    getWormTurningVelocity: getWormTurningVelocity,
     getWormEffects: getWormEffects,
     isWormJumping: isWormJumping,
     getAlivePlayers: getAlivePlayers,
