@@ -70,7 +70,7 @@ module.exports = function PowerUpHandler(deps) {
             forEach(gameStateFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
                 totalSpawnWeight += powerUpDefinition.weightedSpawnChance;
             });
-            var randomValue = Math.random();
+            var randomValue = random.random(gameState);
             var currentChance = 0;
             var found = false;
             forEach(gameStateFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
