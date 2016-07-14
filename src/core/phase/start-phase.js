@@ -45,6 +45,7 @@ startPhase.StartPhase = function StartPhase(deps) {
             wormHandler.setHead(worm, newHead);
             updatedWorms.push(worm);
         });
+
     }
 
     function setWormStartingDirections(gameState, worms) {

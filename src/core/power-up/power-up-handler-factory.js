@@ -6,7 +6,7 @@ var idGenerator = require("./../util/id-generator.js").indexCounterId(0);
 
 module.exports = function PowerUpHandlerFactory(deps) {
     function create() {
-        var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(0.15));
+        var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(0.17));
 
         var dependencies = {
             effectHandler: deps.effectHandler,

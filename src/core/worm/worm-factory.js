@@ -1,7 +1,7 @@
 var Worm = require("./worm.js");
 var ShapeFactory = require("../geometry/shape-factory.js");
 
-var WORM_RADIUS = 2;
+var WORM_RADIUS = 3;
 var WORM_SPEED = 70;
 var TURNING_SPEED = 2.50;
 
@@ -12,7 +12,7 @@ module.exports = function WormFactory(idGenerator) {
         var args = {
             id: idGenerator(),
             playerId: playerId,
-            head: shapeFactory.createCircle(WORM_RADIUS, 10, 10),
+            head: shapeFactory.createCircle(WORM_RADIUS, 0, 0),
             size: WORM_RADIUS * 2,
             direction: 0,
             speed: WORM_SPEED,
