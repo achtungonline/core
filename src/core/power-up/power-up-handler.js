@@ -7,7 +7,7 @@ var forEach = require("./../util/for-each.js");
 
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
-var POWER_UP_SHAPE = circleShape.Circle(40);
+var POWER_UP_SHAPE = circleShape.Circle(25);
 
 module.exports = function PowerUpHandler(deps) {
 
