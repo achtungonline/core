@@ -56,7 +56,7 @@ powerUpDefinitions["quickTurn"] = {
     name: "Quick Turn",
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
-    effectStrength: 2,
+    effectStrength: 3/2,
     weightedSpawnChance: 1,
     affects: "self"
 };
@@ -64,7 +64,7 @@ powerUpDefinitions["slowTurn"] = {
     name: "Slow Turn",
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
-    effectStrength: 0.5,
+    effectStrength: 2/3,
     weightedSpawnChance: 1,
     affects: "others"
 };
@@ -100,7 +100,6 @@ powerUpDefinitions["superJump"] = {
     name: "Super Jump",
     effectType: superJumpEffectDefinition.type,
     effectDuration: 5,
-    effectStrength: -1,
     weightedSpawnChance: 1,
     affects: "self"
 };
