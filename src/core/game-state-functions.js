@@ -140,20 +140,19 @@ function getWormEffects(gameState, wormId) {
 }
 function getWormSize(gameState, wormId) {
     var newSize = transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).size, 'changeSize');
-    return (newSize < 1) ? 1 : newSize
+    return Math.max(1, newSize);
 }
-
 
 function getWormSpeed(gameState, wormId) {
     var newSpeed = transformValueUsingEffects(gameState, wormId, getWorm(gameState, wormId).speed, 'changeSpeed');
-    return (newSpeed < 1) ? 1 : newSpeed;
+    return Math.max(5, newSpeed);
 }
 
 function getWormTurningSpeed(gameState, wormId) {
     var worm = getWorm(gameState, wormId);
     var speedUp = getWormSpeed(gameState, wormId) / worm.speed;
     var initValue = worm.turningSpeed * speedUp;
-    return transformValueUsingEffects(gameState, wormId, initValue, 'changeTurningSpeed');
+    return Math.min(5, transformValueUsingEffects(gameState, wormId, initValue, 'changeTurningSpeed'));
 }
 
 function getWormTurningVelocity(gameState, wormId) {
