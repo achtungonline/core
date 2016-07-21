@@ -1,6 +1,7 @@
 var EventEmitter = require("events").EventEmitter;
-var playerUtils = require("../player/player-utils.js");
 var gameStateFunctions = require("../game-state-functions.js");
+var coreFunctions = require("../core-functions.js");
+
 
 module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, jumpHandler, effectHandler) {
     var eventEmitter = new EventEmitter();
@@ -82,18 +83,18 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
             collisionHandler.wormPowerUpCollisionDetection(gameState, worm);
             collisionHandler.wormMapCollisionDetection(gameState, worm);
-            if (!gameStateFunctions.isWormJumping(gameState, worm.id)) {
+            if (!coreFunctions.isWormJumping(gameState, worm.id)) {
                 collisionHandler.wormWormCollisionDetection(gameState, worm);
             }
         }
 
         jumpHandler.update(gameState, deltaTime, worm);
 
-        var direction = gameStateFunctions.getWormDirection(gameState, worm.id);
-        var speed = gameStateFunctions.getWormSpeed(gameState, worm.id);
-        var size = gameStateFunctions.getWormSize(gameState, worm.id);
-        var turningVelocity = gameStateFunctions.getWormTurningVelocity(gameState, worm.id);
-        var jump = gameStateFunctions.isWormJumping(gameState, worm.id);
+        var direction = coreFunctions.getWormDirection(gameState, worm.id);
+        var speed = coreFunctions.getWormSpeed(gameState, worm.id);
+        var size = coreFunctions.getWormSize(gameState, worm.id);
+        var turningVelocity = coreFunctions.getWormTurningVelocity(gameState, worm.id, deltaTime);
+        var jump = coreFunctions.isWormJumping(gameState, worm.id);
         if (gameState.phase === "startPhase") {
             speed = 0;
         }

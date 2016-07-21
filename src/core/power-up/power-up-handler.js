@@ -1,7 +1,7 @@
 var circleShape = require("./../geometry/shape/circle.js");
 var PowerUp = require("./power-up.js");
 var clone = require("./../util/clone.js");
-var gameStateFunctions = require("./../game-state-functions.js");
+var coreFunctions = require("./../core-functions.js");
 var random = require("./../util/random.js");
 var forEach = require("./../util/for-each.js");
 
@@ -67,13 +67,13 @@ module.exports = function PowerUpHandler(deps) {
 
         function attemptSpawnRandomPowerUp() {
             var totalSpawnWeight = 0;
-            forEach(gameStateFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
+            forEach(coreFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
                 totalSpawnWeight += powerUpDefinition.weightedSpawnChance;
             });
             var randomValue = random.random(gameState);
             var currentChance = 0;
             var found = false;
-            forEach(gameStateFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
+            forEach(coreFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
                 currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
                 if(!found && currentChance > randomValue) {
                     found = true;
@@ -84,14 +84,6 @@ module.exports = function PowerUpHandler(deps) {
                     }
                 }
             });
-
-
-            //var powerUpDefinition = random.randomObjectValue(gameState, gameStateFunctions.getPowerUpDefinitions);
-            //var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
-            //powerUp = attemptGetPowerUpWithRandomPos(powerUp);
-            //if (powerUp !== undefined) {
-            //    gameState.powerUps.push(powerUp);
-            //}
         }
 
         deps.timeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);

@@ -17,6 +17,7 @@ player.Player = function (id, alive) {
     return {
         id: id,
         steering: steering,
+        gameTimeWhenSteeringChanged: 0,
         steeringSegments: steeringSegments,
         alive: alive
     };

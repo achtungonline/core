@@ -32,7 +32,12 @@ module.exports = function Game(gameState, gameEngine, playerHandler) {
     }
 
     function setPlayerSteering(playerId, steering) {
-        gameStateFunctions.getPlayer(gameState, playerId).steering = steering;
+        var player = gameStateFunctions.getPlayer(gameState, playerId);
+        var currentSteering = player.steering;
+        if(currentSteering !== steering) {
+            player.gameTimeWhenSteeringChanged = gameState.gameTime;
+            gameStateFunctions.getPlayer(gameState, playerId).steering = steering;
+        }
     }
 
     function isGameOver() {
