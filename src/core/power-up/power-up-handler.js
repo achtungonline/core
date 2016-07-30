@@ -17,6 +17,11 @@ module.exports = function PowerUpHandler(deps) {
             if (powerUps[i].id === powerUp.id) {
                 deps.effectHandler.activateEffect(gameState, worm.id, powerUp.id);
 
+                gameState.powerUpEvents.push({
+                    type: "powerup_despawn",
+                    time: gameState.gameTime,
+                    id: powerUp.id
+                });
                 powerUps.splice(i, 1);
                 return;
             }
@@ -81,6 +86,11 @@ module.exports = function PowerUpHandler(deps) {
                     powerUp = attemptGetPowerUpWithRandomPos(powerUp);
                     if (powerUp !== undefined) {
                         gameState.powerUps.push(powerUp);
+                        gameState.powerUpEvents.push({
+                            type: "powerup_spawn",
+                            time: gameState.gameTime,
+                            powerUp: powerUp
+                        })
                     }
                 }
             });

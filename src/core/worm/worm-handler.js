@@ -49,11 +49,17 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
         function updatePosition(speed, turningVelocity, direction, pathSegment) {
             var xDiff = 0;
             var yDiff = 0;
-            if (turningVelocity === 0) {
+            if (speed === 0) {
+                // 0 diameter arc
+                pathSegment.type = "still_arc";
+                xDiff = 0;
+                yDiff = 0;
+            } else if (turningVelocity === 0) {
                 // Straight line
                 pathSegment.type = "straight";
                 xDiff = deltaTime * speed * Math.cos(direction);
                 yDiff = deltaTime * speed * Math.sin(direction);
+
             } else {
                 // Circle arc
                 pathSegment.type = "arc";

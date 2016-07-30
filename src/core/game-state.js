@@ -45,6 +45,7 @@ module.exports = function GameState(players, worms, map, playArea, playAreaUpdat
             //  }
         ],
         gameEvents: [],
+        powerUpEvents: [],
         map: map,
         playArea: playArea,
         playAreaUpdateBuffer: playAreaUpdateBuffer,
