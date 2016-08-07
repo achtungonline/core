@@ -82,7 +82,7 @@ module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeMo
 
             worm.direction += turningVelocity * deltaTime;
             worm.head = shapeModifierI.move(worm.head, xDiff, yDiff);
-            wormBodyImmunityHandler.update(worm);
+            wormBodyImmunityHandler.update(gameState, worm);
         }
 
         function collisionDetection() {
