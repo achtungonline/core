@@ -38,6 +38,10 @@ function getWormEffects(gameState, wormId, effectType) {
     }
 }
 
+function hasWormEffect(gameState, wormId, effectType) {
+    return getWormEffects(gameState, wormId, effectType).length > 0;
+}
+
 function getAlivePlayers(gameState) {
     return gameState.players.filter(p => p.alive);
 }
@@ -68,5 +72,6 @@ module.exports = {
     getWorm: getWorm,
     getWormEffects: getWormEffects,
     getAlivePlayers: getAlivePlayers,
+    hasWormEffect: hasWormEffect,
     isPlayerAlive: isPlayerAlive
 };

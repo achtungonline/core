@@ -1,10 +1,8 @@
 var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
-var forEach = require("../util/for-each.js");
-var IMMUNITY_DISTANCE = 100;
+var coreFunctions = require("../core-functions.js");
+var IMMUNITY_DISTANCE_MULTIPLIER = 3;
 
 module.exports = function WormBodyImmunityHandler() {
-
-
     function createWormImmunityData(worm) {
         var data = {};
         data.distanceTravelled = 0;
@@ -30,12 +28,12 @@ module.exports = function WormBodyImmunityHandler() {
         });
     }
 
-    function isImmuneCell(worm, cell) {
+    function isImmuneCell(gameState, worm, cell) {
         var data = getWormImmunityData(worm);
-        return data.distanceTravelled - data.cellsDistanceTravelled[cell] <= IMMUNITY_DISTANCE;
+        return data.distanceTravelled - data.cellsDistanceTravelled[cell] <= IMMUNITY_DISTANCE_MULTIPLIER * coreFunctions.getWormSize(gameState, worm.id);
     }
 
-    function update(worm) {
+    function update(gameState, worm) {
         var data = getWormImmunityData(worm);
         data.distanceTravelled += shapeSpatialRelations.distanceSquared(worm.head, data.prevPosition);
         data.prevPosition = worm.head;
