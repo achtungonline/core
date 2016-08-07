@@ -36,6 +36,7 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         if (aiData.trajectory === undefined) {
             setDefaultDataValues();
         }
+
         aiData.timeUntilNextSimulation -= deltaTime;
         var aliveWorms = playerUtils.getAliveWorms(gameState.worms, player.id);
         if (aliveWorms.length === 0) {
@@ -43,10 +44,24 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         }
         var worm = aliveWorms[0];
 
+        function setSteering(steering) {
+            //TODO Will have to check this again when we have multiple worms
+            if(gameStateFunctions.hasWormEffect(gameState, worm.id, "tronTurn")) {
+                // If we have tron turn, the AI has to "Press and Release" in order to steer, otherwise it won't turn
+                if(player.steering === STEERING.STRAIGHT) {
+                    game.setPlayerSteering(player.id, steering);
+                } else {
+                    game.setPlayerSteering(player.id, STEERING.STRAIGHT);
+                }
+            } else {
+                game.setPlayerSteering(player.id, steering);
+            }
+        }
+
         if (aiData.timeUntilNextSimulation < 0) {
             if (coreFunctions.getWormSpeed(gameState, worm.id) === 0) {
                 aiData.trajectory = getBestStraightTrajectory(gameState, player, worm);
-            } else if (gameStateFunctions.getWormEffects(gameState, worm.id, "tronTurn").length > 0) {
+            } else if (gameStateFunctions.hasWormEffect(gameState, worm.id, "tronTurn")) {
                 aiData.trajectory = getBestTronTurnTrajectory(gameState, player, worm);
             } else {
                 aiData.trajectory = getBestSunFanTrajectory(gameState, player, worm);
@@ -60,11 +75,11 @@ module.exports = function PathCheckerAI(game, collisionHandler, trajectoryHandle
         if (aiData.trajectory.length > 0) {
             // Make sure that the worm follows the generated directory. If the worms turning speed is negative (switched key bindings), we need to take that in consideration when deciding where we should turn.
             if ((aiData.trajectory[0].turningSpeed * coreFunctions.getWormTurningSpeed(gameState, worm.id)) < 0) {
-                game.setPlayerSteering(player.id, STEERING.LEFT);
+                setSteering(STEERING.LEFT);
             } else if (aiData.trajectory[0].turningSpeed * coreFunctions.getWormTurningSpeed(gameState, worm.id) > 0) {
-                game.setPlayerSteering(player.id, STEERING.RIGHT);
+                setSteering(STEERING.RIGHT);
             } else {
-                game.setPlayerSteering(player.id, STEERING.STRAIGHT);
+                setSteering(STEERING.STRAIGHT);
             }
         }
         playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
