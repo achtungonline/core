@@ -1,7 +1,7 @@
 var PathCheckerAIHandler = require("./path-checker-ai-handler.js");
 var RandomAIHandler = require("./random-ai-handler.js");
 
-module.exports = function AIHandler(game) {
+module.exports = function AIHandler({game}) {
     var pathCheckerAiHandler = PathCheckerAIHandler(game);
     var randomAiHandler = RandomAIHandler(game);
 

@@ -4,7 +4,7 @@ var GameEngine = require("./core/game-engine.js");
 var WormHandler = require("./core/worm/worm-handler.js");
 var PlayerHandler = require("./core/player/player-handler.js");
 var Game = require("./core/game.js");
-var AIHandlerFactory = require("./ai/ai-handler-factory.js");
+var AIHandler = require("./ai/ai-handler.js");
 var PlayAreaHandler = require("./core/play-area/play-area-handler.js");
 var WormBodyImmunityHandler = require("./core/worm/worm-body-immunity-handler.js");
 var CollisionHandler = require("./core/collision/collision-handler.js");
@@ -60,7 +60,7 @@ module.exports = function GameFactory() {
 
         var game = Game(gameState, gameEngine, playerHandler);
 
-        var aiHandler = AIHandlerFactory(game, playAreaHandler).create();
+        var aiHandler = AIHandler({game});
 
         playerConfigs.filter(function (playerConfig) {
             return playerConfig.type === 'bot';
