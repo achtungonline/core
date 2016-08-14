@@ -4,10 +4,15 @@ var clone = require("./../util/clone.js");
 var coreFunctions = require("./../core-functions.js");
 var random = require("./../util/random.js");
 var forEach = require("./../util/for-each.js");
-
+var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
+var idGenerator = require("./../util/id-generator.js").indexCounterId(0);
+var mapUtils = require("./../map/map-utils.js");
+var timeBasedChance = require("./../time-based-chance.js");
+var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(0.12));
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 var POWER_UP_SHAPE = circleShape.Circle(25);
+
 
 module.exports = function PowerUpHandler(deps) {
 
@@ -29,7 +34,7 @@ module.exports = function PowerUpHandler(deps) {
             function isCollidingWithWorms(shape) {
                 for (var i in gameState.worms) {
                     var worm = gameState.worms[i];
-                    if (deps.shapeSpatialRelations.intersects(worm.head, shape)) {
+                    if (shapeSpatialRelations.intersects(worm.head, shape)) {
                         return true;
                     }
                 }
@@ -39,7 +44,7 @@ module.exports = function PowerUpHandler(deps) {
             function isCollidingWithPowerUps(shape) {
                 for (var i in gameState.powerUps) {
                     var powerUp = gameState.powerUps[i];
-                    if (deps.shapeSpatialRelations.intersects(powerUp.shape, shape)) {
+                    if (shapeSpatialRelations.intersects(powerUp.shape, shape)) {
                         return true;
                     }
                 }
@@ -47,7 +52,7 @@ module.exports = function PowerUpHandler(deps) {
             }
 
             function getPowerUpShapeInsidePlayableMapArea(powerUp) {
-                return deps.mapUtils.getShapeRandomlyInsidePlayableArea(gameState, gameState.map, powerUp.shape);
+                return mapUtils.getShapeRandomlyInsidePlayableArea(gameState, gameState.map, powerUp.shape);
             }
 
 
@@ -77,7 +82,7 @@ module.exports = function PowerUpHandler(deps) {
                 currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
                 if(!found && currentChance > randomValue) {
                     found = true;
-                    var powerUp = PowerUp(deps.idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
+                    var powerUp = PowerUp(idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
                     powerUp = attemptGetPowerUpWithRandomPos(powerUp);
                     if (powerUp !== undefined) {
                         gameState.powerUps.push(powerUp);
@@ -86,7 +91,7 @@ module.exports = function PowerUpHandler(deps) {
             });
         }
 
-        deps.timeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);
+        timeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);
     }
 
     return {

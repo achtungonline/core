@@ -9,7 +9,7 @@ var PlayArea = require("./core/play-area/play-area.js");
 var PlayAreaHandlerFactory = require("./core/play-area/play-area-handler-factory.js");
 var WormBodyImmunityHandler = require("./core/worm/worm-body-immunity-handler.js");
 var CollisionHandlerFactory = require("./core/collision/collision-handler-factory.js");
-var PowerUpHandlerFactory = require("./core/power-up/power-up-handler-factory.js");
+var PowerUpHandler = require("./core/power-up/power-up-handler.js");
 var EffectHandlerFactory = require("./core/power-up/effect-handler-factory.js");
 var WormFactory = require("./core/worm/worm-factory.js");
 var idGenerator = require("./core/util/id-generator.js");
@@ -51,12 +51,11 @@ module.exports = function GameFactory() {
 
         var playerHandler = PlayerHandler(wormHandler);
 
-        var powerUpHandlerFactory = PowerUpHandlerFactory({
+        var powerUpHandler = PowerUpHandler({
             wormHandler: wormHandler,
             effectHandler: effectHandler,
             collisionHandler: collisionHandler
         });
-        var powerUpHandler = powerUpHandlerFactory.create();
 
         var wormFactory = WormFactory(idGenerator.indexCounterId(0));
 
