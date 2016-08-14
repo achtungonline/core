@@ -1,8 +1,11 @@
 var EventEmitter = require("events").EventEmitter;
 var ShapeToGridConverter = require("../geometry/shape-to-grid-converter.js");
-var PlayArea = require("../play-area/play-area.js");
+var constants = require("../constants.js");
+var gameStateFunctions = require("../game-state-functions.js");
+var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
 
-module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHandler, mapUtils, shapeSpatialRelations) {
+
+module.exports = function CollisionHandler({wormBodyImmunityHandler}) {
     var events = {};
     events.WORM_MAP_COLLISION = "wormMapCollision";
     events.WORM_WORM_COLLISION = "wormWormCollision";
@@ -12,18 +15,21 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
     var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
     function wormMapCollisionDetection(gameState, worm) {
-        var head = worm.head;
-        if (!mapUtils.isInsideMap(gameState.map, head)) {
+        function isWormHeadInsideMap() {
+            return shapeSpatialRelations.contains(gameStateFunctions.getMapShape(gameState), worm.head);
+        }
+        if (!isWormHeadInsideMap()) {
             eventEmitter.emit(events.WORM_MAP_COLLISION, gameState, worm);
         }
     }
+
 
     function wormWormCollisionDetection(gameState, worm) {
         var playArea = gameState.playArea;
         var cells = shapeToGridConverter.convert(worm.head, playArea, ShapeToGridConverter.RoundingModes.CONTAINMENT);
         cells.forEach(function (cell) {
             var value = playArea.grid[cell];
-            if (value !== PlayArea.FREE) { // TODO Utility function to check if worm-id
+            if (value !== constants.PLAY_AREA_FREE) { // TODO Utility function to check if worm-id
                 if (value !== worm.id || !wormBodyImmunityHandler.isImmuneCell(gameState, worm, cell)) {
                     eventEmitter.emit(events.WORM_WORM_COLLISION, gameState, worm, value);
                 }
@@ -45,10 +51,10 @@ module.exports = function CollisionHandler(playAreaHandler, wormBodyImmunityHand
     }
 
     return {
-        wormMapCollisionDetection: wormMapCollisionDetection,
-        wormWormCollisionDetection: wormWormCollisionDetection,
-        wormPowerUpCollisionDetection: wormPowerUpCollisionDetection,
+        wormMapCollisionDetection,
+        wormWormCollisionDetection,
+        wormPowerUpCollisionDetection,
         on: eventEmitter.on.bind(eventEmitter),
-        events: events
+        events
     };
 };

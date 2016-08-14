@@ -1,4 +1,8 @@
-module.exports = function JumpHandler(timeBasedChanceTrigger, jumpLength, jumpMinFrequency) {
+var timeBasedChance = require("../time-based-chance.js");
+var constants = require("../constants.js");
+
+module.exports = function JumpHandler() {
+    var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.JUMP_CHANCE));
 
     function update(gameState, deltaTime, worm) {
         function updateRemainingJumpTime() {
@@ -11,7 +15,7 @@ module.exports = function JumpHandler(timeBasedChanceTrigger, jumpLength, jumpMi
 
         function startJumping() {
             if (worm.speed > 0) {
-                worm.jump.remainingJumpTime = jumpLength / worm.speed;
+                worm.jump.remainingJumpTime = constants.JUMP_LENGTH / worm.speed;
             } else {
                 worm.jump.remainingJumpTime = 0;
             }
@@ -25,7 +29,7 @@ module.exports = function JumpHandler(timeBasedChanceTrigger, jumpLength, jumpMi
 
         updateTimeSinceLastJump();
 
-        if (worm.jump.timeSinceLastJump < jumpMinFrequency) {
+        if (worm.jump.timeSinceLastJump < constants.JUMP_MIN_FREQUENCY) {
             return;
         }
 

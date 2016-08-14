@@ -2,8 +2,7 @@ var gameStateFunctions = require("../game-state-functions.js");
 var coreFunctions = require("../core-functions.js");
 var clone = require("../util/clone.js");
 
-module.exports = function EffectHandler(options) {
-
+module.exports = function EffectHandler() {
     function update(deltaTime, gameState) {
         var effects = gameState.effects;
         for (var i = effects.length - 1; i >= 0; i--) {

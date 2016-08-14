@@ -1,4 +1,3 @@
-
 var random = require("./util/random.js");
 var timeBasedChance = module.exports = {};
 
@@ -71,7 +70,6 @@ timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTim
         currentChance = deltaTime / (1 / baseChance - totalTime);
         totalTime += deltaTime;
     }
-
 
     function getCurrentChance() {
         return currentChance;

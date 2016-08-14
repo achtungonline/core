@@ -1,9 +1,11 @@
 var EventEmitter = require("events").EventEmitter;
-var gameStateFunctions = require("../game-state-functions.js");
 var coreFunctions = require("../core-functions.js");
+var clone = require("../util/clone.js");
+var shapeModifierI = require("../geometry/shape-modifier-immutable.js");
 
+var jumpHandler = require("./jump-handler.js")();
 
-module.exports = function WormHandler(playAreaHandler, collisionHandler, shapeModifierI, wormBodyImmunityHandler, clone, jumpHandler, effectHandler) {
+module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBodyImmunityHandler}) {
     var eventEmitter = new EventEmitter();
     var events = {};
 

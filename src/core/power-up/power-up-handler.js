@@ -1,26 +1,21 @@
-var circleShape = require("./../geometry/shape/circle.js");
-var PowerUp = require("./power-up.js");
 var clone = require("./../util/clone.js");
 var coreFunctions = require("./../core-functions.js");
 var random = require("./../util/random.js");
 var forEach = require("./../util/for-each.js");
 var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
 var idGenerator = require("./../util/id-generator.js").indexCounterId(0);
-var mapUtils = require("./../map/map-utils.js");
 var timeBasedChance = require("./../time-based-chance.js");
-var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(0.12));
+var constants = require("./../constants.js");
+var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANGE));
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
-var POWER_UP_SHAPE = circleShape.Circle(25);
 
-
-module.exports = function PowerUpHandler(deps) {
-
-    deps.collisionHandler.on(deps.collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, worm, powerUp) {
+module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
+    collisionHandler.on(collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, worm, powerUp) {
         var powerUps = gameState.powerUps;
         for (var i = 0; i < powerUps.length; i++) {
             if (powerUps[i].id === powerUp.id) {
-                deps.effectHandler.activateEffect(gameState, worm.id, powerUp.id);
+                effectHandler.activateEffect(gameState, worm.id, powerUp.id);
 
                 gameState.powerUpEvents.push({
                     type: "powerup_despawn",
@@ -57,7 +52,7 @@ module.exports = function PowerUpHandler(deps) {
             }
 
             function getPowerUpShapeInsidePlayableMapArea(powerUp) {
-                return mapUtils.getShapeRandomlyInsidePlayableArea(gameState, gameState.map, powerUp.shape);
+                return coreFunctions.getShapeRandomlyInsidePlayableArea(gameState, gameState.map, powerUp.shape);
             }
 
 
@@ -85,10 +80,17 @@ module.exports = function PowerUpHandler(deps) {
             var found = false;
             forEach(coreFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
                 currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
-                if(!found && currentChance > randomValue) {
+                if (!found && currentChance > randomValue) {
                     found = true;
-                    var powerUp = PowerUp(idGenerator(), powerUpDefinition.name, powerUpDefinition.effectType, clone(POWER_UP_SHAPE), powerUpDefinition.effectStrength, powerUpDefinition.effectDuration, powerUpDefinition.affects);
-                    powerUp = attemptGetPowerUpWithRandomPos(powerUp);
+                    var powerUp = attemptGetPowerUpWithRandomPos({
+                        id: idGenerator(),
+                        name: powerUpDefinition.name,
+                        effectType: powerUpDefinition.effectType,
+                        shape: clone(constants.POWER_UP_SHAPE),
+                        effectStrength: powerUpDefinition.effectStrength,
+                        effectDuration: powerUpDefinition.effectDuration,
+                        affects: powerUpDefinition.affects
+                    });
                     if (powerUp !== undefined) {
                         gameState.powerUps.push(powerUp);
                         gameState.powerUpEvents.push({

@@ -1,5 +1,4 @@
 module.exports = function TrajectoryHandler() {
-
     function addCurve(trajectory, curve) {
         trajectory.push(curve);
     }

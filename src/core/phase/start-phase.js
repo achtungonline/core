@@ -1,20 +1,17 @@
-var shapeModifierI = require("./../geometry/shape-modifier-immutable-factory.js")().create();
+var shapeModifierI = require("./../geometry/shape-modifier-immutable.js");
+var constants = require("../constants.js");
+var random = require("./../util/random.js");
+var gameStateFunctions = require("./../game-state-functions.js");
+var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
+var coreFunctions = require("../core-functions.js");
 
 var PHASE_DURATION = 2.5; // seconds
 
 var startPhase = module.exports = {};
-var random = require("./../util/random.js");
 
 startPhase.type = "startPhase";
 
-startPhase.StartPhase = function StartPhase(deps) {
-    var wormFactory = deps.wormFactory;
-    var shapeSpatialRelations = deps.shapeSpatialRelations;
-    var mapUtils = deps.mapUtils;
-    var playerUtils = deps.playerUtils;
-    var wormHandler = deps.wormHandler;
-    var playerHandler = deps.playerHandler;
-
+startPhase.StartPhase = function StartPhase({wormIdGenerator, wormHandler, playerHandler}) {
     function setWormStartingPositions(gameState, worms, map) {
         function isTooCloseToOtherWorms(worms, shape) {
             var biggerShape = shapeModifierI.changeSize(shape, 70, 70);
@@ -28,11 +25,11 @@ startPhase.StartPhase = function StartPhase(deps) {
         }
 
         function getWormHeadInsidePlayableMapArea(worm) {
-            return mapUtils.getShapeRandomlyInsidePlayableArea(gameState, map, worm.head, 50);
+            return coreFunctions.getShapeRandomlyInsidePlayableArea(gameState, map, worm.head, 50);
         }
 
         var updatedWorms = [];
-        playerUtils.forEachAliveWorm(worms, function (worm) {
+        gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
             var newHead = getWormHeadInsidePlayableMapArea(worm);
             var counter = 0;
             while (isTooCloseToOtherWorms(updatedWorms, newHead)) {
@@ -56,8 +53,8 @@ startPhase.StartPhase = function StartPhase(deps) {
     }
 
     function createWorms(gameState) {
-        playerUtils.forEachAlivePlayer(gameState.players, function (player) {
-            gameState.worms.push(wormFactory.create(player.id));
+        gameStateFunctions.forEachAlivePlayer(gameState, function (player) {
+            gameStateFunctions.addWorm(gameState, wormIdGenerator(), player.id);
         });
     }
 
@@ -74,7 +71,7 @@ startPhase.StartPhase = function StartPhase(deps) {
         }
 
         playerHandler.update(gameState, deltaTime);
-        playerUtils.forEachAliveWorm(gameState.worms, function (worm) {
+        gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
             wormHandler.update(gameState, deltaTime, worm);
         });
 
@@ -87,9 +84,6 @@ startPhase.StartPhase = function StartPhase(deps) {
 
     function end(gameState) {
         //TODO set not startPhase
-        //playerUtils.forEachAliveWorm(gameState.worms, function setOriginalPlayerSpeeds(worm) {
-        //    wormHandler.setSpeed(worm, worm.defaultSpeed);
-        //});
     }
 
     function isActive(gameState) {

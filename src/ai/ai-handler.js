@@ -1,4 +1,13 @@
-module.exports = function AIHandler(game, ais, defaultAiType) {
+var PathCheckerAIHandler = require("./path-checker-ai-handler.js");
+var RandomAIHandler = require("./random-ai-handler.js");
+
+module.exports = function AIHandler(game) {
+    var pathCheckerAiHandler = PathCheckerAIHandler(game);
+    var randomAiHandler = RandomAIHandler(game);
+
+    var ais = [];
+    ais[pathCheckerAiHandler.type] = pathCheckerAiHandler;
+    ais[randomAiHandler.type] = randomAiHandler;
 
     game.on(game.events.GAME_UPDATED, function (gameState, deltaTime) {
         update(gameState, deltaTime);
@@ -13,7 +22,7 @@ module.exports = function AIHandler(game, ais, defaultAiType) {
         }
 
         player.aiData = {};
-        player.aiData.type = (aiType) ? aiType : defaultAiType;
+        player.aiData.type = (aiType) ? aiType : pathCheckerAiHandler.type;
     }
 
     function removeAIPlayer(player) {

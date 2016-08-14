@@ -1,5 +1,6 @@
-var PlayArea = require("./play-area.js");
-var GridUtils = require("./../grid/grid-utils.js");
+var shapeToGridConverter = require("./../geometry/shape-to-grid-converter.js").createShapeToGridConverter();
+var constants = require("../constants.js");
+var gameStateFunctions = require("../game-state-functions.js");
 
 var UpdateBufferData = function UpdateBufferData(index, value) {
     var data = {};
@@ -8,7 +9,7 @@ var UpdateBufferData = function UpdateBufferData(index, value) {
     return data;
 };
 
-module.exports = function PlayAreaHandler(gridUtils, shapeToGridConverter) {
+module.exports = function PlayAreaHandler() {
 
     function applyShape(gameState, shape, value) {
         var playArea = gameState.playArea;
@@ -31,11 +32,11 @@ module.exports = function PlayAreaHandler(gridUtils, shapeToGridConverter) {
     }
 
     function applyObstacleShape(gameState, shape) {
-        return applyShape(gameState, shape, PlayArea.OBSTACLE);
+        return applyShape(gameState, shape, constants.PLAY_AREA_OBSTACLE);
     }
 
     function resetPlayArea(gameState) {
-        GridUtils.fillGrid(gameState.playArea.grid, PlayArea.FREE);
+        gameStateFunctions.resetPlayArea(gameState);
     }
 
     function resetUpdateBuffer(gameState) {
