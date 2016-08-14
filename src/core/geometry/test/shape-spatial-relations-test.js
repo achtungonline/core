@@ -1,4 +1,4 @@
-var shapeFactory = require("../shape-factory.js")();
+var shapeFactory = require("../shape-factory.js");
 var shapeSpatialRelations = require("../shape-spatial-relations.js");
 
 describe("Shape spatial relations", function() {

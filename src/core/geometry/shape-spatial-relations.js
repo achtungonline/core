@@ -1,6 +1,3 @@
-var circleType = require("./shape/circle.js").type;
-var rectangleType = require("./shape/rectangle.js").type;
-
 var spatialRelations = module.exports = {};
 
 spatialRelations.intersects = function intersects(shape, otherShape) {
@@ -19,7 +16,7 @@ spatialRelations.distanceSquared = function distance(shape, otherShape) {
 // -- INTERSECTION-FUNCTIONS --
 var intersectsFunctions = createShapeRelationMatrix();
 
-intersectsFunctions[circleType][circleType] = function circleCircleIntersection(circle, otherCircle) {
+intersectsFunctions["circle"]["circle"] = function circleCircleIntersection(circle, otherCircle) {
     if (!boundingBoxesIntersects(circle, otherCircle)) {
         return false;
     }
@@ -29,11 +26,11 @@ intersectsFunctions[circleType][circleType] = function circleCircleIntersection(
     return spatialRelations.distanceSquared(circle, otherCircle) < maxAllowedDist * maxAllowedDist;
 };
 
-intersectsFunctions[rectangleType][rectangleType] = function rectangleRectangleIntersection(rectangle, otherRectangle) {
+intersectsFunctions["rectangle"]["rectangle"] = function rectangleRectangleIntersection(rectangle, otherRectangle) {
     return boundingBoxesIntersects(rectangle, otherRectangle);
 };
 
-intersectsFunctions[circleType][rectangleType] = function circleRectangleIntersection(circle, rectangle) {
+intersectsFunctions["circle"]["rectangle"] = function circleRectangleIntersection(circle, rectangle) {
     if (!boundingBoxesIntersects(circle, rectangle)) {
         return false;
     }
@@ -56,15 +53,15 @@ intersectsFunctions[circleType][rectangleType] = function circleRectangleInterse
     return cornerDistanceSq <= circle.radius * circle.radius;
 };
 
-intersectsFunctions[rectangleType][circleType] = function rectangleCircleIntersection(rectangle, circle) {
-    return intersectsFunctions[circleType][rectangleType](circle, rectangle);
+intersectsFunctions["rectangle"]["circle"] = function rectangleCircleIntersection(rectangle, circle) {
+    return intersectsFunctions["circle"]["rectangle"](circle, rectangle);
 };
 
 
 // -- CONTAINMENT-FUNCTIONS
 var containmentFunctions = createShapeRelationMatrix();
 
-containmentFunctions[circleType][circleType] = function circleCircleContainment(outerCircle, innerCircle) {
+containmentFunctions["circle"]["circle"] = function circleCircleContainment(outerCircle, innerCircle) {
     if (!boundingBoxesContains(outerCircle, innerCircle)) {
         return false;
     }
@@ -74,11 +71,11 @@ containmentFunctions[circleType][circleType] = function circleCircleContainment(
     return spatialRelations.distanceSquared(outerCircle, innerCircle) < maxAllowedDist * maxAllowedDist;
 };
 
-containmentFunctions[rectangleType][rectangleType] = function rectangleRectangleContainment(outerRectangle, innerRectangle) {
+containmentFunctions["rectangle"]["rectangle"] = function rectangleRectangleContainment(outerRectangle, innerRectangle) {
     return boundingBoxesContains(outerRectangle, innerRectangle);
 };
 
-containmentFunctions[circleType][rectangleType] = function circleRectangleContainment(outerCircle, innerRectangle) {
+containmentFunctions["circle"]["rectangle"] = function circleRectangleContainment(outerCircle, innerRectangle) {
     if (!boundingBoxesContains(outerCircle, innerRectangle)) {
         return false;
     }
@@ -90,7 +87,7 @@ containmentFunctions[circleType][rectangleType] = function circleRectangleContai
     return distX*distX + distY*distY <= outerCircle.radius*outerCircle.radius;
 };
 
-containmentFunctions[rectangleType][circleType] = function rectangleCircleContainment(outerRectangle, innerCircle) {
+containmentFunctions["rectangle"]["circle"] = function rectangleCircleContainment(outerRectangle, innerCircle) {
     return boundingBoxesContains(outerRectangle, innerCircle);
 };
 
@@ -120,8 +117,8 @@ function boundingBoxesContains(outerShape, innerShape) {
 
 function createShapeRelationMatrix() {
     var matrix = [];
-    matrix[circleType] = [];
-    matrix[rectangleType] = [];
+    matrix["circle"] = [];
+    matrix["rectangle"] = [];
     return matrix;
 }
 

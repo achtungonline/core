@@ -1,4 +1,7 @@
 var gameStateFunctions = require("./game-state-functions.js");
+var shapeSpatialRelations = require("./geometry/shape-spatial-relations.js");
+var shapeModifierI = require("./geometry/shape-modifier-immutable.js");
+var random = require("./util/random.js");
 
 var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
@@ -116,6 +119,38 @@ powerUpDefinitions["tronTurn"] = {
     affects: "others"
 };
 
+function getShapeRandomlyInsidePlayableArea(gameState, map, shape, minDistance) {
+    function getRandomPositionInsidePlayableArea(gameState, map, shape, minDistance) {
+        function intersectsBlockingShapes(map, shape) {
+            for (var i = 0; i < map.blockingShapes.length; i++) {
+                if (shapeSpatialRelations.intersects(map.blockingShapes[i], shape)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        minDistance = minDistance || 0;
+        var shrunkenMapShape = shapeModifierI.changeSize(map.shape, -minDistance, -minDistance);
+        var pos = {};
+        var i = 0;
+        var shapeWithNewPos = shape;
+        while (i < 100000) {
+            pos.x = random.random(gameState) * map.width;
+            pos.y = random.random(gameState) * map.height;
+            shapeWithNewPos = shapeModifierI.setPosition(shapeWithNewPos, pos.x, pos.y);
+            if (shapeSpatialRelations.contains(shrunkenMapShape, shapeWithNewPos) && !intersectsBlockingShapes(map, shapeWithNewPos)) {
+                return pos;
+            }
+            i++;
+        }
+        throw Error("Failed to find a position inside playable area for the given shape");
+    }
+
+
+    var newPos = getRandomPositionInsidePlayableArea(gameState, map, shape, minDistance);
+    return shapeModifierI.setPosition(shape, newPos.x, newPos.y);
+}
 
 function getWormDirection(gameState, wormId) {
     return transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).direction, 'changeDirection');
@@ -175,10 +210,11 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
 module.exports = {
     getEffectDefinitions: effectDefinitions,
     getPowerUpDefinitions: powerUpDefinitions,
-    getWormDirection: getWormDirection,
-    getWormSize: getWormSize,
-    getWormSpeed: getWormSpeed,
-    getWormTurningSpeed: getWormTurningSpeed,
-    getWormTurningVelocity: getWormTurningVelocity,
-    isWormJumping: isWormJumping
+    getShapeRandomlyInsidePlayableArea,
+    getWormDirection,
+    getWormSize,
+    getWormSpeed,
+    getWormTurningSpeed,
+    getWormTurningVelocity,
+    isWormJumping
 };

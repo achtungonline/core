@@ -1,4 +1,7 @@
 var EventEmitter = require("events").EventEmitter;
+var StartPhase = require("./start-phase.js").StartPhase;
+var PlayPhase = require("./play-phase.js").PlayPhase;
+var RoundOverPhase = require("./round-over-phase.js").RoundOverPhase;
 
 /**
  * Responsible for the different phases during the game.
@@ -9,11 +12,26 @@ var EventEmitter = require("events").EventEmitter;
  * @constructor
  */
 
-module.exports = function PhaseHandler(phases) {
+module.exports = function PhaseHandler({wormIdGenerator, wormHandler, playerHandler, powerUpHandler, effectHandler}) {
     var eventEmitter = new EventEmitter();
     var events = {};
     events.NEW_PHASE_STARTED = "newPhaseStarted";
     var currentPhaseIndex = 0;
+
+    var phases = [
+        StartPhase({
+            wormHandler,
+            playerHandler,
+            wormIdGenerator
+        }),
+        PlayPhase({
+            wormHandler,
+            playerHandler,
+            powerUpHandler,
+            effectHandler
+        }),
+        RoundOverPhase()
+    ];
 
     function start(gameState) {
         startCurrentPhase(gameState);

@@ -1,6 +1,6 @@
-var PlayArea = require("./../../play-area/play-area.js");
+var constants = require("./../../constants.js");
 var shapeToGridConverter = require("./../../geometry/shape-to-grid-converter.js").createShapeToGridConverter();
-var rectangle = require("./../../geometry/shape/rectangle.js");
+var shapeFactory = require("./../../geometry/shape-factory.js");
 
 var TYPE = "clear";
 
@@ -28,10 +28,10 @@ function activate(gameState, strength, duration, wormId) {
         return changedData;
     }
 
-    applyShape(gameState, rectangle.Rectangle(gameState.map.width, gameState.map.height, 0, 0), PlayArea.FREE);
+    applyShape(gameState, rectangle.Rectangle(gameState.map.width, gameState.map.height, 0, 0), constants.PLAY_AREA_FREE);
 
     gameState.gameEvents.push({
-        type: "clear",
+        type: TYPE,
         time: gameState.gameTime
     });
 }

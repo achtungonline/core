@@ -1,62 +1,50 @@
-var gridUtils = require("./../grid/grid-utils.js");
+var gridUtils = require("./../util/grid.js");
 
-var circleType = require("./shape/circle.js").type;
-var rectType = require("./shape/rectangle.js").type;
+var convertFunctions = {};
+convertFunctions["rectangle"] = function rectToGrid(rect, grid, roundingMode) {
+    var leftRow = Math.max(0, roundingMode.roundLeft(rect.y));
+    var leftCol = Math.max(0, roundingMode.roundLeft(rect.x));
 
-var convertFunctions = getConvertFunctions();
+    var rightRow = Math.min(grid.rows - 1, roundingMode.roundRight(rect.maxY));
+    var rightCol = Math.min(grid.cols - 1, roundingMode.roundRight(rect.maxX));
 
-function getConvertFunctions() {
-    var functions = {};
-
-    functions[rectType] = function rectToGrid(rect, grid, roundingMode) {
-        var leftRow = Math.max(0, roundingMode.roundLeft(rect.y));
-        var leftCol = Math.max(0, roundingMode.roundLeft(rect.x));
-
-        var rightRow = Math.min(grid.rows - 1, roundingMode.roundRight(rect.maxY));
-        var rightCol = Math.min(grid.cols - 1, roundingMode.roundRight(rect.maxX));
-
-        var size = (rightRow - leftRow + 1) * (rightCol - leftCol + 1);
-        var points = new Array(size);
-        var index = 0;
-        for (var row = leftRow; row <= rightRow; row++) {
-            for (var col = leftCol; col <= rightCol; col++) {
-                if (gridUtils.isInsideGrid(grid, row, col)) {
-                    points[index++] = (gridUtils.getIndex(grid, row, col));
-                }
+    var size = (rightRow - leftRow + 1) * (rightCol - leftCol + 1);
+    var points = new Array(size);
+    var index = 0;
+    for (var row = leftRow; row <= rightRow; row++) {
+        for (var col = leftCol; col <= rightCol; col++) {
+            if (gridUtils.isInsideGrid(grid, row, col)) {
+                points[index++] = (gridUtils.getIndex(grid, row, col));
             }
         }
+    }
 
-        return points;
-    };
+    return points;
+};
+convertFunctions["circle"] = function circleToGrid(circle, grid, roundingMode) {
+    var firstRow = Math.max(0, roundingMode.roundLeft(circle.y));
+    var midRow = Math.round(circle.centerY);
+    var lastRow = Math.min(grid.rows - 1, roundingMode.roundRight(circle.maxY));
 
-    functions[circleType] = function circleToGrid(circle, grid, roundingMode) {
-        var firstRow = Math.max(0, roundingMode.roundLeft(circle.y));
-        var midRow = Math.round(circle.centerY);
-        var lastRow = Math.min(grid.rows - 1, roundingMode.roundRight(circle.maxY));
-
-        var points = [];
-        for (var row = firstRow; row <= lastRow; row++) {
-            var dy = midRow - row;
-            var dx = Math.sqrt(circle.radius * circle.radius - dy * dy);
-            var firstCol = Math.max(0, roundingMode.roundLeft((circle.centerX - dx)));
-            var lastCol = Math.min(grid.cols - 1, roundingMode.roundRight((circle.centerX + dx)));
-            for (var col = firstCol; col <= lastCol; col++) {
-                points.push(gridUtils.getIndex(grid, row, col));
-            }
+    var points = [];
+    for (var row = firstRow; row <= lastRow; row++) {
+        var dy = midRow - row;
+        var dx = Math.sqrt(circle.radius * circle.radius - dy * dy);
+        var firstCol = Math.max(0, roundingMode.roundLeft((circle.centerX - dx)));
+        var lastCol = Math.min(grid.cols - 1, roundingMode.roundRight((circle.centerX + dx)));
+        for (var col = firstCol; col <= lastCol; col++) {
+            points.push(gridUtils.getIndex(grid, row, col));
         }
+    }
 
-        return points;
-    };
-    return functions;
-}
-
-
-
-var ShapeToGridConverter = module.exports = {};
+    return points;
+};
 
 function createRoundingMode(roundLeft, roundRight) {
     return {roundLeft: roundLeft, roundRight: roundRight};
 }
+
+var ShapeToGridConverter = module.exports = {};
 
 ShapeToGridConverter.RoundingModes = {};
 ShapeToGridConverter.RoundingModes.ROUND = createRoundingMode(Math.round, Math.round);

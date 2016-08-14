@@ -1,6 +1,5 @@
 var EventEmitter = require("events").EventEmitter;
 var any = require("../util/any.js");
-var playerUtils = require("./player-utils.js");
 var gameStateFunctions = require("./../game-state-functions.js");
 
 module.exports = function PlayerHandler(wormHandler) {
@@ -9,10 +8,10 @@ module.exports = function PlayerHandler(wormHandler) {
     events.PLAYER_DIED = "playerDied";
 
     wormHandler.on(wormHandler.events.WORM_DIED, function (gameState, worm) {
-        var player = playerUtils.getPlayerById(gameState.players, worm.playerId);
+        var player = gameStateFunctions.getPlayer(gameState, worm.playerId);
 
         function isAnyWormAlive() {
-            return playerUtils.getAliveWorms(gameState.worms, worm.playerId).length > 0;
+            return gameStateFunctions.getAliveWorms(gameState, worm.playerId).length > 0;
         }
 
         function kill() {
