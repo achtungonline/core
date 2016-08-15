@@ -6,7 +6,7 @@ var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
 var idGenerator = require("./../util/id-generator.js").indexCounterId(0);
 var timeBasedChance = require("./../time-based-chance.js");
 var constants = require("./../constants.js");
-var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANGE));
+var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 
@@ -18,7 +18,7 @@ module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
                 effectHandler.activateEffect(gameState, worm.id, powerUp.id);
 
                 gameState.powerUpEvents.push({
-                    type: "powerup_despawn",
+                    type: "despawn",
                     time: gameState.gameTime,
                     id: powerUp.id
                 });
@@ -94,7 +94,7 @@ module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
                     if (powerUp !== undefined) {
                         gameState.powerUps.push(powerUp);
                         gameState.powerUpEvents.push({
-                            type: "powerup_spawn",
+                            type: "spawn",
                             time: gameState.gameTime,
                             powerUp: powerUp
                         })

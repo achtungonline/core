@@ -2,6 +2,7 @@ var EventEmitter = require("events").EventEmitter;
 var coreFunctions = require("../core-functions.js");
 var clone = require("../util/clone.js");
 var shapeModifierI = require("../geometry/shape-modifier-immutable.js");
+var gameStateFunctions = require("../game-state-functions.js");
 
 var jumpHandler = require("./jump-handler.js")();
 
@@ -127,37 +128,7 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
         }
         updatePosition(speed, turningVelocity, direction, pathSegment);
         collisionDetection();
-        addWormPathSegment(gameState, worm, pathSegment);
-    }
-
-
-    function addWormPathSegment(gameState, worm, segment) {
-        var segments = worm.pathSegments;
-        if (segments.length === 0) {
-            segments.push(segment);
-        } else {
-            var lastSegment = segments[segments.length - 1];
-            if (segment.type === lastSegment.type &&
-                    segment.speed === lastSegment.speed &&
-                    segment.turningVelocity === lastSegment.turningVelocity &&
-                    segment.size === lastSegment.size &&
-                    segment.playerId === lastSegment.playerId &&
-                    segment.jump === lastSegment.jump) {
-                // Continue last segment
-                lastSegment.duration += segment.duration;
-                lastSegment.endTime += segment.duration;
-                lastSegment.endX = segment.endX;
-                lastSegment.endY = segment.endY;
-                lastSegment.endDirection = segment.endDirection;
-                if (segment.type === "arc") {
-                    lastSegment.arcEndAngle = segment.arcEndAngle;
-                    lastSegment.arcAngleDiff += segment.arcAngleDiff;
-                }
-            } else {
-                // Start new segment
-                segments.push(segment);
-            }
-        }
+        gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
     }
 
     function setHead(worm, shape) {

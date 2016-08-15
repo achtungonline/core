@@ -31,7 +31,7 @@ function activate(gameState, strength, duration, wormId) {
     applyShape(gameState, rectangle.Rectangle(gameState.map.width, gameState.map.height, 0, 0), constants.PLAY_AREA_FREE);
 
     gameState.worms.forEach(function (worm) {
-        worm.pathSegments.push({
+        gameState.wormPathSegments[worm.id].push({
             type: TYPE,
             startTime: gameState.gameTime,
             endTime: gameState.gameTime
