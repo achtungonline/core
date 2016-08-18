@@ -1,4 +1,4 @@
-var random = require("./util/random.js");
+var random = require("./random.js");
 var timeBasedChance = module.exports = {};
 
 /**

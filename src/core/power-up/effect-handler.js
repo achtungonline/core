@@ -21,7 +21,7 @@ module.exports = function EffectHandler() {
     function activateEffect(gameState, wormId, powerUpId) {
 
         var powerUp = gameStateFunctions.getPowerUp(gameState, powerUpId);
-        var effect = coreFunctions.getEffectDefinitions[powerUp.effectType].activate(gameState, powerUp.effectStrength, powerUp.effectDuration, wormId);
+        var effect = coreFunctions.getEffectDefinitions[powerUp.effectType].activate(gameState, powerUp.effectStrength, powerUp.effectDuration, wormId, powerUp.affects);
         if (effect) {
             if (powerUp.affects === "self" || powerUp.affects === "all") {
                 gameStateFunctions.addEffect(gameState, effect);

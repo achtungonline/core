@@ -1,4 +1,4 @@
-var timeBasedChance = require("../time-based-chance.js");
+var timeBasedChance = require("../util/time-based-chance.js");
 var constants = require("../constants.js");
 
 module.exports = function JumpHandler() {

@@ -6,13 +6,22 @@ function addPlayer(gameState, id) {
         id,
         alive: true,
         steering: constants.STEERING_STRAIGHT,
-        gameTimeWhenSteeringChanged: 0,
-        steeringSegments: [{
-            steering: constants.STEERING_STRAIGHT,
-            startTime: 0,
-            deltaTime: 0
-        }]
+        gameTimeWhenSteeringChanged: 0
     });
+    gameState.playerSteeringSegments[id] = [];
+}
+
+function addPlayerSteeringSegment(gameState, playerId, steering, duration) {
+    var steeringSegments = gameState.playerSteeringSegments[playerId];
+    if (steeringSegments.length > 0 && steeringSegments[steeringSegments.length - 1].steering === steering) {
+        steeringSegments[steeringSegments.length - 1].duration += duration;
+    } else {
+        steeringSegments.push({
+            steering: steering,
+            startTime: gameState.gameTime - duration,
+            duration: duration
+        });
+    }
 }
 
 function addWorm(gameState, id, playerId) {
@@ -25,12 +34,42 @@ function addWorm(gameState, id, playerId) {
         speed: constants.WORM_SPEED,
         turningSpeed: constants.WORM_TURNING_SPEED,
         alive: true,
-        pathSegments: [],
         jump: {
             remainingJumpTime: 0,
             timeSinceLastJump: 0
         }
     });
+    gameState.wormPathSegments[id] = [];
+}
+
+function addWormPathSegment(gameState, wormId, segment) {
+    var segments = gameState.wormPathSegments[wormId];
+    if (segments.length === 0) {
+        segments.push(segment);
+    } else {
+        var lastSegment = segments[segments.length - 1];
+        if (    segment.type === lastSegment.type &&
+                segment.speed === lastSegment.speed &&
+                segment.turningVelocity === lastSegment.turningVelocity &&
+                segment.size === lastSegment.size &&
+                segment.playerId === lastSegment.playerId &&
+                segment.jump === lastSegment.jump) {
+
+            // Continue last segment
+            lastSegment.duration += segment.duration;
+            lastSegment.endTime += segment.duration;
+            lastSegment.endX = segment.endX;
+            lastSegment.endY = segment.endY;
+            lastSegment.endDirection = segment.endDirection;
+            if (segment.type === "arc") {
+                lastSegment.arcEndAngle = segment.arcEndAngle;
+                lastSegment.arcAngleDiff += segment.arcAngleDiff;
+            }
+        } else {
+            // Start new segment
+            segments.push(segment);
+        }
+    }
 }
 
 function addEffect(gameState, effect) {
@@ -91,18 +130,6 @@ function getEnemyWorms(gamesState, wormId) {
     return gamesState.worms.filter(w => w.playerId !== getWorm(gamesState, wormId).playerId);
 }
 
-function getLastClearTime(gameState, endTime) {
-    var res = 0;
-    gameState.gameEvents.forEach(function (gameEvent) {
-        if (gameEvent.type === "clear") {
-            if (endTime === undefined || gameEvent.time <= endTime) {
-                res = gameEvent.time;
-            }
-        }
-    });
-    return res;
-}
-
 function getMapShape(gameState) {
     return gameState.map.shape;
 }
@@ -150,6 +177,19 @@ function resetPlayArea(gameState) {
     }
 }
 
+function extractReplayGameState(gameState) {
+    return {
+        worms: gameState.worms.map(worm => ({ id: worm.id })),
+        players: gameState.players.map(player => ({ id: player.id })),
+        wormPathSegments: gameState.wormPathSegments,
+        gameEvents: gameState.gameEvents,
+        powerUpEvents: gameState.powerUpEvents,
+        gameTime: gameState.gameTime,
+        map: gameState.map
+    };
+}
+
+
 function createGameState(map, seed) {
     function createPlayArea(width, height) {
         var playArea = {
@@ -168,8 +208,7 @@ function createGameState(map, seed) {
             //  {
             //      id,
             //      steering,
-            //      steeringSegments: [ {steering, startTime, duration} ],
-            //      gameTimeWhenSteeringChanged
+            //      gameTimeWhenSteeringChanged,
             //      alive
             //  }
         ],
@@ -186,20 +225,18 @@ function createGameState(map, seed) {
             //          remainingJumpTime: 0,
             //          timeSinceLastJump: 0
             //      },
-            //      pathSegments: [
-            //          {type: straight/curve, duration, startTime, jump, playerId, startX, startY, startDirection, endX, endY, endDirection}
-            //      ]
+
             //      immunityData: undefined
             //      }
         ],
         powerUps: [
             //  {
-            //      id
-            //      name
-            //      shape
-            //      effectType
-            //      effectStrength  // Higher means more potent, negative could mean reversed. For speed effect, -1 means decreased speed for example
-            //      effectDuration  // The duration for the effect, if it has one
+            //      id,
+            //      name,
+            //      shape,
+            //      effectType,
+            //      effectStrength, // Higher means more potent, negative could mean reversed. For speed effect, -1 means decreased speed for example
+            //      effectDuration, // The duration for the effect, if it has one
             //      affects         // all | others | self
             //  }
         ],
@@ -208,10 +245,42 @@ function createGameState(map, seed) {
             //      type,
             //      remainingDuration,
             //      wormId,
-            //      strength,           // Comes from the power-ups effectStrength
+            //      strength            // Comes from the power-ups effectStrength
             //  }
         ],
-        gameEvents: [],
+        playerSteeringSegments: {
+            //  [
+            //      steering,
+            //      startTime,
+            //      duration
+            //  ]
+        },
+        wormPathSegments: {
+            //  [
+            //      type,           // straight | arc | still_arc
+            //      duration,
+            //      startTime,
+            //      jump,           // true | false
+            //      playerId,
+            //      startX,
+            //      startY,
+            //      startDirection,
+            //      endX,
+            //      endY,
+            //      endDirection
+            //  ]
+        },
+        gameEvents: [
+            //      type,           // game_start | player_died | game_over
+            //      time
+            //      (id)            // Only for type player_died
+        ],
+        powerUpEvents: [
+            //      type,           // spawn | despawn
+            //      time,
+            //      (powerUp),      // Only for type spawn
+            //      (id)            // Only for type despawn
+        ],
         map: map,
         playArea: createPlayArea(map.width, map.height),
         playAreaUpdateBuffer: [],
@@ -226,19 +295,21 @@ function createGameState(map, seed) {
 module.exports = {
     addEffect,
     addPlayer,
+    addPlayerSteeringSegment,
     addWorm,
+    addWormPathSegment,
     createGameState,
     createMap,
     createMapCircle,
     createMapRectangle,
     createMapSquare,
+    extractReplayGameState,
     forEachAlivePlayer,
     forEachAliveWorm,
     getAlivePlayers,
     getAliveWorms,
     getEffect,
     getEnemyWorms,
-    getLastClearTime,
     getMapShape,
     getPowerUp,
     getPlayer,

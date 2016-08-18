@@ -19,6 +19,11 @@ module.exports = function PlayerHandler(wormHandler) {
                 throw Error("Trying to kill player that is already dead");
             }
             player.alive = false;
+            gameState.gameEvents.push({
+                type: "player_died",
+                time: gameState.gameTime,
+                playerId: player.id
+            });
             eventEmitter.emit(events.PLAYER_DIED, gameState, player);
         }
 
@@ -33,16 +38,7 @@ module.exports = function PlayerHandler(wormHandler) {
 
     function update(gameState, deltaTime) {
         gameState.players.forEach(function (player) {
-            var lastSegment = player.steeringSegments[player.steeringSegments.length - 1];
-            if (lastSegment.steering === player.steering) {
-                lastSegment.duration += deltaTime;
-            } else {
-                player.steeringSegments.push({
-                    steering: player.steering,
-                    startTime: gameState.gameTime,
-                    duration: deltaTime
-                });
-            }
+            gameStateFunctions.addPlayerSteeringSegment(gameState, player.id, player.steering, deltaTime);
         });
     }
 

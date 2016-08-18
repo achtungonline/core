@@ -4,9 +4,9 @@ var random = require("./../util/random.js");
 var forEach = require("./../util/for-each.js");
 var shapeSpatialRelations = require("./../geometry/shape-spatial-relations.js");
 var idGenerator = require("./../util/id-generator.js").indexCounterId(0);
-var timeBasedChance = require("./../time-based-chance.js");
+var timeBasedChance = require("./../util/time-based-chance.js");
 var constants = require("./../constants.js");
-var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANGE));
+var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 
@@ -17,6 +17,11 @@ module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
             if (powerUps[i].id === powerUp.id) {
                 effectHandler.activateEffect(gameState, worm.id, powerUp.id);
 
+                gameState.powerUpEvents.push({
+                    type: "despawn",
+                    time: gameState.gameTime,
+                    id: powerUp.id
+                });
                 powerUps.splice(i, 1);
                 return;
             }
@@ -88,6 +93,11 @@ module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
                     });
                     if (powerUp !== undefined) {
                         gameState.powerUps.push(powerUp);
+                        gameState.powerUpEvents.push({
+                            type: "spawn",
+                            time: gameState.gameTime,
+                            powerUp: powerUp
+                        })
                     }
                 }
             });

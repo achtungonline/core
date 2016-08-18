@@ -1,21 +1,22 @@
 var GameFactory = require("./game-factory");
 var Match = require("./core/match");
-var MatchState = require("./core/match-state.js");
 
 module.exports = function MatchFactory() {
     var gameFactory = GameFactory();
 
-    function create(options) {
+    function create({ matchConfig }) {
 
-        var matchConfig = options.matchConfig;
         var score = {};
-        var roundWinners = [];
+        var roundsData = [];
 
         matchConfig.playerConfigs.forEach(function (playerConfig) {
             score[playerConfig.id] = 0;
         });
 
-        var matchState = MatchState(score, roundWinners, matchConfig.maxScore);
+        var matchState = {
+            score,
+            roundsData
+        };
 
         return Match({
             matchState: matchState,
