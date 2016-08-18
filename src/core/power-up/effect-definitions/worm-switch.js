@@ -3,7 +3,7 @@ var random = require("../../util/random");
 
 var TYPE = "wormSwitch";
 
-function activate(gameState, strength, duration, wormId) {
+function activate({ gameState }) {
     var aliveWorms = gameStateFunctions.getAliveWorms(gameState);
     var perm = random.randomPermutation(gameState, aliveWorms.length, true); //TODO must fix random here (ML)
     for (var i = 0; i < perm.length; i++) {

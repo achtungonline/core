@@ -2,7 +2,7 @@ var TYPE = "size";
 
 var FADE_DURATION = 0.4;
 
-function activate(gameState, strength, duration, wormId) {
+function activate({ strength, duration, wormId }) {
     return {
         duration: duration,
         timeLeft: duration,

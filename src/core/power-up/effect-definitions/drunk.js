@@ -3,7 +3,7 @@ var TYPE = "drunk";
 
 var FADE_DURATION = 0.3;
 
-function activate(gameState, strength, duration, wormId) {
+function activate({ strength, duration, wormId }) {
     return {
         timeLeft: duration,
         strength: strength,

@@ -2,7 +2,7 @@ var gameStateFunctions = require("./../../game-state-functions.js");
 var TYPE = "tronTurn";
 var MIN_REACTION_TIME = 0.1;
 
-function activate(gameState, strength, duration, wormId) {
+function activate({ duration, wormId }) {
     return {
         timeLeft: duration,
         wormId: wormId,

@@ -1,6 +1,6 @@
 var TYPE = "superJump";
 
-function activate(gameState, strength, duration, wormId) {
+function activate({ strength, duration, wormId }) {
     return {
         timeLeft: duration,
         strength: strength,

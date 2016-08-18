@@ -3,7 +3,7 @@ var gameStateFunctions = require("../../game-state-functions.js");
 
 var TYPE = "clear";
 
-function activate(gameState, strength, duration, wormId) {
+function activate({ gameState, wormId, affects}) {
 
     gameStateFunctions.resetPlayArea(gameState);
 
