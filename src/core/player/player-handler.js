@@ -19,6 +19,11 @@ module.exports = function PlayerHandler(wormHandler) {
                 throw Error("Trying to kill player that is already dead");
             }
             player.alive = false;
+            gameState.gameEvents.push({
+                type: "player_died",
+                time: gameState.gameTime,
+                playerId: player.id
+            });
             eventEmitter.emit(events.PLAYER_DIED, gameState, player);
         }
 

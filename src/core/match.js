@@ -1,42 +1,29 @@
-var events = require("./match-events");
-var EventEmitter = require("events").EventEmitter;
-var gameStateFunctions = require("./game-state-functions.js");
-var ScoreHandler = require("./score-handler.js");
+var scoreUtil = require("./score/score-util.js");
 
-module.exports = function Match(options) {
-    var matchState = options.matchState;
-    var gameFactory = options.gameFactory;
-    var matchConfig = options.matchConfig;
+module.exports = function Match({ matchState, gameFactory, matchConfig }) {
 
-    var eventEmitter = new EventEmitter();
-    events = {
-        MATCH_OVER: "matchOver",
-        SCORE_UPDATED: "scoreUpdated"
-    };
     var currentGame;
-    var currentScoreHandler;
+
+    function addRoundData(roundData) {
+        matchState.roundsData.push(roundData);
+        matchState.score = scoreUtil.combineScores(matchState.score, roundData.roundScore);
+    }
 
     function getCurrentGame() {
         return currentGame;
     }
 
-    function getCurrentScoreHandler() {
-        return currentScoreHandler;
-    }
-
     function isMaxScoreReached() {
-        var scoreSortedPlayers = currentGame.gameState.players.sort((p1,p2) => matchState.score[p1.id] <= matchState.score[p2.id]);
-        if(matchState.score[scoreSortedPlayers[0].id] - matchState.score[scoreSortedPlayers[1].id] < 2) {
+        var scoreSortedPlayers = scoreUtil.createSortedList(matchState.score);
+        if(scoreSortedPlayers[0].score - scoreSortedPlayers[1].score < 2) {
             return false; // Leading player is not leading by 2 points.
         }
-        return matchState.score[scoreSortedPlayers[0].id] >= matchState.maxScore;
-
+        return scoreSortedPlayers[0].score >= matchConfig.maxScore;
     }
 
     function isMatchOver() {
         return currentGame && currentGame.isGameOver() && isMaxScoreReached();
     }
-
 
     function prepareNextGame(seed) {
         currentGame = gameFactory.create({
@@ -44,19 +31,14 @@ module.exports = function Match(options) {
             map: matchConfig.map,
             playerConfigs: matchConfig.playerConfigs
         });
-
-        currentScoreHandler = ScoreHandler({game: currentGame, scoreState: matchState});
-
         return currentGame;
     }
 
     return {
-        getCurrentGame: getCurrentGame,
-        getCurrentScoreHandler: getCurrentScoreHandler,
-        prepareNextGame: prepareNextGame,
-        isMatchOver: isMatchOver,
-        matchState: matchState,
-        on: eventEmitter.on.bind(eventEmitter),
-        events: events
+        addRoundData,
+        getCurrentGame,
+        prepareNextGame,
+        isMatchOver,
+        matchState
     }
 };

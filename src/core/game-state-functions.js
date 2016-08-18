@@ -177,6 +177,18 @@ function resetPlayArea(gameState) {
     }
 }
 
+function extractReplayGameState(gameState) {
+    return {
+        worms: gameState.worms.map(worm => ({ id: worm.id })),
+        players: gameState.players.map(player => ({ id: player.id })),
+        wormPathSegments: gameState.wormPathSegments,
+        gameEvents: gameState.gameEvents,
+        powerUpEvents: gameState.powerUpEvents,
+        gameTime: gameState.gameTime,
+        map: gameState.map
+    };
+}
+
 function createGameState(map, seed) {
     function createPlayArea(width, height) {
         var playArea = {
@@ -259,6 +271,7 @@ function createGameState(map, seed) {
         gameEvents: [
             //      type,           // game_start | player_died | game_over
             //      time
+            //      (id)            // Only for type player_died
         ],
         powerUpEvents: [
             //      type,           // spawn | despawn
@@ -288,6 +301,7 @@ module.exports = {
     createMapCircle,
     createMapRectangle,
     createMapSquare,
+    extractReplayGameState,
     forEachAlivePlayer,
     forEachAliveWorm,
     getAlivePlayers,

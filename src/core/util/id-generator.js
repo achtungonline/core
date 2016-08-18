@@ -4,7 +4,7 @@ idGenerator.indexCounterId = function (startingIndex) {
     return function nextIndexFunction() {
         var id = startingIndex;
         startingIndex++;
-        return id;
+        return id + "";
     };
 };
 
