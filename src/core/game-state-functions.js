@@ -283,7 +283,6 @@ function createGameState(map, seed) {
         ],
         map: map,
         playArea: createPlayArea(map.width, map.height),
-        playAreaUpdateBuffer: [],
         gameTime: 0,
         gameActive: false,                           // TODO: might get removed and replaced with just phase
         phaseTimer: 0,                               // Time left until next phase starts (only interesting between startPhase and playPhase)

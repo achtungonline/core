@@ -32,7 +32,6 @@ module.exports = function GameEngine(phaseHandler, playAreaHandler) {
                 stop();
             }
             eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
-            playAreaHandler.resetUpdateBuffer(gameState);
         }
     }
 

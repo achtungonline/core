@@ -1,6 +1,5 @@
 var shapeToGridConverter = require("./../geometry/shape-to-grid-converter.js").createShapeToGridConverter();
 var constants = require("../constants.js");
-var gameStateFunctions = require("../game-state-functions.js");
 
 var UpdateBufferData = function UpdateBufferData(index, value) {
     var data = {};
@@ -23,7 +22,6 @@ module.exports = function PlayAreaHandler() {
                 changedData.push(UpdateBufferData(points[i], value));
             }
         }
-        gameState.playAreaUpdateBuffer = gameState.playAreaUpdateBuffer.concat(changedData);
         return changedData;
     }
 
@@ -35,18 +33,8 @@ module.exports = function PlayAreaHandler() {
         return applyShape(gameState, shape, constants.PLAY_AREA_OBSTACLE);
     }
 
-    function resetPlayArea(gameState) {
-        gameStateFunctions.resetPlayArea(gameState);
-    }
-
-    function resetUpdateBuffer(gameState) {
-        gameState.playAreaUpdateBuffer = [];
-    }
-
     return {
         applyWormHead: applyWormHead,
-        applyObstacleShape: applyObstacleShape,
-        resetPlayArea: resetPlayArea,
-        resetUpdateBuffer: resetUpdateBuffer
+        applyObstacleShape: applyObstacleShape
     };
 };
