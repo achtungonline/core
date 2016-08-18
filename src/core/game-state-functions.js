@@ -189,6 +189,7 @@ function extractReplayGameState(gameState) {
     };
 }
 
+
 function createGameState(map, seed) {
     function createPlayArea(width, height) {
         var playArea = {
@@ -224,6 +225,7 @@ function createGameState(map, seed) {
             //          remainingJumpTime: 0,
             //          timeSinceLastJump: 0
             //      },
+
             //      immunityData: undefined
             //      }
         ],
