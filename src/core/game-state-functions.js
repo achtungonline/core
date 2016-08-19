@@ -260,7 +260,9 @@ function createGameState(map, seed) {
             //      type,           // straight | arc | still_arc
             //      duration,
             //      startTime,
+            //      endTime,
             //      jump,           // true | false
+            //      size,
             //      playerId,
             //      startX,
             //      startY,

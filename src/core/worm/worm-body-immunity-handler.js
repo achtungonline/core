@@ -1,6 +1,6 @@
 var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
 var coreFunctions = require("../core-functions.js");
-var IMMUNITY_DISTANCE_MULTIPLIER = 3;
+var IMMUNITY_DISTANCE_MULTIPLIER = 5;
 
 module.exports = function WormBodyImmunityHandler() {
     function createWormImmunityData(worm) {
