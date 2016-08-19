@@ -1,18 +1,24 @@
 var constants = require("./../../constants.js");
-var gameStateFunctions = require("../../game-state-functions.js");
 
 var TYPE = "clear";
 
 function activate({ gameState, wormId, affects}) {
 
-    gameStateFunctions.resetPlayArea(gameState);
+    var grid = gameState.playArea.grid;
+    for (var i = 0; i < grid.length; i++) {
+        if (affects === "all" || affects === "self" && grid[i] === wormId || affects === "others" && grid[i] !== wormId) {
+            grid[i] = constants.PLAY_AREA_FREE;
+        }
+    }
 
     gameState.worms.forEach(function (worm) {
-        gameState.wormPathSegments[worm.id].push({
-            type: TYPE,
-            startTime: gameState.gameTime,
-            endTime: gameState.gameTime
-        });
+        if (affects === "all" || affects === "self" && worm.id === wormId || affects === "others" && worm.id !== wormId) {
+            gameState.wormPathSegments[worm.id].push({
+                type: TYPE,
+                startTime: gameState.gameTime,
+                endTime: gameState.gameTime
+            });
+        }
     });
 }
 

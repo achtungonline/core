@@ -98,11 +98,23 @@ powerUpDefinitions["drunk"] = {
     weightedSpawnChance: 1,
     affects: "others"
 };
-powerUpDefinitions["clear"] = {
+powerUpDefinitions["clear_all"] = {
     name: "Clear",
     effectType: clearEffectDefinition.type,
     weightedSpawnChance: 0.25,
     affects: "all"
+};
+powerUpDefinitions["clear_self"] = {
+    name: "Clear",
+    effectType: clearEffectDefinition.type,
+    weightedSpawnChance: 0.25,
+    affects: "self"
+};
+powerUpDefinitions["clear_others"] = {
+    name: "Clear",
+    effectType: clearEffectDefinition.type,
+    weightedSpawnChance: 0.25,
+    affects: "others"
 };
 powerUpDefinitions["superJump"] = {
     name: "Super Jump",
