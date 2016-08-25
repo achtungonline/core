@@ -1,60 +1,44 @@
-var EventEmitter = require("events").EventEmitter;
 var ShapeToGridConverter = require("../geometry/shape-to-grid-converter.js");
 var constants = require("../constants.js");
 var gameStateFunctions = require("../game-state-functions.js");
 var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
 
-
 module.exports = function CollisionHandler({wormBodyImmunityHandler}) {
-    var events = {};
-    events.WORM_MAP_COLLISION = "wormMapCollision";
-    events.WORM_WORM_COLLISION = "wormWormCollision";
-    events.WORM_POWER_UP_COLLISION = "wormPowerUpCollision";
 
-    var eventEmitter = new EventEmitter();
     var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
-    function wormMapCollisionDetection(gameState, worm) {
-        function isWormHeadInsideMap() {
-            return shapeSpatialRelations.contains(gameStateFunctions.getMapShape(gameState), worm.head);
-        }
-        if (!isWormHeadInsideMap()) {
-            eventEmitter.emit(events.WORM_MAP_COLLISION, gameState, worm);
-        }
+    function wormMapCollision(gameState, wormId) {
+        var worm = gameStateFunctions.getWorm(gameState, wormId);
+        return !shapeSpatialRelations.contains(gameState.map.shape, worm.head);
     }
 
-
-    function wormWormCollisionDetection(gameState, worm) {
+    function wormWormCollision(gameState, worm) {
         var playArea = gameState.playArea;
         var cells = shapeToGridConverter.convert(worm.head, playArea, ShapeToGridConverter.RoundingModes.CONTAINMENT);
-        cells.forEach(function (cell) {
+        return cells.some(function (cell) {
             var value = playArea.grid[cell];
             if (value !== constants.PLAY_AREA_FREE) { // TODO Utility function to check if worm-id
                 if (value !== worm.id || !wormBodyImmunityHandler.isImmuneCell(gameState, worm, cell)) {
-                    eventEmitter.emit(events.WORM_WORM_COLLISION, gameState, worm, value);
+                    return true;
                 }
             }
         });
     }
 
-    function wormPowerUpCollisionDetection(gameState, worm) {
+    function wormPowerUpCollision(gameState, worm) {
         var powerUps = gameState.powerUps;
         var collidedPowerUps = [];
         powerUps.forEach(function(powerUp) {
             if(shapeSpatialRelations.intersects(worm.head, powerUp.shape)) {
-                collidedPowerUps.push(powerUp);
+                collidedPowerUps.push(powerUp.id);
             }
         });
-        collidedPowerUps.forEach(function(powerUp) {
-            eventEmitter.emit(events.WORM_POWER_UP_COLLISION, gameState, worm, powerUp);
-        });
+        return collidedPowerUps;
     }
 
     return {
-        wormMapCollisionDetection,
-        wormWormCollisionDetection,
-        wormPowerUpCollisionDetection,
-        on: eventEmitter.on.bind(eventEmitter),
-        events
+        wormMapCollision,
+        wormWormCollision,
+        wormPowerUpCollision
     };
 };

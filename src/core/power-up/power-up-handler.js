@@ -10,24 +10,7 @@ var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedCha
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 
-module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
-    collisionHandler.on(collisionHandler.events.WORM_POWER_UP_COLLISION, function (gameState, worm, powerUp) {
-        var powerUps = gameState.powerUps;
-        for (var i = 0; i < powerUps.length; i++) {
-            if (powerUps[i].id === powerUp.id) {
-                effectHandler.activateEffect(gameState, worm.id, powerUp.id);
-
-                gameState.powerUpEvents.push({
-                    type: "despawn",
-                    time: gameState.gameTime,
-                    id: powerUp.id
-                });
-                powerUps.splice(i, 1);
-                return;
-            }
-        }
-    });
-
+module.exports = function PowerUpHandler() {
 
     function update(deltaTime, gameState) {
         function attemptGetPowerUpWithRandomPos(powerUp) {
@@ -72,13 +55,13 @@ module.exports = function PowerUpHandler({collisionHandler, effectHandler}) {
 
         function attemptSpawnRandomPowerUp() {
             var totalSpawnWeight = 0;
-            forEach(coreFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
+            forEach(coreFunctions.powerUpDefinitions, function (powerUpDefinition, _) {
                 totalSpawnWeight += powerUpDefinition.weightedSpawnChance;
             });
             var randomValue = random.random(gameState);
             var currentChance = 0;
             var found = false;
-            forEach(coreFunctions.getPowerUpDefinitions, function (powerUpDefinition, _) {
+            forEach(coreFunctions.powerUpDefinitions, function (powerUpDefinition, _) {
                 currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
                 if (!found && currentChance > randomValue) {
                     found = true;

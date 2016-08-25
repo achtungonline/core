@@ -1,40 +1,6 @@
-var EventEmitter = require("events").EventEmitter;
-var any = require("../util/any.js");
 var gameStateFunctions = require("./../game-state-functions.js");
 
-module.exports = function PlayerHandler(wormHandler) {
-    var eventEmitter = new EventEmitter();
-    var events = {};
-    events.PLAYER_DIED = "playerDied";
-
-    wormHandler.on(wormHandler.events.WORM_DIED, function (gameState, worm) {
-        var player = gameStateFunctions.getPlayer(gameState, worm.playerId);
-
-        function isAnyWormAlive() {
-            return gameStateFunctions.getAliveWorms(gameState, worm.playerId).length > 0;
-        }
-
-        function kill() {
-            if (!player.alive) {
-                throw Error("Trying to kill player that is already dead");
-            }
-            player.alive = false;
-            gameState.gameEvents.push({
-                type: "player_died",
-                time: gameState.gameTime,
-                playerId: player.id
-            });
-            eventEmitter.emit(events.PLAYER_DIED, gameState, player);
-        }
-
-        if (!player.alive) {
-            throw Error("A worm died for a already dead player.");
-        }
-
-        if (!isAnyWormAlive() && gameStateFunctions.getAlivePlayers(gameState).length > 1) {
-            kill();
-        }
-    });
+module.exports = function PlayerHandler() {
 
     function update(gameState, deltaTime) {
         gameState.players.forEach(function (player) {
@@ -43,8 +9,6 @@ module.exports = function PlayerHandler(wormHandler) {
     }
 
     return {
-        update: update,
-        on: eventEmitter.on.bind(eventEmitter),
-        events: events
+        update: update
     };
 };

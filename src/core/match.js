@@ -22,7 +22,7 @@ module.exports = function Match({ matchState, gameFactory, matchConfig }) {
     }
 
     function isMatchOver() {
-        return currentGame && currentGame.isGameOver() && isMaxScoreReached();
+        return currentGame && !currentGame.isActive() && isMaxScoreReached();
     }
 
     function prepareNextGame(seed) {

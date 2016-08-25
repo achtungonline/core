@@ -1,13 +1,12 @@
 var constants = require("../core/constants.js");
 var clone = require("../core/util/clone.js");
 var shapeToGridConverter = require("../core/geometry/shape-to-grid-converter.js").createShapeToGridConverter();
+var shapeSpatialRelations = require("../core/geometry/shape-spatial-relations.js");
 var RoundingModes = require("../core/geometry/shape-to-grid-converter.js").RoundingModes;
 var random = require("../core/util/random.js");
 var coreFunctions = require("../core/core-functions.js");
 var gameStateFunctions = require("../core/game-state-functions.js");
 var trajectoryHandler = require("../core/geometry/trajectory/trajectory-handler.js")();
-var collisionHandler = require("../core/collision/collision-handler.js")({});
-
 
 var TYPE = "pathCheckerAi";
 
@@ -22,26 +21,16 @@ function createCurve(speed, turningSpeed, duration) {
 }
 
 //TODO Remove Player from all (most) functions
-module.exports = function PathCheckerAI(game) {
+module.exports = function PathCheckerAI() {
 
     var seedState = {seed: 10}; //TODO: Local state. AI needs its own "state" with a seed. In order to not affect the core seed
-
-    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, worm) {
-        gameStateFunctions.getPlayer(gameState, worm.playerId).aiData.simulationCollision = true;
-    });
 
     function update(gameState, deltaTime, player) {
         var aiData = player.aiData;
 
-        function setDefaultDataValues() {
-
+        if (aiData.trajectory === undefined) {
             aiData.timeUntilNextSimulation = 0;
             aiData.trajectory = [];
-            aiData.simulationCollision = false;
-        }
-
-        if (aiData.trajectory === undefined) {
-            setDefaultDataValues();
         }
 
         aiData.timeUntilNextSimulation -= deltaTime;
@@ -56,12 +45,12 @@ module.exports = function PathCheckerAI(game) {
             if (gameStateFunctions.hasWormEffect(gameState, worm.id, "tronTurn")) {
                 // If we have tron turn, the AI has to "Press and Release" in order to steer, otherwise it won't turn
                 if (player.steering === constants.STEERING_STRAIGHT) {
-                    game.setPlayerSteering(player.id, steering);
+                    gameStateFunctions.setPlayerSteering(gameState, player.id, steering);
                 } else {
-                    game.setPlayerSteering(player.id, constants.STEERING_STRAIGHT);
+                    gameStateFunctions.setPlayerSteering(gameState, player.id, constants.STEERING_STRAIGHT);
                 }
             } else {
-                game.setPlayerSteering(player.id, steering);
+                gameStateFunctions.setPlayerSteering(gameState, player.id, steering);
             }
         }
 
@@ -210,23 +199,25 @@ module.exports = function PathCheckerAI(game) {
             clonedHead.maxY += yDiff;
             clonedWorm.direction = direction;
 
+            var collision = false;
             // Map collision detection
-            collisionHandler.wormMapCollisionDetection(gameState, clonedWorm);
-            if (!player.aiData.simulationCollision) {
+            if (!shapeSpatialRelations.contains(gameState.map.shape, clonedWorm.head)) {
+                collision = true;
+            }
+            if (!collision) {
                 // Worm collision detection
                 var cells = shapeToGridConverter.convert(clonedHead, playArea, RoundingModes.INTERSECTION);
                 cells.some(function (cell) {
                     var value = playArea.grid[cell];
                     if (value !== constants.PLAY_AREA_FREE) {
                         if (value !== clonedWorm.id || distanceSquared > immunityDistance) {
-                            player.aiData.simulationCollision = true;
+                            collision = true;
                             return true;
                         }
                     }
                 });
             }
-            if (player.aiData.simulationCollision) {
-                player.aiData.simulationCollision = false;
+            if (collision) {
                 return true;
             }
             trajectoryTime = time;

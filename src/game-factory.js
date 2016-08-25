@@ -1,6 +1,4 @@
-var constants = require("./core/constants.js");
 var PhaseHandler = require("./core/phase/phase-handler.js");
-var GameEngine = require("./core/game-engine.js");
 var WormHandler = require("./core/worm/worm-handler.js");
 var PlayerHandler = require("./core/player/player-handler.js");
 var Game = require("./core/game.js");
@@ -38,13 +36,9 @@ module.exports = function GameFactory() {
             playAreaHandler
         });
 
-        var playerHandler = PlayerHandler(wormHandler);
+        var playerHandler = PlayerHandler();
 
-        var powerUpHandler = PowerUpHandler({
-            wormHandler,
-            effectHandler,
-            collisionHandler
-        });
+        var powerUpHandler = PowerUpHandler();
 
         var wormIdGenerator = idGenerator.indexCounterId(0);
 
@@ -56,21 +50,16 @@ module.exports = function GameFactory() {
             effectHandler
         });
 
-        var gameEngine = GameEngine(phaseHandler, playAreaHandler);
-
-        var game = Game(gameState, gameEngine, playerHandler);
-
-        var aiHandler = AIHandler({game});
-
+        var aiHandler = AIHandler();
         players.filter(function (player) {
-            return player.type === 'bot';
+            return player.type === "bot";
         }).map(function (player) {
             return gameStateFunctions.getPlayer(gameState, player.id);
         }).forEach(function (aiPlayer) {
             aiHandler.addAIPlayer(aiPlayer);
         });
 
-        return game;
+        return Game(gameState, phaseHandler, aiHandler);
     }
 
     return {

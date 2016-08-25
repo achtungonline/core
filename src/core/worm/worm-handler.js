@@ -1,4 +1,3 @@
-var EventEmitter = require("events").EventEmitter;
 var coreFunctions = require("../core-functions.js");
 var clone = require("../util/clone.js");
 var shapeModifierI = require("../geometry/shape-modifier-immutable.js");
@@ -7,30 +6,6 @@ var gameStateFunctions = require("../game-state-functions.js");
 var jumpHandler = require("./jump-handler.js")();
 
 module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBodyImmunityHandler}) {
-    var eventEmitter = new EventEmitter();
-    var events = {};
-
-    events.WORM_DIED = "wormDied";
-
-    collisionHandler.on(collisionHandler.events.WORM_MAP_COLLISION, function onWormMapCollision(gameState, worm) {
-        if (worm.alive) {
-            kill(gameState, worm);
-        }
-    });
-
-    collisionHandler.on(collisionHandler.events.WORM_WORM_COLLISION, function onWormWormCollision(gameState, worm, otherWormID) {
-        if (worm.alive) {
-            kill(gameState, worm);
-        }
-    });
-
-    function kill(gameState, worm) {
-        if (!worm.alive) {
-            throw Error("Trying to kill worm that is already dead");
-        }
-        worm.alive = false;
-        eventEmitter.emit(events.WORM_DIED, gameState, worm);
-    }
 
     function pushBodyPart(gameState, worm) {
         var changedCells = playAreaHandler.applyWormHead(gameState, worm);
@@ -90,10 +65,16 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
 
         function collisionDetection() {
 
-            collisionHandler.wormPowerUpCollisionDetection(gameState, worm);
-            collisionHandler.wormMapCollisionDetection(gameState, worm);
-            if (!coreFunctions.isWormJumping(gameState, worm.id)) {
-                collisionHandler.wormWormCollisionDetection(gameState, worm);
+            collisionHandler.wormPowerUpCollision(gameState, worm).forEach(function (powerUpId) {
+                coreFunctions.activatePowerUp(gameState, powerUpId, worm.id);
+            });
+            if (worm.alive && collisionHandler.wormMapCollision(gameState, worm.id)) {
+                coreFunctions.killWorm(gameState, worm.id);
+            }
+            if (worm.alive && !coreFunctions.isWormJumping(gameState, worm.id)) {
+                if (collisionHandler.wormWormCollision(gameState, worm)) {
+                    coreFunctions.killWorm(gameState, worm.id);
+                }
             }
         }
 
@@ -142,8 +123,6 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
     return {
         setDirection: setDirection,
         setHead: setHead,
-        update: update,
-        on: eventEmitter.on.bind(eventEmitter),
-        events: events
+        update: update
     };
 };

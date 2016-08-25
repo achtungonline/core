@@ -2,6 +2,7 @@ var gameStateFunctions = require("./game-state-functions.js");
 var shapeSpatialRelations = require("./geometry/shape-spatial-relations.js");
 var shapeModifierI = require("./geometry/shape-modifier-immutable.js");
 var random = require("./util/random.js");
+var clone = require("./util/clone.js");
 
 var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
@@ -131,6 +132,36 @@ powerUpDefinitions["tronTurn"] = {
     affects: "others"
 };
 
+function activatePowerUp(gameState, powerUpId, wormId) {
+    var index = gameState.powerUps.findIndex(powerUp => powerUp.id === powerUpId);
+    var powerUp = gameState.powerUps[index];
+    var effect = effectDefinitions[powerUp.effectType].activate({
+        gameState,
+        strength: powerUp.effectStrength,
+        duration: powerUp.effectDuration,
+        wormId,
+        affects: powerUp.affects
+    });
+    if (effect) {
+        if (powerUp.affects === "self" || powerUp.affects === "all") {
+            gameStateFunctions.addEffect(gameState, effect);
+        }
+        if (powerUp.affects === "others" || powerUp.affects === "all") {
+            gameStateFunctions.getEnemyWorms(gameState, wormId).forEach(function (worm) {
+                var clonedEffect = clone(effect);
+                clonedEffect.wormId = worm.id;
+                gameStateFunctions.addEffect(gameState, clonedEffect);
+            })
+        }
+    }
+    gameState.powerUpEvents.push({
+        type: "despawn",
+        time: gameState.gameTime,
+        id: powerUpId
+    });
+    gameState.powerUps.splice(index, 1);
+}
+
 function getShapeRandomlyInsidePlayableArea(gameState, map, shape, minDistance) {
     function getRandomPositionInsidePlayableArea(gameState, map, shape, minDistance) {
         function intersectsBlockingShapes(map, shape) {
@@ -201,6 +232,24 @@ function isWormJumping(gameState, wormId) {
     return transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).jump.remainingJumpTime > 0, 'changeIsJumping');
 }
 
+function killPlayer(gameState, playerId) {
+    var player = gameStateFunctions.getPlayer(gameState, playerId);
+    player.alive = false;
+    gameState.gameEvents.push({
+        type: "player_died",
+        time: gameState.gameTime,
+        playerId: playerId
+    });
+}
+
+function killWorm(gameState, wormId) {
+    var worm = gameStateFunctions.getWorm(gameState, wormId);
+    worm.alive = false;
+    if (gameStateFunctions.getAliveWorms(gameState, worm.playerId).length === 0) {
+        killPlayer(gameState, worm.playerId);
+    }
+}
+
 /**
  * Transform the given initValue based on effects owned by wormId. Each effect owned by wormId that has the function effectFunctionName in its definition will be called and the value will be changed in a pipe-line fashion.
  * Available effectFunctionNames: "changeSpeed", "changeTurningSpeed", "changeSize"
@@ -220,13 +269,16 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
 
 
 module.exports = {
-    getEffectDefinitions: effectDefinitions,
-    getPowerUpDefinitions: powerUpDefinitions,
+    activatePowerUp,
+    effectDefinitions,
+    powerUpDefinitions,
     getShapeRandomlyInsidePlayableArea,
     getWormDirection,
     getWormSize,
     getWormSpeed,
     getWormTurningSpeed,
     getWormTurningVelocity,
-    isWormJumping
+    isWormJumping,
+    killPlayer,
+    killWorm
 };

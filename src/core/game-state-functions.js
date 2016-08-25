@@ -130,10 +130,6 @@ function getEnemyWorms(gamesState, wormId) {
     return gamesState.worms.filter(w => w.playerId !== getWorm(gamesState, wormId).playerId);
 }
 
-function getMapShape(gameState) {
-    return gameState.map.shape;
-}
-
 function getPlayer(gameState, id) {
     var player = gameState.players.find(p => p.id === id);
     if (player) {
@@ -174,6 +170,14 @@ function resetPlayArea(gameState) {
     var grid = gameState.playArea.grid;
     for (var i = 0; i < grid.length; i++) {
         grid[i] = constants.PLAY_AREA_FREE;
+    }
+}
+
+function setPlayerSteering(gameState, playerId, steering) {
+    var player = getPlayer(gameState, playerId);
+    if (player.steering !== steering) {
+        player.gameTimeWhenSteeringChanged = gameState.gameTime;
+        player.steering = steering;
     }
 }
 
@@ -311,12 +315,12 @@ module.exports = {
     getAliveWorms,
     getEffect,
     getEnemyWorms,
-    getMapShape,
     getPowerUp,
     getPlayer,
     getWorm,
     getWormEffects,
     hasWormEffect,
     isPlayerAlive,
-    resetPlayArea
+    resetPlayArea,
+    setPlayerSteering
 };

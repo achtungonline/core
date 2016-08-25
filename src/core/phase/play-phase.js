@@ -6,14 +6,6 @@ playPhase.type = "playPhase";
 
 playPhase.PlayPhase = function PlayPhase({powerUpHandler, effectHandler, playerHandler, wormHandler}) {
 
-    playerHandler.on(playerHandler.events.PLAYER_DIED, function onPlayerDied(gameState, player) {
-        var alivePlayers = gameStateFunctions.getAlivePlayers(gameState);
-
-        if (alivePlayers.length <= 1) {
-            gameState.phaseTimer = -1;
-        }
-    });
-
     function start(gameState) {
         gameState.phaseTimer = 1;
     }
@@ -29,6 +21,11 @@ playPhase.PlayPhase = function PlayPhase({powerUpHandler, effectHandler, playerH
         gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
             wormHandler.update(gameState, deltaTime, worm);
         });
+
+        var alivePlayers = gameStateFunctions.getAlivePlayers(gameState);
+        if (alivePlayers.length <= 1) {
+            gameState.phaseTimer = -1;
+        }
     }
 
     function isActive(gameState) {
