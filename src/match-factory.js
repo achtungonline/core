@@ -9,8 +9,8 @@ module.exports = function MatchFactory() {
         var score = {};
         var roundsData = [];
 
-        matchConfig.playerConfigs.forEach(function (playerConfig) {
-            score[playerConfig.id] = 0;
+        matchConfig.players.forEach(function (player) {
+            score[player.id] = 0;
         });
 
         var matchState = {

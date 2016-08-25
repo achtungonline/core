@@ -28,10 +28,11 @@ module.exports = function GameEngine(phaseHandler, playAreaHandler) {
             eventEmitter.emit(events.GAME_UPDATE_STARTING, gameState, deltaTime);
             phaseHandler.update(gameState, deltaTime);
 
-            if (!phaseHandler.isActive(gameState)) {
-                stop();
+            if (isActive(gameState)) {
+                eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
+            } else {
+                stop(gameState);
             }
-            eventEmitter.emit(events.GAME_UPDATED, gameState, deltaTime);
         }
     }
 

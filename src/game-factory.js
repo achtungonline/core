@@ -14,11 +14,11 @@ var idGenerator = require("./core/util/id-generator.js");
 var gameStateFunctions = require("./core/game-state-functions.js");
 
 module.exports = function GameFactory() {
-    function create({map, seed, playerConfigs}) {
+    function create({map, seed, players}) {
         var gameState = gameStateFunctions.createGameState(map, seed);
 
-        playerConfigs.forEach(function (playerConfig) {
-            gameStateFunctions.addPlayer(gameState, playerConfig.id);
+        players.forEach(function (player) {
+            gameStateFunctions.addPlayer(gameState, player.id);
         });
 
         var playAreaHandler = PlayAreaHandler();
@@ -62,10 +62,10 @@ module.exports = function GameFactory() {
 
         var aiHandler = AIHandler({game});
 
-        playerConfigs.filter(function (playerConfig) {
-            return playerConfig.type === 'bot';
-        }).map(function (playerConfig) {
-            return gameStateFunctions.getPlayer(gameState, playerConfig.id);
+        players.filter(function (player) {
+            return player.type === 'bot';
+        }).map(function (player) {
+            return gameStateFunctions.getPlayer(gameState, player.id);
         }).forEach(function (aiPlayer) {
             aiHandler.addAIPlayer(aiPlayer);
         });

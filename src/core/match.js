@@ -29,7 +29,7 @@ module.exports = function Match({ matchState, gameFactory, matchConfig }) {
         currentGame = gameFactory.create({
             seed: seed,
             map: matchConfig.map,
-            playerConfigs: matchConfig.playerConfigs
+            players: matchConfig.players
         });
         return currentGame;
     }
@@ -39,6 +39,7 @@ module.exports = function Match({ matchState, gameFactory, matchConfig }) {
         getCurrentGame,
         prepareNextGame,
         isMatchOver,
+        matchConfig,
         matchState
     }
 };
