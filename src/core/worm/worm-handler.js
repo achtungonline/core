@@ -3,7 +3,6 @@ var clone = require("../util/clone.js");
 var shapeFactory = require("../geometry/shape-factory.js");
 var gameStateFunctions = require("../game-state-functions.js");
 var trajectoryUtil = require("../geometry/trajectory/trajectory-util.js");
-var jumpHandler = require("./jump-handler.js")();
 
 module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBodyImmunityHandler}) {
 
@@ -33,8 +32,6 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
                 }
             }
         }
-
-        jumpHandler.update(gameState, deltaTime, worm);
 
         var direction = coreFunctions.getWormDirection(gameState, worm.id);
         var speed = coreFunctions.getWormSpeed(gameState, worm.id);

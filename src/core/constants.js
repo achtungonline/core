@@ -8,9 +8,9 @@ module.exports = {
     WORM_SPEED: 80,
     WORM_TURNING_SPEED: 2.50,
 
-    JUMP_MIN_FREQUENCY: 1.5,                // After a jump, this is the minimum waiting time until another jump
+    JUMP_COOLDOWN: 1.5,                // After a jump, this is the minimum waiting time until another jump
     JUMP_LENGTH: 30,                        // The length of a jump
-    JUMP_CHANCE: 0.4,                       // 0.5 means 50 % chance of jump after 1 second has passed (after the JUMP_MIN_FREQUENCY has passed).
+    JUMP_CHANCE: 0.4,                       // 0.5 means 50 % chance of jump after 1 second has passed (after the JUMP_COOLDOWN has passed).
 
     STEERING_STRAIGHT: 0,
     STEERING_LEFT: -1,

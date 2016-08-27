@@ -1,39 +1,30 @@
 var timeBasedChance = require("../util/time-based-chance.js");
 var constants = require("../constants.js");
+var gameStateFunctions = require("../game-state-functions.js");
 
 module.exports = function JumpHandler() {
-    var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.JUMP_CHANCE));
+    var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(constants.JUMP_CHANCE));
 
-    function update(gameState, deltaTime, worm) {
-        function updateRemainingJumpTime() {
-            worm.jump.remainingJumpTime -= deltaTime;
-        }
+    function update(gameState, deltaTime) {
+        gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
+            if (worm.jump.remainingJumpTime <= 0) {
+                worm.jump.timeSinceLastJump += deltaTime;
+                if (worm.jump.timeSinceLastJump > constants.JUMP_COOLDOWN) {
+                    function startJumping() {
+                        if (worm.speed > 0) {
+                            worm.jump.remainingJumpTime = constants.JUMP_LENGTH / worm.speed;
+                        } else {
+                            worm.jump.remainingJumpTime = 0;
+                        }
+                        worm.jump.timeSinceLastJump = 0;
+                    }
 
-        function updateTimeSinceLastJump() {
-            worm.jump.timeSinceLastJump += deltaTime;
-        }
-
-        function startJumping() {
-            if (worm.speed > 0) {
-                worm.jump.remainingJumpTime = constants.JUMP_LENGTH / worm.speed;
+                    timeBasedChanceTrigger.update(gameState, deltaTime, startJumping);
+                }
             } else {
-                worm.jump.remainingJumpTime = 0;
+                worm.jump.remainingJumpTime -= deltaTime;
             }
-            worm.jump.timeSinceLastJump = 0;
-        }
-
-        if (worm.jump.remainingJumpTime > 0) {
-            updateRemainingJumpTime();
-            return;
-        }
-
-        updateTimeSinceLastJump();
-
-        if (worm.jump.timeSinceLastJump < constants.JUMP_MIN_FREQUENCY) {
-            return;
-        }
-
-        timeBasedChanceTrigger.update(gameState, deltaTime, startJumping);
+        });
     }
 
     return {
