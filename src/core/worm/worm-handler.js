@@ -1,8 +1,8 @@
 var coreFunctions = require("../core-functions.js");
 var clone = require("../util/clone.js");
-var shapeModifierI = require("../geometry/shape-modifier-immutable.js");
+var shapeFactory = require("../geometry/shape-factory.js");
 var gameStateFunctions = require("../game-state-functions.js");
-
+var trajectoryUtil = require("../geometry/trajectory/trajectory-util.js");
 var jumpHandler = require("./jump-handler.js")();
 
 module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBodyImmunityHandler}) {
@@ -13,54 +13,10 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
     }
 
     function update(gameState, deltaTime, worm) {
-        function updateHead(size) {
-            worm.head = shapeModifierI.setSize(worm.head, size, size);
-        }
-
-
         function updateBody() {
             var bodyPart = clone(worm.head);
             pushBodyPart(gameState, worm, bodyPart);
             return bodyPart;
-        }
-
-        function updatePosition(speed, turningVelocity, direction, pathSegment) {
-            var xDiff = 0;
-            var yDiff = 0;
-            if (speed === 0) {
-                // 0 diameter arc
-                pathSegment.type = "still_arc";
-                xDiff = 0;
-                yDiff = 0;
-            } else if (turningVelocity === 0) {
-                // Straight line
-                pathSegment.type = "straight";
-                xDiff = deltaTime * speed * Math.cos(direction);
-                yDiff = deltaTime * speed * Math.sin(direction);
-
-            } else {
-                // Circle arc
-                pathSegment.type = "arc";
-                var radius = speed / turningVelocity;
-                var angle = deltaTime * turningVelocity;
-
-                pathSegment.arcCenterX = pathSegment.startX - radius * Math.cos(direction - Math.PI/2);
-                pathSegment.arcCenterY = pathSegment.startY - radius * Math.sin(direction - Math.PI/2);
-                pathSegment.arcRadius = Math.abs(radius);
-                pathSegment.arcStartAngle = direction - radius/Math.abs(radius)*Math.PI/2;
-                pathSegment.arcAngleDiff = angle;
-                pathSegment.arcEndAngle = pathSegment.arcStartAngle + pathSegment.arcAngleDiff;
-
-                xDiff = -radius * (Math.cos(direction - Math.PI/2) + Math.cos(direction + Math.PI/2 + angle));
-                yDiff = -radius * (Math.sin(direction - Math.PI/2) + Math.sin(direction + Math.PI/2 + angle));
-            }
-            pathSegment.endX = pathSegment.startX + xDiff;
-            pathSegment.endY = pathSegment.startY + yDiff;
-            pathSegment.endDirection = pathSegment.startDirection + turningVelocity * deltaTime;
-
-            worm.direction += turningVelocity * deltaTime;
-            worm.head = shapeModifierI.move(worm.head, xDiff, yDiff);
-            wormBodyImmunityHandler.update(gameState, worm);
         }
 
         function collisionDetection() {
@@ -88,26 +44,28 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
         if (gameState.phase === "startPhase") {
             speed = 0;
         }
-        var pathSegment = {
+        var pathSegment = trajectoryUtil.createTrajectory({
             duration: deltaTime,
-            startTime: gameState.gameTime - deltaTime,
-            endTime: gameState.gameTime,
             startX: worm.head.centerX,
             startY: worm.head.centerY,
-            startDirection: worm.direction,
-            jump: jump,
-            size: size,
-            speed: speed,
-            turningVelocity: turningVelocity,
-            playerId: worm.playerId
-        };
+            startDirection: direction,
+            speed,
+            turningVelocity
+        });
+        pathSegment.startTime = gameState.gameTime - deltaTime;
+        pathSegment.endTime = gameState.gameTime;
+        pathSegment.jump = jump;
+        pathSegment.size = size;
+        pathSegment.playerId = worm.playerId;
 
-        updateHead(size);
+        worm.head.radius = size/2;
         if (speed > 0 && !jump) {
             // No body update during the start phase and also only render the body if we are not standing still
             updateBody();
         }
-        updatePosition(speed, turningVelocity, direction, pathSegment);
+        worm.direction += turningVelocity * deltaTime;
+        worm.head = shapeFactory.createCircle(worm.head.radius, pathSegment.endX - worm.head.radius, pathSegment.endY - worm.head.radius);
+        wormBodyImmunityHandler.update(gameState, worm);
         collisionDetection();
         gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
     }

@@ -3,19 +3,12 @@ var PathCheckerAIHandler = require("./path-checker-ai-handler.js");
 module.exports = function AIHandler() {
     var pathCheckerAiHandler = PathCheckerAIHandler();
 
-    var ais = [];
-    ais[pathCheckerAiHandler.type] = pathCheckerAiHandler;
-
-    function addAIPlayer(player, aiType) {
+    function addAIPlayer(player) {
         if(player.aiData) {
             throw Error("player.ai is already set: ", player.aiData);
         }
-        if(aiType && !ais[aiType]) {
-            throw Error("Unknown AI type: ", aiType);
-        }
 
         player.aiData = {};
-        player.aiData.type = (aiType) ? aiType : pathCheckerAiHandler.type;
     }
 
     function removeAIPlayer(player) {
@@ -23,10 +16,9 @@ module.exports = function AIHandler() {
     }
 
     function update(gameState, deltaTime) {
-        gameState.players.forEach(function (player, index) {
-            var aiData = player.aiData;
-            if(aiData) {
-                ais[aiData.type].update(gameState, deltaTime, player);
+        gameState.players.forEach(function (player) {
+            if(player.aiData) {
+                pathCheckerAiHandler.update(gameState, deltaTime, player);
             }
         });
     }
