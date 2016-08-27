@@ -8,8 +8,8 @@ var coreFunctions = require("../core/core-functions.js");
 var gameStateFunctions = require("../core/game-state-functions.js");
 var trajectoryUtil = require("../core/geometry/trajectory/trajectory-util.js");
 
-var SIMULATION_DURATION = 3;
-var SIMULATION_DELTA = 0.15;
+var SIMULATION_DURATION = 2;
+var SIMULATION_DELTA = 0.05;
 var MIN_SLEEP_TIME = 0.2;
 var MAX_SLEEP_TIME = 0.3;
 
