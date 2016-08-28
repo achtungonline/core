@@ -1,5 +1,17 @@
 var constants = require("./constants.js");
 var shapeFactory = require("./geometry/shape-factory.js");
+var effectIdGenerator = require("./util/id-generator.js").indexCounterId(0);
+var powerUpIdGenerator = require("./util/id-generator.js").indexCounterId(0);
+
+function addEffect(gameState, effect) {
+    effect.id = effectIdGenerator();
+    gameState.effects.push(effect);
+    gameState.effectEvents.push({
+        type: "spawn",
+        time: gameState.gameTime,
+        effect: effect
+    });
+}
 
 function addPlayer(gameState, id) {
     gameState.players.push({
@@ -22,6 +34,16 @@ function addPlayerSteeringSegment(gameState, playerId, steering, duration) {
             duration: duration
         });
     }
+}
+
+function addPowerUp(gameState, powerUp) {
+    powerUp.id = powerUpIdGenerator();
+    gameState.powerUps.push(powerUp);
+    gameState.powerUpEvents.push({
+        type: "spawn",
+        time: gameState.gameTime,
+        powerUp: powerUp
+    })
 }
 
 function addWorm(gameState, id, playerId) {
@@ -70,10 +92,6 @@ function addWormPathSegment(gameState, wormId, segment) {
             segments.push(segment);
         }
     }
-}
-
-function addEffect(gameState, effect) {
-    gameState.effects.push(effect)
 }
 
 function createMap(name, shape, blockingShapes) {
@@ -166,6 +184,24 @@ function isPlayerAlive(gameState, playerId) {
     return !!getAlivePlayers(gameState).find(p => p.id === playerId);
 }
 
+function removeEffect(gameState, effectId) {
+    gameState.effectEvents.push({
+        type: "despawn",
+        time: gameState.gameTime,
+        id: effectId
+    });
+    gameState.effects.splice(gameState.effects.findIndex(effect => effect.id === effectId), 1);
+}
+
+function removePowerUp(gameState, powerUpId) {
+    gameState.powerUpEvents.push({
+        type: "despawn",
+        time: gameState.gameTime,
+        id: powerUpId
+    });
+    gameState.powerUps.splice(gameState.powerUps.findIndex(powerUp => powerUp.id === powerUpId), 1);
+}
+
 function resetPlayArea(gameState) {
     var grid = gameState.playArea.grid;
     for (var i = 0; i < grid.length; i++) {
@@ -188,6 +224,7 @@ function extractReplayGameState(gameState) {
         wormPathSegments: gameState.wormPathSegments,
         gameEvents: gameState.gameEvents,
         powerUpEvents: gameState.powerUpEvents,
+        effectEvents: gameState.effectEvents,
         gameTime: gameState.gameTime,
         map: gameState.map
     };
@@ -287,6 +324,12 @@ function createGameState(map, seed) {
             //      (powerUp),      // Only for type spawn
             //      (id)            // Only for type despawn
         ],
+        effectEvents: [
+            //      type,
+            //      time
+            //      (effect)        // Only for type spawn
+            //      (id)            // Only for type despawn
+        ],
         map: map,
         playArea: createPlayArea(map.width, map.height),
         gameTime: 0,
@@ -301,6 +344,7 @@ module.exports = {
     addEffect,
     addPlayer,
     addPlayerSteeringSegment,
+    addPowerUp,
     addWorm,
     addWormPathSegment,
     createGameState,
@@ -321,6 +365,8 @@ module.exports = {
     getWormEffects,
     hasWormEffect,
     isPlayerAlive,
+    removeEffect,
+    removePowerUp,
     resetPlayArea,
     setPlayerSteering
 };

@@ -30,7 +30,7 @@ effectDefinitions[tronTurnEffectDefinition.type] = tronTurnEffectDefinition;
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
-    name: "Speed",
+    name: "speed",
     effectType: speedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 3 / 2,
@@ -38,7 +38,7 @@ powerUpDefinitions["speed"] = {
     affects: "self"
 };
 powerUpDefinitions["slow"] = {
-    name: "Slow",
+    name: "slow",
     effectType: speedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2 / 3,
@@ -46,7 +46,7 @@ powerUpDefinitions["slow"] = {
     affects: "others"
 };
 powerUpDefinitions["fat"] = {
-    name: "Fat",
+    name: "fat",
     effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2,
@@ -54,23 +54,23 @@ powerUpDefinitions["fat"] = {
     affects: "others"
 };
 powerUpDefinitions["slim"] = {
-    name: "Slim",
+    name: "slim",
     effectType: sizeEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 0.5,
     weightedSpawnChance: 1,
     affects: "self"
 };
-powerUpDefinitions["quickTurn"] = {
-    name: "Quick Turn",
+powerUpDefinitions["quick_turn"] = {
+    name: "quick_turn",
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 3 / 2,
     weightedSpawnChance: 1,
     affects: "self"
 };
-powerUpDefinitions["slowTurn"] = {
-    name: "Slow Turn",
+powerUpDefinitions["slow_turn"] = {
+    name: "slow_turn",
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 2 / 3,
@@ -78,13 +78,13 @@ powerUpDefinitions["slowTurn"] = {
     affects: "others"
 };
 powerUpDefinitions["switcharoonie"] = {
-    name: "Switcharoonie",
+    name: "switcharoonie",
     effectType: wormSwitchEffectDefinition.type,
     weightedSpawnChance: 0.5,
     affects: "all"
 };
-powerUpDefinitions["keyBindingsSwitch"] = {
-    name: "Switch Keys",
+powerUpDefinitions["key_switch"] = {
+    name: "key_switch",
     effectType: turningSpeedEffectDefinition.type,
     effectDuration: 5,
     effectStrength: -1,
@@ -92,7 +92,7 @@ powerUpDefinitions["keyBindingsSwitch"] = {
     affects: "others"
 };
 powerUpDefinitions["drunk"] = {
-    name: "Drunk",
+    name: "drunk",
     effectType: drunkEffectDefinition.type,
     effectDuration: 5,
     effectStrength: 1,
@@ -100,32 +100,32 @@ powerUpDefinitions["drunk"] = {
     affects: "others"
 };
 powerUpDefinitions["clear_all"] = {
-    name: "Clear",
+    name: "clear",
     effectType: clearEffectDefinition.type,
     weightedSpawnChance: 0.25,
     affects: "all"
 };
 powerUpDefinitions["clear_self"] = {
-    name: "Clear",
+    name: "clear",
     effectType: clearEffectDefinition.type,
     weightedSpawnChance: 0.25,
     affects: "self"
 };
 powerUpDefinitions["clear_others"] = {
-    name: "Clear",
+    name: "clear",
     effectType: clearEffectDefinition.type,
     weightedSpawnChance: 0.25,
     affects: "others"
 };
-powerUpDefinitions["superJump"] = {
-    name: "Super Jump",
+powerUpDefinitions["super_jump"] = {
+    name: "super_jump",
     effectType: superJumpEffectDefinition.type,
     effectDuration: 5,
     weightedSpawnChance: 1,
     affects: "self"
 };
-powerUpDefinitions["tronTurn"] = {
-    name: "Tron Turn",
+powerUpDefinitions["tron_turn"] = {
+    name: "tron_turn",
     effectType: tronTurnEffectDefinition.type,
     effectDuration: 5,
     weightedSpawnChance: 1,
@@ -143,6 +143,7 @@ function activatePowerUp(gameState, powerUpId, wormId) {
         affects: powerUp.affects
     });
     if (effect) {
+        effect.name = powerUp.name;
         if (powerUp.affects === "self" || powerUp.affects === "all") {
             gameStateFunctions.addEffect(gameState, effect);
         }
@@ -154,12 +155,7 @@ function activatePowerUp(gameState, powerUpId, wormId) {
             })
         }
     }
-    gameState.powerUpEvents.push({
-        type: "despawn",
-        time: gameState.gameTime,
-        id: powerUpId
-    });
-    gameState.powerUps.splice(index, 1);
+    gameStateFunctions.removePowerUp(gameState, powerUpId);
 }
 
 function getShapeRandomlyInsidePlayableArea(gameState, map, shape, minDistance) {

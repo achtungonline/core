@@ -1,4 +1,5 @@
 var coreFunctions = require("../core-functions.js");
+var gameStateFunctions = require("../game-state-functions.js");
 
 module.exports = function EffectHandler() {
     function update(deltaTime, gameState) {
@@ -11,7 +12,7 @@ module.exports = function EffectHandler() {
                 effectDefinition.update(gameState, deltaTime, effect)
             }
             if (effect.timeLeft <= 0) {
-                effects.splice(i, 1);
+                gameStateFunctions.removeEffect(gameState, effect.id);
             }
         }
     }
