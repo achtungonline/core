@@ -62,8 +62,8 @@ module.exports = function WormHandler({playAreaHandler, collisionHandler, wormBo
         }
         worm.direction += turningVelocity * deltaTime;
         worm.head = shapeFactory.createCircle(worm.head.radius, pathSegment.endX - worm.head.radius, pathSegment.endY - worm.head.radius);
-        wormBodyImmunityHandler.update(gameState, worm);
         collisionDetection();
+        wormBodyImmunityHandler.update(gameState, worm);
         gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
     }
 
