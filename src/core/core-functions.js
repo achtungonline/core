@@ -1,8 +1,13 @@
+var constants = require("./constants.js");
 var gameStateFunctions = require("./game-state-functions.js");
 var shapeSpatialRelations = require("./geometry/shape-spatial-relations.js");
 var shapeModifierI = require("./geometry/shape-modifier-immutable.js");
 var random = require("./util/random.js");
 var clone = require("./util/clone.js");
+var shapeFactory = require("./geometry/shape-factory.js");
+var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
+var ShapeToGridConverter = require("./geometry/shape-to-grid-converter.js");
+var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
 var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
@@ -12,6 +17,7 @@ var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
 var clearEffectDefinition = require("./power-up/effect-definitions/clear.js");
 var superJumpEffectDefinition = require("./power-up/effect-definitions/super-jump.js");
 var tronTurnEffectDefinition = require("./power-up/effect-definitions/tron-turn.js");
+var twinEffectDefinition = require("./power-up/effect-definitions/twin.js");
 
 /**
  * The core functionality of the game
@@ -26,7 +32,7 @@ effectDefinitions[drunkEffectDefinition.type] = drunkEffectDefinition;
 effectDefinitions[clearEffectDefinition.type] = clearEffectDefinition;
 effectDefinitions[superJumpEffectDefinition.type] = superJumpEffectDefinition;
 effectDefinitions[tronTurnEffectDefinition.type] = tronTurnEffectDefinition;
-
+effectDefinitions[twinEffectDefinition.type] = twinEffectDefinition;
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
@@ -131,6 +137,14 @@ powerUpDefinitions["tron_turn"] = {
     weightedSpawnChance: 1,
     affects: "others"
 };
+powerUpDefinitions["twin"] = {
+    name: "twin",
+    effectType: twinEffectDefinition.type,
+    effectDuration: 5,
+    weightedSpawnChance: 1,
+    affects: "self"
+};
+
 
 function activatePowerUp(gameState, powerUpId, wormId) {
     var index = gameState.powerUps.findIndex(powerUp => powerUp.id === powerUpId);
@@ -148,7 +162,7 @@ function activatePowerUp(gameState, powerUpId, wormId) {
             gameStateFunctions.addEffect(gameState, effect);
         }
         if (powerUp.affects === "others" || powerUp.affects === "all") {
-            gameStateFunctions.getEnemyWorms(gameState, wormId).forEach(function (worm) {
+            gameStateFunctions.getAliveEnemyWorms(gameState, wormId).forEach(function (worm) {
                 var clonedEffect = clone(effect);
                 clonedEffect.wormId = worm.id;
                 gameStateFunctions.addEffect(gameState, clonedEffect);
@@ -257,10 +271,124 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
     function getEffectsWithFunction(gameState, wormId, effectFunctionName) {
         return gameStateFunctions.getWormEffects(gameState, wormId).filter(e => effectDefinitions[e.type][effectFunctionName]);
     }
+
     return getEffectsWithFunction(gameState, wormId, effectFunctionName).reduce(function (accValue, effect) {
         var effectHandler = effectDefinitions[effect.type];
         return effectHandler[effectFunctionName](gameState, effect, accValue);
     }, initValue);
+}
+
+function collisionDetection(gameState, worm) {
+    function wormMapCollision(gameState, wormId) {
+        var worm = gameStateFunctions.getWorm(gameState, wormId);
+        return !shapeSpatialRelations.contains(gameState.map.shape, worm.head);
+    }
+
+    function wormWormCollision(gameState, worm) {
+        function isImmuneCell(gameState, worm, cell) {
+            var IMMUNITY_DISTANCE_MULTIPLIER = 5;
+            var data = worm.immunityData;
+            return data.distanceTravelled - data.cellsDistanceTravelled[cell] <= IMMUNITY_DISTANCE_MULTIPLIER * getWormSize(gameState, worm.id);
+        }
+
+        var playArea = gameState.playArea;
+        var cells = shapeToGridConverter.convert(worm.head, playArea, ShapeToGridConverter.RoundingModes.CONTAINMENT);
+        return cells.some(function (cell) {
+            var value = playArea.grid[cell];
+            if (value !== constants.PLAY_AREA_FREE) { // TODO Utility function to check if worm-id
+                if (!isImmuneCell(gameState, worm, cell)) {
+                    return true;
+                }
+            }
+        });
+    }
+
+    function wormPowerUpCollision(gameState, worm) {
+        var powerUps = gameState.powerUps;
+        var collidedPowerUps = [];
+        powerUps.forEach(function (powerUp) {
+            if (shapeSpatialRelations.intersects(worm.head, powerUp.shape)) {
+                collidedPowerUps.push(powerUp.id);
+            }
+        });
+        return collidedPowerUps;
+    }
+
+    wormPowerUpCollision(gameState, worm).forEach(function (powerUpId) {
+        activatePowerUp(gameState, powerUpId, worm.id);
+    });
+    if (worm.alive && wormMapCollision(gameState, worm.id)) {
+        killWorm(gameState, worm.id);
+    }
+    if (worm.alive && !isWormJumping(gameState, worm.id)) {
+        if (wormWormCollision(gameState, worm)) {
+            killWorm(gameState, worm.id);
+        }
+    }
+}
+
+function updateWorms(gameState, deltaTime) {
+    gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
+        function updateBody() {
+            function setImmunityCells(worm, cells) {
+                cells.forEach(function (cell) {
+                    worm.immunityData.cellsDistanceTravelled[cell.index] = worm.immunityData.distanceTravelled;
+                });
+            }
+
+            function pushBodyPart(gameState, worm) {
+                var changedCells = gameStateFunctions.addPlayAreaWormHead(gameState, worm);
+                setImmunityCells(worm, changedCells);
+                gameStateFunctions.getAliveWorms(gameState, worm.playerId).forEach(function (w) {
+                    //if()
+                    //w => wormBodyImmunityHandler.setImmunityCells(w, changedCells));
+                });
+            }
+
+            var bodyPart = clone(worm.head);
+            pushBodyPart(gameState, worm, bodyPart);
+            return bodyPart;
+        }
+
+        function updateImmunityData(worm) {
+            var data = worm.immunityData;
+            data.distanceTravelled += shapeSpatialRelations.distanceSquared(worm.head, data.prevPosition);
+            data.prevPosition = worm.head;
+        }
+
+        collisionDetection(gameState, worm);
+        var direction = getWormDirection(gameState, worm.id);
+        var speed = getWormSpeed(gameState, worm.id);
+        var size = getWormSize(gameState, worm.id);
+        var turningVelocity = getWormTurningVelocity(gameState, worm.id, deltaTime);
+        var jump = isWormJumping(gameState, worm.id);
+        if (gameState.phase === "startPhase") {
+            speed = 0;
+        }
+        var pathSegment = trajectoryUtil.createTrajectory({
+            duration: deltaTime,
+            startX: worm.head.centerX,
+            startY: worm.head.centerY,
+            startDirection: direction,
+            speed,
+            turningVelocity
+        });
+        pathSegment.startTime = gameState.gameTime - deltaTime;
+        pathSegment.endTime = gameState.gameTime;
+        pathSegment.jump = jump;
+        pathSegment.size = size;
+        pathSegment.playerId = worm.playerId;
+
+        worm.head.radius = size / 2;
+        if (speed > 0 && !jump) {
+            // No body update during the start phase and also only render the body if we are not standing still
+            updateBody();
+        }
+        worm.direction += turningVelocity * deltaTime;
+        worm.head = shapeFactory.createCircle(worm.head.radius, pathSegment.endX - worm.head.radius, pathSegment.endY - worm.head.radius);
+        updateImmunityData(worm);
+        gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
+    });
 }
 
 
@@ -276,5 +404,6 @@ module.exports = {
     getWormTurningVelocity,
     isWormJumping,
     killPlayer,
-    killWorm
+    killWorm,
+    updateWorms
 };

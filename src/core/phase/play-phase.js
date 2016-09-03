@@ -1,11 +1,12 @@
 var gameStateFunctions = require("./../game-state-functions.js");
+var coreFunctions = require("./../core-functions.js");
 var jumpHandler = require("../worm/jump-handler.js")();
 
 var playPhase = module.exports = {};
 
 playPhase.type = "playPhase";
 
-playPhase.PlayPhase = function PlayPhase({powerUpHandler, effectHandler, playerHandler, wormHandler}) {
+playPhase.PlayPhase = function PlayPhase({powerUpHandler, effectHandler, playerHandler}) {
 
     function start(gameState) {
         gameState.phaseTimer = 1;
@@ -20,9 +21,7 @@ playPhase.PlayPhase = function PlayPhase({powerUpHandler, effectHandler, playerH
         effectHandler.update(deltaTime, gameState);
         playerHandler.update(gameState, deltaTime);
         jumpHandler.update(gameState, deltaTime);
-        gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
-            wormHandler.update(gameState, deltaTime, worm);
-        });
+        coreFunctions.updateWorms(gameState, deltaTime);
 
         var alivePlayers = gameStateFunctions.getAlivePlayers(gameState);
         if (alivePlayers.length <= 1) {

@@ -40,15 +40,15 @@ function createTrajectory({ startX, startY, startDirection, speed, turningVeloci
         var radius = speed / turningVelocity;
         var angle = duration * turningVelocity;
 
-        trajectory.arcCenterX = trajectory.startX - radius * Math.cos(startDirection - Math.PI/2);
-        trajectory.arcCenterY = trajectory.startY - radius * Math.sin(startDirection - Math.PI/2);
+        trajectory.arcCenterX = trajectory.startX - radius * Math.cos(startDirection - Math.PI / 2);
+        trajectory.arcCenterY = trajectory.startY - radius * Math.sin(startDirection - Math.PI / 2);
         trajectory.arcRadius = Math.abs(radius);
-        trajectory.arcStartAngle = startDirection - radius/Math.abs(radius)*Math.PI/2;
+        trajectory.arcStartAngle = startDirection - radius / Math.abs(radius) * Math.PI / 2;
         trajectory.arcAngleDiff = angle;
         trajectory.arcEndAngle = trajectory.arcStartAngle + trajectory.arcAngleDiff;
 
-        xDiff = -radius * (Math.cos(startDirection - Math.PI/2) + Math.cos(startDirection + Math.PI/2 + angle));
-        yDiff = -radius * (Math.sin(startDirection - Math.PI/2) + Math.sin(startDirection + Math.PI/2 + angle));
+        xDiff = -radius * (Math.cos(startDirection - Math.PI / 2) + Math.cos(startDirection + Math.PI / 2 + angle));
+        yDiff = -radius * (Math.sin(startDirection - Math.PI / 2) + Math.sin(startDirection + Math.PI / 2 + angle));
     }
     trajectory.endX = trajectory.startX + xDiff;
     trajectory.endY = trajectory.startY + yDiff;

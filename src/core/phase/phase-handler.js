@@ -2,17 +2,14 @@ var StartPhase = require("./start-phase.js").StartPhase;
 var PlayPhase = require("./play-phase.js").PlayPhase;
 var RoundOverPhase = require("./round-over-phase.js").RoundOverPhase;
 
-module.exports = function PhaseHandler({wormIdGenerator, wormHandler, playerHandler, powerUpHandler, effectHandler}) {
+module.exports = function PhaseHandler({playerHandler, powerUpHandler, effectHandler}) {
     var currentPhaseIndex = 0;
 
     var phases = [
         StartPhase({
-            wormHandler,
-            playerHandler,
-            wormIdGenerator
+            playerHandler
         }),
         PlayPhase({
-            wormHandler,
             playerHandler,
             powerUpHandler,
             effectHandler
