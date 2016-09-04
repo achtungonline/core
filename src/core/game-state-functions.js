@@ -45,14 +45,15 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function addWorm(gameState, {id, playerId, direction, head}) {
+function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius}) {
     id = (id === undefined ? getNextId(gameState) : id);
-    head = head || shapeFactory.createCircle(constants.WORM_RADIUS, 0, 0)
+    radius = (radius === undefined ? constants.WORM_RADIUS : radius);
     var worm = {
         id,
         playerId,
-        head,
-        size: constants.WORM_RADIUS * 2,
+        centerX,
+        centerY,
+        radius: radius || constants.WORM_RADIUS,
         direction: direction || 0,
         speed: constants.WORM_SPEED,
         turningSpeed: constants.WORM_TURNING_SPEED,
@@ -63,7 +64,7 @@ function addWorm(gameState, {id, playerId, direction, head}) {
         },
         immunityData: {
             distanceTravelled: 0,
-            prevPosition: head,
+            prevPosition: {centerX, centerY, radius},
             cellsDistanceTravelled: {}
         }
     };
@@ -264,7 +265,7 @@ function applyShape(gameState, shape, value) {
 }
 
 function addPlayAreaWormHead(gameState, worm) {
-    return applyShape(gameState, worm.head, worm.id);
+    return applyShape(gameState, worm, worm.id);
 }
 
 function addPlayAreaObstacle(gameState, shape) {
@@ -305,7 +306,9 @@ function createGameState(map, seed) {
             //  {
             //      id,
             //      playerId,
-            //      head,
+            //      centerX,
+            //      centerY,
+            //      radius,
             //      direction,
             //      speed,
             //      turningSpeed,

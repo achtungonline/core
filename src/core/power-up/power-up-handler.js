@@ -7,6 +7,7 @@ var shapeSpatialRelations = require("../geometry/shape-spatial-relations.js");
 var timeBasedChance = require("../util/time-based-chance.js");
 var constants = require("../constants.js");
 var timeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
+var shapeModifierI = require("../geometry/shape-modifier-immutable.js");
 
 var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
 
@@ -17,7 +18,7 @@ module.exports = function PowerUpHandler() {
             function isCollidingWithWorms(shape) {
                 for (var i in gameState.worms) {
                     var worm = gameState.worms[i];
-                    if (shapeSpatialRelations.intersects(worm.head, shape)) {
+                    if (shapeSpatialRelations.intersects(worm, shape)) {
                         return true;
                     }
                 }
@@ -34,24 +35,19 @@ module.exports = function PowerUpHandler() {
                 return false;
             }
 
-            function getPowerUpShapeInsidePlayableMapArea(powerUp) {
-                return coreFunctions.getShapeRandomlyInsidePlayableArea(gameState, gameState.map, powerUp.shape);
-            }
-
-
-            var powerUpShape = getPowerUpShapeInsidePlayableMapArea(powerUp);
+            var position = coreFunctions.getRandomPositionInsidePlayableArea(gameState, powerUp.shape.radius);
+            powerUp.shape = shapeModifierI.setPosition(powerUp.shape, position.x - powerUp.shape.radius, position.y - powerUp.shape.radius);
             var counter = 0;
-            while (isCollidingWithWorms(powerUpShape) || isCollidingWithPowerUps(powerUpShape)) {
+            while (isCollidingWithWorms(powerUp.shape) || isCollidingWithPowerUps(powerUp.shape)) {
                 if (counter > MAX_POWER_UP_SPAWN_ATTEMPTS) {
                     return undefined;
                 }
-                powerUpShape = getPowerUpShapeInsidePlayableMapArea(powerUp);
+                position = coreFunctions.getRandomPositionInsidePlayableArea(gameState, powerUp.shape.radius);
+                powerUp.shape = shapeModifierI.setPosition(powerUp.shape, position.x - powerUp.shape.radius, position.y - powerUp.shape.radius);
                 counter++;
             }
-            powerUp.shape = powerUpShape;
             return powerUp;
         }
-
 
         function attemptSpawnRandomPowerUp() {
             var totalSpawnWeight = 0;

@@ -94,6 +94,31 @@ containmentFunctions["rectangle"]["circle"] = function rectangleCircleContainmen
 
 // -- UTILITY-FUNCTIONS --
 function isRelationTrue(spatialRelationsFunctions, shape, otherShape) {
+    function convertWormToCircle(w) {
+        return {
+            type: "circle",
+            centerX: w.centerX,
+            centerY: w.centerY,
+            x: w.centerX - w.radius,
+            y: w.centerY - w.radius,
+            maxX: w.centerX + w.radius,
+            maxY: w.centerY + w.radius,
+            radius: w.radius,
+            boundingBox: {
+                width: w.radius * 2,
+                height: w.radius * 2
+            }
+        }
+    }
+    // TODO Not the prettiest but works for now. This handles special worm treatment
+    if (!shape.type) {
+        shape = convertWormToCircle(shape);
+    }
+
+    if(!otherShape.type) {
+        otherShape = convertWormToCircle(otherShape);
+    }
+
     return spatialRelationsFunctions[shape.type][otherShape.type](shape, otherShape);
 }
 

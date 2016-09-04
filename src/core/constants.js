@@ -1,29 +1,9 @@
 var shapeFactory = require("./geometry/shape-factory.js");
-var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
-var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
-var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
-var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
-var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
-var clearEffectDefinition = require("./power-up/effect-definitions/clear.js");
-var superJumpEffectDefinition = require("./power-up/effect-definitions/super-jump.js");
-var tronTurnEffectDefinition = require("./power-up/effect-definitions/tron-turn.js");
-var twinEffectDefinition = require("./power-up/effect-definitions/twin.js");
-
-var effectDefinitions = {};
-effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
-effectDefinitions[sizeEffectDefinition.type] = sizeEffectDefinition;
-effectDefinitions[turningSpeedEffectDefinition.type] = turningSpeedEffectDefinition;
-effectDefinitions[wormSwitchEffectDefinition.type] = wormSwitchEffectDefinition;
-effectDefinitions[drunkEffectDefinition.type] = drunkEffectDefinition;
-effectDefinitions[clearEffectDefinition.type] = clearEffectDefinition;
-effectDefinitions[superJumpEffectDefinition.type] = superJumpEffectDefinition;
-effectDefinitions[tronTurnEffectDefinition.type] = tronTurnEffectDefinition;
-effectDefinitions[twinEffectDefinition.type] = twinEffectDefinition;
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
     name: "speed",
-    effectType: speedEffectDefinition.type,
+    effectType: "speed",
     effectDuration: 5,
     effectStrength: 3 / 2,
     weightedSpawnChance: 1,
@@ -31,7 +11,7 @@ powerUpDefinitions["speed"] = {
 };
 powerUpDefinitions["slow"] = {
     name: "slow",
-    effectType: speedEffectDefinition.type,
+    effectType: "speed",
     effectDuration: 5,
     effectStrength: 2 / 3,
     weightedSpawnChance: 1,
@@ -39,7 +19,7 @@ powerUpDefinitions["slow"] = {
 };
 powerUpDefinitions["fat"] = {
     name: "fat",
-    effectType: sizeEffectDefinition.type,
+    effectType: "size",
     effectDuration: 5,
     effectStrength: 2,
     weightedSpawnChance: 1,
@@ -47,7 +27,7 @@ powerUpDefinitions["fat"] = {
 };
 powerUpDefinitions["slim"] = {
     name: "slim",
-    effectType: sizeEffectDefinition.type,
+    effectType: "size",
     effectDuration: 5,
     effectStrength: 0.5,
     weightedSpawnChance: 1,
@@ -55,7 +35,7 @@ powerUpDefinitions["slim"] = {
 };
 powerUpDefinitions["quick_turn"] = {
     name: "quick_turn",
-    effectType: turningSpeedEffectDefinition.type,
+    effectType: "turningSpeed",
     effectDuration: 5,
     effectStrength: 3 / 2,
     weightedSpawnChance: 1,
@@ -63,7 +43,7 @@ powerUpDefinitions["quick_turn"] = {
 };
 powerUpDefinitions["slow_turn"] = {
     name: "slow_turn",
-    effectType: turningSpeedEffectDefinition.type,
+    effectType: "turningSpeed",
     effectDuration: 5,
     effectStrength: 2 / 3,
     weightedSpawnChance: 1,
@@ -71,13 +51,13 @@ powerUpDefinitions["slow_turn"] = {
 };
 powerUpDefinitions["switcharoonie"] = {
     name: "switcharoonie",
-    effectType: wormSwitchEffectDefinition.type,
+    effectType: "wormSwitch",
     weightedSpawnChance: 0.5,
     affects: "all"
 };
 powerUpDefinitions["key_switch"] = {
     name: "key_switch",
-    effectType: turningSpeedEffectDefinition.type,
+    effectType: "turningSpeed",
     effectDuration: 5,
     effectStrength: -1,
     weightedSpawnChance: 1,
@@ -85,7 +65,7 @@ powerUpDefinitions["key_switch"] = {
 };
 powerUpDefinitions["drunk"] = {
     name: "drunk",
-    effectType: drunkEffectDefinition.type,
+    effectType: "drunk",
     effectDuration: 5,
     effectStrength: 1,
     weightedSpawnChance: 1,
@@ -93,39 +73,39 @@ powerUpDefinitions["drunk"] = {
 };
 powerUpDefinitions["clear_all"] = {
     name: "clear",
-    effectType: clearEffectDefinition.type,
+    effectType: "clear",
     weightedSpawnChance: 0.25,
     affects: "all"
 };
 powerUpDefinitions["clear_self"] = {
     name: "clear",
-    effectType: clearEffectDefinition.type,
+    effectType: "clear",
     weightedSpawnChance: 0.25,
     affects: "self"
 };
 powerUpDefinitions["clear_others"] = {
     name: "clear",
-    effectType: clearEffectDefinition.type,
+    effectType: "clear",
     weightedSpawnChance: 0.25,
     affects: "others"
 };
 powerUpDefinitions["super_jump"] = {
     name: "super_jump",
-    effectType: superJumpEffectDefinition.type,
+    effectType: "superJump",
     effectDuration: 5,
     weightedSpawnChance: 1,
     affects: "self"
 };
 powerUpDefinitions["tron_turn"] = {
     name: "tron_turn",
-    effectType: tronTurnEffectDefinition.type,
+    effectType: "tronTurn",
     effectDuration: 5,
     weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["twin"] = {
     name: "twin",
-    effectType: twinEffectDefinition.type,
+    effectType: "twin",
     effectDuration: 5,
     weightedSpawnChance: 1,
     affects: "self"
@@ -133,8 +113,9 @@ powerUpDefinitions["twin"] = {
 
 module.exports = {
     START_PHASE_DURATION: 2.5,
+    START_DISTANCE_TO_MAP: 50,
+    START_DISTANCE_TO_WORMS: 70,
 
-    effectDefinitions: effectDefinitions,
     powerUpDefinitions: powerUpDefinitions,
     POWER_UP_SPAWN_CHANCE: 0.12,            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds, average 5 seconds.
     POWER_UP_SHAPE: shapeFactory.createCircle(25),

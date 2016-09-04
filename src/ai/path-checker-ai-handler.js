@@ -84,8 +84,8 @@ module.exports = function PathCheckerAI() {
             var trajectory = [];
             // Turn on the spot
             trajectory.push(trajectoryUtil.createTrajectory({
-                startX: worm.head.centerX,
-                startY: worm.head.centerY,
+                startX: worm.centerX,
+                startY: worm.centerY,
                 startDirection: worm.direction,
                 duration: turnTime,
                 speed: 0,
@@ -141,8 +141,8 @@ module.exports = function PathCheckerAI() {
         [constants.STEERING_RIGHT, constants.STEERING_LEFT].forEach(function (steering) {
             for (var turns = 0; turns <= maxTurns; turns++) {
                 var trajectory = [];
-                var x = worm.head.centerX;
-                var y = worm.head.centerY;
+                var x = worm.centerX;
+                var y = worm.centerY;
                 var direction = worm.direction;
                 if (turns > 0) {
                     trajectory.push(trajectoryUtil.createTrajectory({
@@ -174,14 +174,12 @@ module.exports = function PathCheckerAI() {
     function checkTrajectory(gameState, worm, trajectory) {
         var playArea = gameState.playArea;
         var clonedWorm = clone(worm);
-        var clonedHead = clone(worm.head);
-        clonedWorm.head = clonedHead;
 
         var segmentTime = 0;
         var time = 0;
         var trajectoryIndex = 0;
         var distanceTravelled = 0;
-        var immunityDistance = 3*worm.head.radius;
+        var immunityDistance = 3*worm.radius;
         while (trajectoryIndex < trajectory.length) {
             segmentTime += SIMULATION_DELTA;
             distanceTravelled += SIMULATION_DELTA * trajectory[trajectoryIndex].speed;
@@ -194,24 +192,20 @@ module.exports = function PathCheckerAI() {
                 segmentTime -= trajectory[trajectoryIndex].duration;
                 trajectoryIndex++;
             }
-            var xDiff = position.x - clonedHead.centerX;
-            var yDiff = position.y - clonedHead.centerY;
-            clonedHead.x += xDiff;
-            clonedHead.y += yDiff;
-            clonedHead.centerX += xDiff;
-            clonedHead.centerY += yDiff;
-            clonedHead.maxX += xDiff;
-            clonedHead.maxY += yDiff;
+            var xDiff = position.x - clonedWorm.centerX;
+            var yDiff = position.y - clonedWorm.centerY;
+            clonedWorm.centerX += xDiff;
+            clonedWorm.centerY += yDiff;
             clonedWorm.direction = position.direction;
 
             var collision = false;
             // Map collision detection
-            if (!shapeSpatialRelations.contains(gameState.map.shape, clonedWorm.head)) {
+            if (!shapeSpatialRelations.contains(gameState.map.shape, clonedWorm)) {
                 collision = true;
             }
             if (!collision) {
                 // Worm collision detection
-                var cells = shapeToGridConverter.convert(clonedHead, playArea, RoundingModes.INTERSECTION);
+                var cells = shapeToGridConverter.convert(clonedWorm, playArea, RoundingModes.INTERSECTION);
                 cells.some(function (cell) {
                     var value = playArea.grid[cell];
                     if (value !== constants.PLAY_AREA_FREE) {

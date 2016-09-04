@@ -40,6 +40,18 @@ convertFunctions["circle"] = function circleToGrid(circle, grid, roundingMode) {
     return points;
 };
 
+convertFunctions["worm"] = function wormToGrid(worm, grid, roundingMode) {
+    return convertFunctions["circle"]({
+        centerX: worm.centerX,
+        centerY: worm.centerY,
+        x: worm.centerX - worm.radius,
+        y: worm.centerY - worm.radius,
+        maxX: worm.centerX + worm.radius,
+        maxY: worm.centerY + worm.radius,
+        radius: worm.radius
+    }, grid, roundingMode);
+};
+
 function createRoundingMode(roundLeft, roundRight) {
     return {roundLeft: roundLeft, roundRight: roundRight};
 }
@@ -53,10 +65,12 @@ ShapeToGridConverter.RoundingModes.INTERSECTION = createRoundingMode(Math.floor,
 
 ShapeToGridConverter.createShapeToGridConverter = function createShapeToGridConverter() {
     function convert(shape, grid, roundingMode) {
-        var convertFunction = convertFunctions[shape.type];
+        var type = shape.type || "worm";
+        var convertFunction = convertFunctions[type];
 
         roundingMode = roundingMode || ShapeToGridConverter.RoundingModes.ROUND;
 
+        if(shape)
         return convertFunction(shape, grid, roundingMode);
     }
 
