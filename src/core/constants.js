@@ -132,6 +132,8 @@ powerUpDefinitions["twin"] = {
 };
 
 module.exports = {
+    START_PHASE_DURATION: 2.5,
+
     effectDefinitions: effectDefinitions,
     powerUpDefinitions: powerUpDefinitions,
     POWER_UP_SPAWN_CHANCE: 0.12,            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds, average 5 seconds.

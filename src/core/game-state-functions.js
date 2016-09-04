@@ -271,6 +271,14 @@ function addPlayAreaObstacle(gameState, shape) {
     return applyShape(gameState, shape, constants.PLAY_AREA_OBSTACLE);
 }
 
+function isInStartPhase(gameState) {
+    return gameState.gameActive && gameState.startPhaseTimer > 0;
+}
+
+function isInPlayPhase(gameState) {
+    return gameState.gameActive && !isInStartPhase(gameState);
+}
+
 function createGameState(map, seed) {
     function createPlayArea(width, height) {
         var playArea = {
@@ -373,9 +381,8 @@ function createGameState(map, seed) {
         map: map,
         playArea: createPlayArea(map.width, map.height),
         gameTime: 0,
-        gameActive: false,                           // TODO: might get removed and replaced with just phase
-        phaseTimer: 0,                               // Time left until next phase starts (only interesting between startPhase and playPhase)
-        phase: "notStartedPhase",                    // notStartedPhase | startPhase | playPhase | roundOverPhase
+        gameActive: false,                                  // TODO: might get removed
+        startPhaseTimer: constants.START_PHASE_DURATION,    // Time left until start phase ends
         seed: seed,
         nextId: 0
     };
@@ -408,6 +415,8 @@ module.exports = {
     getWorm,
     getWormEffects,
     hasWormEffect,
+    isInStartPhase,
+    isInPlayPhase,
     isPlayerAlive,
     removeEffect,
     removePowerUp,

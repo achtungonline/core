@@ -40,7 +40,7 @@ module.exports = function PathCheckerAI() {
             }
             aiData.timeUntilNextSimulation = random.randInt(gameState, MIN_SLEEP_TIME*1000, MAX_SLEEP_TIME*1000) / 1000.0;
         } else {
-            if (gameState.phase !== "startPhase" && coreFunctions.getWormSpeed(gameState, worm.id) > 0) {
+            if (gameStateFunctions.isInStartPhase(gameState) && coreFunctions.getWormSpeed(gameState, worm.id) > 0) {
                 while (aiData.trajectory.length > 0 && deltaTime >= aiData.trajectory[0].duration) {
                     deltaTime -= aiData.trajectory[0].duration;
                     aiData.trajectory.shift();

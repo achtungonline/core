@@ -225,7 +225,7 @@ function updateWorms(gameState, deltaTime) {
         var size = getWormSize(gameState, worm.id);
         var turningVelocity = getWormTurningVelocity(gameState, worm.id, deltaTime);
         var jump = isWormJumping(gameState, worm.id);
-        if (gameState.phase === "startPhase") {
+        if (gameStateFunctions.isInStartPhase(gameState)) {
             speed = 0;
         }
         var pathSegment = trajectoryUtil.createTrajectory({
