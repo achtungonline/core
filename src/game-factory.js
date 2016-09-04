@@ -1,4 +1,3 @@
-var PhaseHandler = require("./core/phase/phase-handler.js");
 var PlayerHandler = require("./core/player/player-handler.js");
 var Game = require("./core/game.js");
 var AIHandler = require("./ai/ai-handler.js");
@@ -24,12 +23,6 @@ module.exports = function GameFactory() {
         var powerUpHandler = PowerUpHandler();
 
 
-        var phaseHandler = PhaseHandler({
-            playerHandler,
-            powerUpHandler,
-            effectHandler
-        });
-
         var aiHandler = AIHandler();
         players.filter(function (player) {
             return player.type === "bot";
@@ -39,7 +32,7 @@ module.exports = function GameFactory() {
             aiHandler.addAIPlayer(aiPlayer);
         });
 
-        return Game(gameState, phaseHandler, aiHandler);
+        return Game(gameState, playerHandler, powerUpHandler, effectHandler, aiHandler);
     }
 
     return {

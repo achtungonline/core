@@ -55,13 +55,13 @@ module.exports = function PowerUpHandler() {
 
         function attemptSpawnRandomPowerUp() {
             var totalSpawnWeight = 0;
-            forEach(coreFunctions.powerUpDefinitions, function (powerUpDefinition, _) {
+            forEach(constants.powerUpDefinitions, function (powerUpDefinition, _) {
                 totalSpawnWeight += powerUpDefinition.weightedSpawnChance;
             });
             var randomValue = random.random(gameState);
             var currentChance = 0;
             var found = false;
-            forEach(coreFunctions.powerUpDefinitions, function (powerUpDefinition, _) {
+            forEach(constants.powerUpDefinitions, function (powerUpDefinition, _) {
                 currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
                 if (!found && currentChance > randomValue) {
                     found = true;

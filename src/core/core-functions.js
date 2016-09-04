@@ -9,147 +9,10 @@ var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
 var ShapeToGridConverter = require("./geometry/shape-to-grid-converter.js");
 var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 
-var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
-var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
-var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
-var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
-var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
-var clearEffectDefinition = require("./power-up/effect-definitions/clear.js");
-var superJumpEffectDefinition = require("./power-up/effect-definitions/super-jump.js");
-var tronTurnEffectDefinition = require("./power-up/effect-definitions/tron-turn.js");
-var twinEffectDefinition = require("./power-up/effect-definitions/twin.js");
-
-/**
- * The core functionality of the game
- */
-
-var effectDefinitions = {};
-effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
-effectDefinitions[sizeEffectDefinition.type] = sizeEffectDefinition;
-effectDefinitions[turningSpeedEffectDefinition.type] = turningSpeedEffectDefinition;
-effectDefinitions[wormSwitchEffectDefinition.type] = wormSwitchEffectDefinition;
-effectDefinitions[drunkEffectDefinition.type] = drunkEffectDefinition;
-effectDefinitions[clearEffectDefinition.type] = clearEffectDefinition;
-effectDefinitions[superJumpEffectDefinition.type] = superJumpEffectDefinition;
-effectDefinitions[tronTurnEffectDefinition.type] = tronTurnEffectDefinition;
-effectDefinitions[twinEffectDefinition.type] = twinEffectDefinition;
-
-var powerUpDefinitions = {};
-powerUpDefinitions["speed"] = {
-    name: "speed",
-    effectType: speedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 3 / 2,
-    weightedSpawnChance: 1,
-    affects: "self"
-};
-powerUpDefinitions["slow"] = {
-    name: "slow",
-    effectType: speedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 2 / 3,
-    weightedSpawnChance: 1,
-    affects: "others"
-};
-powerUpDefinitions["fat"] = {
-    name: "fat",
-    effectType: sizeEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 2,
-    weightedSpawnChance: 1,
-    affects: "others"
-};
-powerUpDefinitions["slim"] = {
-    name: "slim",
-    effectType: sizeEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 0.5,
-    weightedSpawnChance: 1,
-    affects: "self"
-};
-powerUpDefinitions["quick_turn"] = {
-    name: "quick_turn",
-    effectType: turningSpeedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 3 / 2,
-    weightedSpawnChance: 1,
-    affects: "self"
-};
-powerUpDefinitions["slow_turn"] = {
-    name: "slow_turn",
-    effectType: turningSpeedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 2 / 3,
-    weightedSpawnChance: 1,
-    affects: "others"
-};
-powerUpDefinitions["switcharoonie"] = {
-    name: "switcharoonie",
-    effectType: wormSwitchEffectDefinition.type,
-    weightedSpawnChance: 0.5,
-    affects: "all"
-};
-powerUpDefinitions["key_switch"] = {
-    name: "key_switch",
-    effectType: turningSpeedEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: -1,
-    weightedSpawnChance: 1,
-    affects: "others"
-};
-powerUpDefinitions["drunk"] = {
-    name: "drunk",
-    effectType: drunkEffectDefinition.type,
-    effectDuration: 5,
-    effectStrength: 1,
-    weightedSpawnChance: 1,
-    affects: "others"
-};
-powerUpDefinitions["clear_all"] = {
-    name: "clear",
-    effectType: clearEffectDefinition.type,
-    weightedSpawnChance: 0.25,
-    affects: "all"
-};
-powerUpDefinitions["clear_self"] = {
-    name: "clear",
-    effectType: clearEffectDefinition.type,
-    weightedSpawnChance: 0.25,
-    affects: "self"
-};
-powerUpDefinitions["clear_others"] = {
-    name: "clear",
-    effectType: clearEffectDefinition.type,
-    weightedSpawnChance: 0.25,
-    affects: "others"
-};
-powerUpDefinitions["super_jump"] = {
-    name: "super_jump",
-    effectType: superJumpEffectDefinition.type,
-    effectDuration: 5,
-    weightedSpawnChance: 1,
-    affects: "self"
-};
-powerUpDefinitions["tron_turn"] = {
-    name: "tron_turn",
-    effectType: tronTurnEffectDefinition.type,
-    effectDuration: 5,
-    weightedSpawnChance: 1,
-    affects: "others"
-};
-powerUpDefinitions["twin"] = {
-    name: "twin",
-    effectType: twinEffectDefinition.type,
-    effectDuration: 5,
-    weightedSpawnChance: 1,
-    affects: "self"
-};
-
-
 function activatePowerUp(gameState, powerUpId, wormId) {
     var index = gameState.powerUps.findIndex(powerUp => powerUp.id === powerUpId);
     var powerUp = gameState.powerUps[index];
-    var effect = effectDefinitions[powerUp.effectType].activate({
+    var effect = constants.effectDefinitions[powerUp.effectType].activate({
         gameState,
         strength: powerUp.effectStrength,
         duration: powerUp.effectDuration,
@@ -231,7 +94,7 @@ function getWormTurningVelocity(gameState, wormId, deltaTime) {
     var player = gameStateFunctions.getPlayer(gameState, gameStateFunctions.getWorm(gameState, wormId).playerId);
     var tronTurnEffects = gameStateFunctions.getWormEffects(gameState, wormId, 'tronTurn');
     if (tronTurnEffects.length > 0) {
-        turningVelocity = effectDefinitions['tronTurn'].getWormTurningVelocity(gameState, tronTurnEffects[0], deltaTime);
+        turningVelocity = constants.effectDefinitions['tronTurn'].getWormTurningVelocity(gameState, tronTurnEffects[0], deltaTime);
     } else {
         turningVelocity = player.steering * getWormTurningSpeed(gameState, wormId);
     }
@@ -269,11 +132,11 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
      * Returns all effects currently owned by wormId and that has the function effectFunctionName in its definition
      */
     function getEffectsWithFunction(gameState, wormId, effectFunctionName) {
-        return gameStateFunctions.getWormEffects(gameState, wormId).filter(e => effectDefinitions[e.type][effectFunctionName]);
+        return gameStateFunctions.getWormEffects(gameState, wormId).filter(e => constants.effectDefinitions[e.type][effectFunctionName]);
     }
 
     return getEffectsWithFunction(gameState, wormId, effectFunctionName).reduce(function (accValue, effect) {
-        var effectHandler = effectDefinitions[effect.type];
+        var effectHandler = constants.effectDefinitions[effect.type];
         return effectHandler[effectFunctionName](gameState, effect, accValue);
     }, initValue);
 }
@@ -394,8 +257,6 @@ function updateWorms(gameState, deltaTime) {
 
 module.exports = {
     activatePowerUp,
-    effectDefinitions,
-    powerUpDefinitions,
     getShapeRandomlyInsidePlayableArea,
     getWormDirection,
     getWormSize,

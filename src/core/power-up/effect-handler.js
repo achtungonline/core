@@ -1,4 +1,4 @@
-var coreFunctions = require("../core-functions.js");
+var constants = require("../constants.js");
 var gameStateFunctions = require("../game-state-functions.js");
 
 module.exports = function EffectHandler() {
@@ -7,7 +7,7 @@ module.exports = function EffectHandler() {
         for (var i = effects.length - 1; i >= 0; i--) {
             var effect = effects[i];
             effect.timeLeft -= deltaTime;
-            var effectDefinition = coreFunctions.effectDefinitions[effect.type];
+            var effectDefinition = constants.effectDefinitions[effect.type];
             if (effectDefinition.update) {
                 effectDefinition.update(gameState, deltaTime, effect)
             }
