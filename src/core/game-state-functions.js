@@ -240,7 +240,7 @@ function extractReplayGameState(gameState) {
 }
 
 function getNextId(gameState) {
-    var nextId = gameState.nextId;
+    var nextId = gameState.nextId + "";
     gameState.nextId += 1;
     return nextId;
 }
