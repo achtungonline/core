@@ -18,12 +18,12 @@ function activate({ gameState, wormId, affects}) {
     affectedWorms.forEach(function (worm) {
         var newWorm = gameStateFunctions.addWorm(gameState, {
             playerId: worm.playerId,
-            direction: worm.direction - Math.PI / 4,
+            direction: worm.direction - Math.PI / 8,
             centerX: worm.centerX,
             centerY: worm.centerY,
             radius: worm.radius
         });
-        worm.direction += Math.PI / 4;
+        worm.direction += Math.PI / 8;
         gameStateFunctions.getWormEffects(gameState, worm.id).forEach(function (effect) {
             var clonedEffect = clone(effect);
             clonedEffect.wormId = newWorm.id;
