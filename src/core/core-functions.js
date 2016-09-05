@@ -160,7 +160,7 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
     }, initValue);
 }
 
-function collisionDetection(gameState, worm) {
+function updateCollision(gameState) {
     function wormMapCollision(gameState, wormId) {
         var worm = gameStateFunctions.getWorm(gameState, wormId);
         return !shapeSpatialRelations.contains(gameState.map.shape, worm);
@@ -196,17 +196,19 @@ function collisionDetection(gameState, worm) {
         return collidedPowerUps;
     }
 
-    wormPowerUpCollision(gameState, worm).forEach(function (powerUpId) {
-        activatePowerUp(gameState, powerUpId, worm.id);
-    });
-    if (worm.alive && wormMapCollision(gameState, worm.id)) {
-        killWorm(gameState, worm.id);
-    }
-    if (worm.alive && !isWormJumping(gameState, worm.id)) {
-        if (wormWormCollision(gameState, worm)) {
+    gameStateFunctions.forEachAliveWorm(gameState, function(worm) {
+        wormPowerUpCollision(gameState, worm).forEach(function (powerUpId) {
+            activatePowerUp(gameState, powerUpId, worm.id);
+        });
+        if (worm.alive && wormMapCollision(gameState, worm.id)) {
             killWorm(gameState, worm.id);
         }
-    }
+        if (worm.alive && !isWormJumping(gameState, worm.id)) {
+            if (wormWormCollision(gameState, worm)) {
+                killWorm(gameState, worm.id);
+            }
+        }
+    });
 }
 
 function updateWorms(gameState, deltaTime) {
@@ -236,7 +238,6 @@ function updateWorms(gameState, deltaTime) {
             };
         }
 
-        collisionDetection(gameState, worm);
         var direction = getWormDirection(gameState, worm.id);
         var speed = getWormSpeed(gameState, worm.id);
         var radius = getWormRadius(gameState, worm.id);
@@ -392,6 +393,7 @@ module.exports = {
     isWormJumping,
     killPlayer,
     killWorm,
+    updateCollision,
     updateWorms,
     updateEffects,
     updatePlayers,

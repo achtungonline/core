@@ -29,6 +29,7 @@ module.exports = function Game(gameState, aiHandler) {
             coreFunctions.updatePlayers(gameState, deltaTime);
             coreFunctions.updateWormJumps(gameState, deltaTime);
             coreFunctions.updateWorms(gameState, deltaTime);
+            coreFunctions.updateCollision(gameState);
         }
 
         if (gameStateFunctions.getAlivePlayers(gameState).length <= 1) {
