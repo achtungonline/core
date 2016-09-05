@@ -4,9 +4,12 @@ var shapeSpatialRelations = require("./geometry/shape-spatial-relations.js");
 var shapeModifierI = require("./geometry/shape-modifier-immutable.js");
 var random = require("./util/random.js");
 var clone = require("./util/clone.js");
+var forEach = require("./util/for-each.js");
 var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
 var ShapeToGridConverter = require("./geometry/shape-to-grid-converter.js");
 var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
+var timeBasedChance = require("./util/time-based-chance.js");
+var linearTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
 
 var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
@@ -282,6 +285,79 @@ function updateEffects(gameState, deltaTime) {
     }
 }
 
+function updatePlayers(gameState, deltaTime) {
+    gameState.players.forEach(function (player) {
+        gameStateFunctions.addPlayerSteeringSegment(gameState, player.id, player.steering, deltaTime);
+    });
+}
+
+function updatePowerUps(gameState, deltaTime) {
+    function attemptGetPowerUpWithRandomPos(powerUp) {
+        function isCollidingWithWorms(shape) {
+            for (var i in gameState.worms) {
+                var worm = gameState.worms[i];
+                if (shapeSpatialRelations.intersects(worm, shape)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function isCollidingWithPowerUps(shape) {
+            for (var i in gameState.powerUps) {
+                var powerUp = gameState.powerUps[i];
+                if (shapeSpatialRelations.intersects(powerUp.shape, shape)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        var position = getRandomPositionInsidePlayableArea(gameState, powerUp.shape.radius);
+        powerUp.shape = shapeModifierI.setPosition(powerUp.shape, position.x - powerUp.shape.radius, position.y - powerUp.shape.radius);
+        var MAX_POWER_UP_SPAWN_ATTEMPTS = 100;
+        var counter = 0;
+        while (isCollidingWithWorms(powerUp.shape) || isCollidingWithPowerUps(powerUp.shape)) {
+            if (counter > MAX_POWER_UP_SPAWN_ATTEMPTS) {
+                return undefined;
+            }
+            position = getRandomPositionInsidePlayableArea(gameState, powerUp.shape.radius);
+            powerUp.shape = shapeModifierI.setPosition(powerUp.shape, position.x - powerUp.shape.radius, position.y - powerUp.shape.radius);
+            counter++;
+        }
+        return powerUp;
+    }
+
+    function attemptSpawnRandomPowerUp() {
+        var totalSpawnWeight = 0;
+        forEach(constants.powerUpDefinitions, function (powerUpDefinition, _) {
+            totalSpawnWeight += powerUpDefinition.weightedSpawnChance;
+        });
+        var randomValue = random.random(gameState);
+        var currentChance = 0;
+        var found = false;
+        forEach(constants.powerUpDefinitions, function (powerUpDefinition, _) {
+            currentChance += powerUpDefinition.weightedSpawnChance / totalSpawnWeight;
+            if (!found && currentChance > randomValue) {
+                found = true;
+                var powerUp = attemptGetPowerUpWithRandomPos({
+                    name: powerUpDefinition.name,
+                    effectType: powerUpDefinition.effectType,
+                    shape: clone(constants.POWER_UP_SHAPE),
+                    effectStrength: powerUpDefinition.effectStrength,
+                    effectDuration: powerUpDefinition.effectDuration,
+                    affects: powerUpDefinition.affects
+                });
+                if (powerUp !== undefined) {
+                    gameStateFunctions.addPowerUp(gameState, powerUp);
+                }
+            }
+        });
+    }
+
+    linearTimeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);
+}
+
 module.exports = {
     activatePowerUp,
     getRandomPositionInsidePlayableArea,
@@ -294,5 +370,7 @@ module.exports = {
     killPlayer,
     killWorm,
     updateWorms,
-    updateEffects
+    updateEffects,
+    updatePlayers,
+    updatePowerUps
 };

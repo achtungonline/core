@@ -1,7 +1,5 @@
-var PlayerHandler = require("./core/player/player-handler.js");
 var Game = require("./core/game.js");
 var AIHandler = require("./ai/ai-handler.js");
-var PowerUpHandler = require("./core/power-up/power-up-handler.js");
 var gameStateFunctions = require("./core/game-state-functions.js");
 var random = require("./core/util/random.js");
 var coreFunctions = require("./core/core-functions.js");
@@ -45,17 +43,12 @@ module.exports = function GameFactory() {
 
         map.blockingShapes.forEach(blockingShape => gameStateFunctions.addPlayAreaObstacle(gameState, blockingShape));
 
-        var playerHandler = PlayerHandler();
-
-        var powerUpHandler = PowerUpHandler();
-
-
         var aiHandler = AIHandler();
         players.filter(player => player.type === "bot")
             .map(player => gameStateFunctions.getPlayer(gameState, player.id))
             .forEach(aiPlayer => aiHandler.addAIPlayer(aiPlayer));
 
-        return Game(gameState, playerHandler, powerUpHandler, aiHandler);
+        return Game(gameState, aiHandler);
     }
 
     return {

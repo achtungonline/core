@@ -4,7 +4,7 @@ var coreFunctions = require("./core-functions.js");
 var jumpHandler = require("./worm/jump-handler.js")();
 var random = require("./util/random.js");
 
-module.exports = function Game(gameState, playerHandler, powerUpHandler, aiHandler) {
+module.exports = function Game(gameState, aiHandler) {
     function start() {
         gameState.gameActive = true;
     }
@@ -21,13 +21,13 @@ module.exports = function Game(gameState, playerHandler, powerUpHandler, aiHandl
         aiHandler.update(gameState, deltaTime);
 
         if (gameState.startPhaseTimer > 0) {
-            playerHandler.update(gameState, deltaTime);
+            coreFunctions.updatePlayers(gameState, deltaTime);
             coreFunctions.updateWorms(gameState, deltaTime);
             gameState.startPhaseTimer -= deltaTime;
         } else {
-            powerUpHandler.update(deltaTime, gameState);
+            coreFunctions.updatePowerUps(gameState, deltaTime);
             coreFunctions.updateEffects(gameState, deltaTime);
-            playerHandler.update(gameState, deltaTime);
+            coreFunctions.updatePlayers(gameState, deltaTime);
             jumpHandler.update(gameState, deltaTime);
             coreFunctions.updateWorms(gameState, deltaTime);
         }
