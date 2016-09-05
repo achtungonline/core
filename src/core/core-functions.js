@@ -9,7 +9,8 @@ var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
 var ShapeToGridConverter = require("./geometry/shape-to-grid-converter.js");
 var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 var timeBasedChance = require("./util/time-based-chance.js");
-var linearTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
+var powerUpTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
+var jumpTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(constants.JUMP_CHANCE));
 
 var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
 var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
@@ -355,7 +356,29 @@ function updatePowerUps(gameState, deltaTime) {
         });
     }
 
-    linearTimeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);
+    powerUpTimeBasedChanceTrigger.update(gameState, deltaTime, attemptSpawnRandomPowerUp);
+}
+
+function updateWormJumps(gameState, deltaTime) {
+    gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
+        if (worm.jump.remainingJumpTime <= 0) {
+            worm.jump.timeSinceLastJump += deltaTime;
+            if (worm.jump.timeSinceLastJump > constants.JUMP_COOLDOWN) {
+                function startJumping() {
+                    if (worm.speed > 0) {
+                        worm.jump.remainingJumpTime = constants.JUMP_LENGTH / worm.speed;
+                    } else {
+                        worm.jump.remainingJumpTime = 0;
+                    }
+                    worm.jump.timeSinceLastJump = 0;
+                }
+
+                jumpTimeBasedChanceTrigger.update(gameState, deltaTime, startJumping);
+            }
+        } else {
+            worm.jump.remainingJumpTime -= deltaTime;
+        }
+    });
 }
 
 module.exports = {
@@ -372,5 +395,6 @@ module.exports = {
     updateWorms,
     updateEffects,
     updatePlayers,
-    updatePowerUps
+    updatePowerUps,
+    updateWormJumps
 };
