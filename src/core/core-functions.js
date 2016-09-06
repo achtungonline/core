@@ -168,7 +168,7 @@ function updateCollision(gameState) {
 
     function wormWormCollision(gameState, worm) {
         function isImmuneCell(gameState, worm, cell) {
-            var IMMUNITY_DISTANCE_MULTIPLIER = 5;
+            var IMMUNITY_DISTANCE_MULTIPLIER = 10;
             var data = worm.immunityData;
             return data.distanceTravelled - data.cellsDistanceTravelled[cell] <= IMMUNITY_DISTANCE_MULTIPLIER * getWormRadius(gameState, worm.id);
         }
@@ -196,6 +196,16 @@ function updateCollision(gameState) {
         return collidedPowerUps;
     }
 
+    function updateImmunityData(worm) {
+        var data = worm.immunityData;
+        data.distanceTravelled += shapeSpatialRelations.distanceSquared(worm, data.prevPosition);
+        data.prevPosition = {
+            centerX: worm.centerX,
+            centerY: worm.centerY,
+            radius: worm.radius
+        };
+    }
+
     gameStateFunctions.forEachAliveWorm(gameState, function(worm) {
         wormPowerUpCollision(gameState, worm).forEach(function (powerUpId) {
             activatePowerUp(gameState, powerUpId, worm.id);
@@ -208,6 +218,7 @@ function updateCollision(gameState) {
                 killWorm(gameState, worm.id);
             }
         }
+        updateImmunityData(worm);
     });
 }
 
@@ -226,16 +237,6 @@ function updateWorms(gameState, deltaTime) {
             }
 
             pushBodyPart(gameState, worm);
-        }
-
-        function updateImmunityData(worm) {
-            var data = worm.immunityData;
-            data.distanceTravelled += shapeSpatialRelations.distanceSquared(worm, data.prevPosition);
-            data.prevPosition = {
-                centerX: worm.centerX,
-                centerY: worm.centerY,
-                radius: worm.radius
-            };
         }
 
         var direction = getWormDirection(gameState, worm.id);
@@ -267,7 +268,6 @@ function updateWorms(gameState, deltaTime) {
         worm.direction += turningVelocity * deltaTime;
         worm.centerX = pathSegment.endX;
         worm.centerY = pathSegment.endY;
-        updateImmunityData(worm);
         gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
     });
 }
