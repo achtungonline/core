@@ -111,6 +111,22 @@ powerUpDefinitions["twin"] = {
     affects: "self"
 };
 
+powerUpDefinitions["wall_hack_self"] = {
+    name: "wall_hack",
+    effectType: "wallHack",
+    effectDuration: 5,
+    weightedSpawnChance: 0.5,
+    affects: "self"
+};
+
+powerUpDefinitions["wall_hack_others"] = {
+    name: "wall_hack",
+    effectType: "wallHack",
+    effectDuration: 5,
+    weightedSpawnChance: 0.5,
+    affects: "all"
+};
+
 module.exports = {
     START_PHASE_DURATION: 2.5,
     START_DISTANCE_TO_MAP: 50,
@@ -127,6 +143,8 @@ module.exports = {
     JUMP_COOLDOWN: 1.5,                // After a jump, this is the minimum waiting time until another jump
     JUMP_LENGTH: 30,                        // The length of a jump
     JUMP_CHANCE: 0.4,                       // 0.5 means 50 % chance of jump after 1 second has passed (after the JUMP_COOLDOWN has passed).
+
+    IMMUNITY_DISTANCE_MULTIPLIER: 12,
 
     STEERING_STRAIGHT: 0,
     STEERING_LEFT: -1,

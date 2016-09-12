@@ -21,7 +21,9 @@ function activate({ gameState, wormId, affects}) {
             direction: worm.direction - Math.PI / 8,
             centerX: worm.centerX,
             centerY: worm.centerY,
-            radius: worm.radius
+            radius: worm.radius,
+            distanceTravelled: worm.distanceTravelled,
+            distanceTravelledFromCells : clone(worm.distanceTravelledFromCells)
         });
         worm.direction += Math.PI / 8;
         gameStateFunctions.getWormEffects(gameState, worm.id).forEach(function (effect) {
@@ -29,7 +31,9 @@ function activate({ gameState, wormId, affects}) {
             clonedEffect.wormId = newWorm.id;
             gameStateFunctions.addEffect(gameState, clonedEffect);
         });
-        newWorm.immunityData = clone(worm.immunityData);
+        //TODO Instead of timeLeft, make sure the effects are removed when worm and twin-worm no longer intersect (maybe with a margin)
+        gameStateFunctions.addEffect(gameState, {timeLeft: 0.2, wormId: newWorm.id, type: TYPE, twinWormId: worm.id});
+        gameStateFunctions.addEffect(gameState, {timeLeft: 0.2, wormId: worm.id, type: TYPE, twinWormId: newWorm.id});
     });
 }
 

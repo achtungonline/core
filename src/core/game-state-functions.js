@@ -1,6 +1,7 @@
 var constants = require("./constants.js");
 var shapeFactory = require("./geometry/shape-factory.js");
 var shapeToGridConverter = require("./geometry/shape-to-grid-converter.js").createShapeToGridConverter();
+var forEach = require("./util/for-each.js");
 
 function addEffect(gameState, effect) {
     effect.id = getNextId(gameState);
@@ -45,7 +46,7 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius}) {
+function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius, distanceTravelled, distanceTravelledFromCells}) {
     id = (id === undefined ? getNextId(gameState) : id);
     radius = (radius === undefined ? constants.WORM_RADIUS : radius);
     var worm = {
@@ -62,11 +63,8 @@ function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius})
             remainingJumpTime: 0,
             timeSinceLastJump: 0
         },
-        immunityData: {
-            distanceTravelled: 0,
-            prevPosition: {centerX, centerY, radius},
-            cellsDistanceTravelled: {}
-        }
+        distanceTravelled: distanceTravelled || 0,
+        distanceTravelledFromCells: distanceTravelledFromCells || {}
     };
     gameState.worms.push(worm);
     gameState.wormPathSegments[id] = [];
@@ -85,11 +83,13 @@ function addWormPathSegment(gameState, wormId, segment) {
             segment.size === lastSegment.size &&
             segment.playerId === lastSegment.playerId &&
             segment.jump === lastSegment.jump &&
-            segment.startDirection === lastSegment.endDirection) {
+            segment.startDirection === lastSegment.endDirection &&
+            segment.startX === lastSegment.endX &&
+            segment.startY === lastSegment.endY) {
 
             // Continue last segment
             lastSegment.duration += segment.duration;
-            lastSegment.endTime += segment.duration;
+            lastSegment.endTime += segment.duration; //= segment.endTime; // changed from segment += duration. Check if this was bad or not
             lastSegment.endX = segment.endX;
             lastSegment.endY = segment.endY;
             lastSegment.endDirection = segment.endDirection;
@@ -142,12 +142,34 @@ function forEachAliveWorm(gameState, callback, playerId) {
     });
 }
 
+function forEachAliveLatestWormPathSegment(gameState, callback, playerId) {
+    var latestSegments = [];
+    forEach(gameState.wormPathSegments, function (segments) {
+        if (segments.length === 0) {
+            return;
+        }
+        latestSegments.push(segments[segments.length - 1]);
+    });
+    latestSegments.forEach(function (latestSegment) {
+        if (latestSegment.endTime !== gameState.gameTime) {
+            return
+        }
+        if (getWorm(gameState, latestSegment.wormId).alive && (playerId === undefined || latestSegment.playerId === playerId)) {
+            callback(latestSegment);
+        }
+    });
+}
+
 function getAlivePlayers(gameState) {
     return gameState.players.filter(p => p.alive);
 }
 
 function getAliveWorms(gameState, playerId) {
     return gameState.worms.filter(w => w.alive && (playerId === undefined || w.playerId === playerId));
+}
+
+function getLatestWormPathSegment(gameState, segmentId) {
+    return gameState.wormPathSegments[segmentId][gameState.wormPathSegments[segmentId].length - 1];
 }
 
 function getEffect(gameState, effectId) {
@@ -175,6 +197,7 @@ function getWorm(gameState, wormId) {
     return gameState.worms.find(w => w.id === wormId);
 }
 
+
 function getWormEffects(gameState, wormId, effectType) {
     var effects = gameState.effects.filter(function (effect) {
         return effect.wormId === wormId;
@@ -184,6 +207,11 @@ function getWormEffects(gameState, wormId, effectType) {
     } else {
         return effects;
     }
+}
+
+function getWormEffect(gameState, wormId, effectType) {
+    var effects = getWormEffects(gameState, wormId, effectType);
+    return effects.length !== 0 ? effects[0] : null;
 }
 
 function hasWormEffect(gameState, wormId, effectType) {
@@ -246,15 +274,15 @@ function getNextId(gameState) {
     return nextId;
 }
 
-function applyShape(gameState, shape, value) {
+function addPlayAreaShape(gameState, shape, value) {
     var playArea = gameState.playArea;
     var points = shapeToGridConverter.convert(shape, playArea);
-    var grid = playArea.grid;
     var changedData = [];
     for (var i = 0; i < points.length; i++) {
         // Buffer should only be updated when a value has changed
-        if (grid[points[i]] !== value) {
-            grid[points[i]] = value;
+        // TODO ATM we do not accept "painting over". If we were, worm worm collision would have issues since we would not collide against other worms, might want to fix this
+        if (playArea.grid[points[i]] !== value) {
+            playArea.grid[points[i]] = value;
             changedData.push({
                 index: points[i],
                 value
@@ -264,12 +292,8 @@ function applyShape(gameState, shape, value) {
     return changedData;
 }
 
-function addPlayAreaWormHead(gameState, worm) {
-    return applyShape(gameState, worm, worm.id);
-}
-
 function addPlayAreaObstacle(gameState, shape) {
-    return applyShape(gameState, shape, constants.PLAY_AREA_OBSTACLE);
+    return addPlayAreaShape(gameState, shape, constants.PLAY_AREA_OBSTACLE);
 }
 
 function isInStartPhase(gameState) {
@@ -394,7 +418,7 @@ function createGameState(map, seed) {
 module.exports = {
     addEffect,
     addPlayAreaObstacle,
-    addPlayAreaWormHead,
+    addPlayAreaShape,
     addPlayer,
     addPlayerSteeringSegment,
     addPowerUp,
@@ -408,14 +432,17 @@ module.exports = {
     extractReplayGameState,
     forEachAlivePlayer,
     forEachAliveWorm,
+    forEachAliveLatestWormPathSegment,
     getAliveEnemyWorms,
     getAlivePlayers,
     getAliveWorms,
     getEffect,
+    getLatestWormPathSegment,
     getNextId,
     getPowerUp,
     getPlayer,
     getWorm,
+    getWormEffect,
     getWormEffects,
     hasWormEffect,
     isInStartPhase,

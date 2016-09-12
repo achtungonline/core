@@ -21,6 +21,7 @@ var clearEffectDefinition = require("./power-up/effect-definitions/clear.js");
 var superJumpEffectDefinition = require("./power-up/effect-definitions/super-jump.js");
 var tronTurnEffectDefinition = require("./power-up/effect-definitions/tron-turn.js");
 var twinEffectDefinition = require("./power-up/effect-definitions/twin.js");
+var wallHackEffectDefinition = require("./power-up/effect-definitions/wall-hack.js");
 
 var effectDefinitions = {};
 effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
@@ -32,6 +33,7 @@ effectDefinitions[clearEffectDefinition.type] = clearEffectDefinition;
 effectDefinitions[superJumpEffectDefinition.type] = superJumpEffectDefinition;
 effectDefinitions[tronTurnEffectDefinition.type] = tronTurnEffectDefinition;
 effectDefinitions[twinEffectDefinition.type] = twinEffectDefinition;
+effectDefinitions[wallHackEffectDefinition.type] = wallHackEffectDefinition;
 
 function activatePowerUp(gameState, powerUpId, wormId) {
     var index = gameState.powerUps.findIndex(powerUp => powerUp.id === powerUpId);
@@ -72,14 +74,13 @@ function getRandomPositionInsidePlayableArea(gameState, minDistance) {
     }
 
     minDistance = minDistance || 0;
-    var shrunkenMapShape = shapeModifierI.changeSize(map.shape, -minDistance, -minDistance);
     var pos = {};
     var i = 0;
     while (i < 100000) {
         pos.x = random.random(gameState) * map.width;
         pos.y = random.random(gameState) * map.height;
         var shape = {centerX: pos.x, centerY: pos.y, radius: minDistance};
-        if (shapeSpatialRelations.contains(shrunkenMapShape, shape) && !intersectsBlockingShapes(shape)) {
+        if (shapeSpatialRelations.contains(map.shape, shape) && !intersectsBlockingShapes(shape)) {
             return pos;
         }
         i++;
@@ -160,85 +161,63 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
     }, initValue);
 }
 
+/**
+ * Update what should happen on collision. Either on wall, worm or on power up
+ */
 function updateCollision(gameState) {
-    function wormMapCollision(gameState, wormId) {
-        var worm = gameStateFunctions.getWorm(gameState, wormId);
-        return !shapeSpatialRelations.contains(gameState.map.shape, worm);
+    function wormMapCollision(gameState, segment) {
+        return !shapeSpatialRelations.contains(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size});
     }
 
-    function wormWormCollision(gameState, worm) {
-        function isImmuneCell(gameState, worm, cell) {
-            var IMMUNITY_DISTANCE_MULTIPLIER = 10;
-            var data = worm.immunityData;
-            return data.distanceTravelled - data.cellsDistanceTravelled[cell] <= IMMUNITY_DISTANCE_MULTIPLIER * getWormRadius(gameState, worm.id);
-        }
-
+    function wormWormCollision(gameState, worm, segment) {
         var playArea = gameState.playArea;
-        var cells = shapeToGridConverter.convert(worm, playArea, ShapeToGridConverter.RoundingModes.CONTAINMENT);
+        var cells = shapeToGridConverter.convert({centerX: segment.endX, centerY: segment.endY, radius: segment.size}, playArea, ShapeToGridConverter.RoundingModes.CONTAINMENT);
         return cells.some(function (cell) {
             var value = playArea.grid[cell];
             if (value !== constants.PLAY_AREA_FREE) { // TODO Utility function to check if worm-id
-                if (!isImmuneCell(gameState, worm, cell)) {
+                if (!(worm.distanceTravelled - worm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)) {
+                    var twinEffects =  gameStateFunctions.getWormEffects(gameState, worm.id, "twin");
+                    if(twinEffects.length > 0) {
+                        return twinEffects.map(te => gameStateFunctions.getWorm(gameState, te.twinWormId)).filter(function(twinWorm) {
+                            return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
+                        }).length === 0;
+                    }
                     return true;
                 }
             }
         });
     }
 
-    function wormPowerUpCollision(gameState, worm) {
+    function wormPowerUpCollision(gameState, segment) {
         var powerUps = gameState.powerUps;
         var collidedPowerUps = [];
         powerUps.forEach(function (powerUp) {
-            if (shapeSpatialRelations.intersects(worm, powerUp.shape)) {
+            if (shapeSpatialRelations.intersects({centerX: segment.endX, centerY: segment.endY, radius: segment.size}, powerUp.shape)) {
                 collidedPowerUps.push(powerUp.id);
             }
         });
         return collidedPowerUps;
     }
 
-    function updateImmunityData(worm) {
-        var data = worm.immunityData;
-        data.distanceTravelled += shapeSpatialRelations.distanceSquared(worm, data.prevPosition);
-        data.prevPosition = {
-            centerX: worm.centerX,
-            centerY: worm.centerY,
-            radius: worm.radius
-        };
-    }
-
-    gameStateFunctions.forEachAliveWorm(gameState, function(worm) {
-        wormPowerUpCollision(gameState, worm).forEach(function (powerUpId) {
+    gameStateFunctions.forEachAliveLatestWormPathSegment(gameState, function (segment) {
+        var worm = gameStateFunctions.getWorm(gameState, segment.wormId);
+        wormPowerUpCollision(gameState, segment).forEach(function (powerUpId) {
             activatePowerUp(gameState, powerUpId, worm.id);
         });
-        if (worm.alive && wormMapCollision(gameState, worm.id)) {
+        if (worm.alive && !gameStateFunctions.hasWormEffect(gameState, worm.id, wallHackEffectDefinition.type) && wormMapCollision(gameState, segment)) {
             killWorm(gameState, worm.id);
         }
-        if (worm.alive && !isWormJumping(gameState, worm.id)) {
-            if (wormWormCollision(gameState, worm)) {
-                killWorm(gameState, worm.id);
-            }
+        if (worm.alive && !segment.jump && (wormWormCollision(gameState, worm, segment))) {
+            killWorm(gameState, worm.id);
         }
-        updateImmunityData(worm);
     });
 }
 
+/**
+ * Updates each worms
+ */
 function updateWorms(gameState, deltaTime) {
     gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
-        function updateBody() {
-            function setImmunityCells(worm, cells) {
-                cells.forEach(function (cell) {
-                    worm.immunityData.cellsDistanceTravelled[cell.index] = worm.immunityData.distanceTravelled;
-                });
-            }
-
-            function pushBodyPart(gameState, worm) {
-                var changedCells = gameStateFunctions.addPlayAreaWormHead(gameState, worm);
-                setImmunityCells(worm, changedCells);
-            }
-
-            pushBodyPart(gameState, worm);
-        }
-
         var direction = getWormDirection(gameState, worm.id);
         var speed = getWormSpeed(gameState, worm.id);
         var radius = getWormRadius(gameState, worm.id);
@@ -260,15 +239,26 @@ function updateWorms(gameState, deltaTime) {
         pathSegment.jump = jump;
         pathSegment.size = radius;
         pathSegment.playerId = worm.playerId;
+        pathSegment.wormId = worm.id;
 
-        if (speed > 0 && !jump) {
-            // No body update during the start phase and also only render the body if we are not standing still
-            updateBody();
-        }
         worm.direction += turningVelocity * deltaTime;
         worm.centerX = pathSegment.endX;
         worm.centerY = pathSegment.endY;
+
+        worm.distanceTravelled += shapeSpatialRelations.distanceSquared({centerX: pathSegment.startX, centerY: pathSegment.startY}, {centerX: pathSegment.endX, centerY: pathSegment.endY});
+        //TODO: Will get removed when we no longer have collision detection based on playArea
+        // No body update during the start phase and also only render the body if we are not standing still
+        if (getWormSpeed(gameState, worm.id) > 0 && !isWormJumping(gameState, worm.id)) {
+            gameStateFunctions.addPlayAreaShape(gameState, {centerX: pathSegment.startX, centerY: pathSegment.startY, radius: pathSegment.size}, pathSegment.wormId).forEach(function (cell) {
+                worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
+            });
+        }
+
         gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
+
+        if (gameStateFunctions.hasWormEffect(gameState, worm.id, "wallHack")) {
+            wallHackEffectDefinition.updateWorm(gameState, deltaTime, worm.id, pathSegment);
+        }
     });
 }
 
