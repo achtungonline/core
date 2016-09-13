@@ -37,31 +37,16 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
 
         var wallHackSegments;
         if (gameState.map.shape.type === "rectangle") {
-            wallHackSegments = [{
-                id: worm.id + "_left",
-                segment: getModifiedWallHackSegment({xDiff: -gameState.map.width})
-            }, {
-                id: worm.id + "_right",
-                segment: getModifiedWallHackSegment({xDiff: gameState.map.width})
-            }, {
-                id: worm.id + "_up",
-                segment: getModifiedWallHackSegment({yDiff: -gameState.map.height})
-            }, {
-                id: worm.id + "_down",
-                segment: getModifiedWallHackSegment({yDiff: gameState.map.height})
-            }, {
-                id: worm.id + "_up_left",
-                segment: getModifiedWallHackSegment({xDiff: -gameState.map.width, yDiff: -gameState.map.height})
-            }, {
-                id: worm.id + "_up_right",
-                segment: getModifiedWallHackSegment({xDiff: gameState.map.width, yDiff: -gameState.map.height})
-            }, {
-                id: worm.id + "_down_left",
-                segment: getModifiedWallHackSegment({xDiff: -gameState.map.width, yDiff: gameState.map.height})
-            }, {
-                id: worm.id + "_down_right",
-                segment: getModifiedWallHackSegment({xDiff: gameState.map.width, yDiff: gameState.map.height})
-            }];
+            wallHackSegments = [
+                getModifiedWallHackSegment({xDiff: -gameState.map.width}),
+                getModifiedWallHackSegment({xDiff: gameState.map.width}),
+                getModifiedWallHackSegment({yDiff: -gameState.map.height}),
+                getModifiedWallHackSegment({yDiff: gameState.map.height}),
+                getModifiedWallHackSegment({xDiff: -gameState.map.width, yDiff: -gameState.map.height}),
+                getModifiedWallHackSegment({xDiff: gameState.map.width, yDiff: -gameState.map.height}),
+                getModifiedWallHackSegment({xDiff: -gameState.map.width, yDiff: gameState.map.height}),
+                getModifiedWallHackSegment({xDiff: gameState.map.width, yDiff: gameState.map.height})
+            ];
         } else if (gameState.map.shape.type === "circle") {
 
             var x1 = gameState.map.shape.centerX - pathSegment.startX;
@@ -87,25 +72,25 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
                 oldDir -= (2 * Math.PI);
             }
             var newDir = oldDir + (dir1 - oldDir) * 2;
-            console.log("oldDir: ", oldDir);
-            console.log("newDir: ", newDir);
 
-            wallHackSegments = [{
-                id: worm.id + "_mirror",
-                segment: getModifiedWallHackSegment({
+            wallHackSegments = [
+                getModifiedWallHackSegment({
                     xDiff: centerX - pathSegment.startX,
                     yDiff: centerY - pathSegment.startY,
                     startDirectionDiff: newDir - pathSegment.startDirection
                 })
-            }];
+            ];
         } else {
             throw "Unhandled map type for wall hack: " + gameState.map.shape.type;
         }
 
-        wallHackSegments.forEach(function ({id, segment}) {
+        var secondaryId = 1;
+        wallHackSegments.forEach(function (segment) {
             if (shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size})) {
-                if (!gameState.wormPathSegments[id]) {
-                    gameState.wormPathSegments[id] = [];
+                var segmentId = wormId + "#" + secondaryId;
+                secondaryId++;
+                if (!gameState.wormPathSegments[segmentId]) {
+                    gameState.wormPathSegments[segmentId] = [];
                 }
 
                 //  TODO: Will get removed when we no longer have collision detection based on playArea
@@ -115,26 +100,18 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
                         worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
                     });
                 }
-                gameStateFunctions.addWormPathSegment(gameState, id, segment);
+                gameStateFunctions.addWormPathSegment(gameState, segmentId, segment);
             }
         });
 
         if (!shapeSpatialRelations.intersects(gameState.map.shape, worm)) {
             // Main worm segment is outside of map, switch with one of the wallHackSegments, that should be fully inside the map
-            var wallHackSegmentInsideMap = wallHackSegments.find(({id, segment}) => shapeSpatialRelations.contains(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size})) ||
-                    // Could be that it is not yet counted as inside the map, we instead take some wallHackSegment that intersects with the map at least.
-                wallHackSegments.find(({id, segment}) => shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size}));
-            if (!wallHackSegmentInsideMap) {
-                throw "Could not find a wallhack segment that either contains within the map or at least intersects. Check code.";
+            var wallHackSegmentInsideMap = wallHackSegments.find(segment => shapeSpatialRelations.contains(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size}));
+            if (wallHackSegmentInsideMap) {
+                worm.direction = wallHackSegmentInsideMap.startDirection;
+                worm.centerX = wallHackSegmentInsideMap.endX;
+                worm.centerY = wallHackSegmentInsideMap.endY;
             }
-            var latestWormPathSegment = gameStateFunctions.getLatestWormPathSegment(gameState, wormId);
-            var latestMirrorWormPathSegment = gameStateFunctions.getLatestWormPathSegment(gameState, wallHackSegmentInsideMap.id);
-            gameStateFunctions.addWormPathSegment(gameState, worm.id, latestMirrorWormPathSegment);
-            gameStateFunctions.addWormPathSegment(gameState, wallHackSegmentInsideMap.id, latestWormPathSegment);
-
-            worm.direction = latestMirrorWormPathSegment.startDirection;
-            worm.centerX = latestMirrorWormPathSegment.endX;
-            worm.centerY = latestMirrorWormPathSegment.endY;
         }
     }
 }
