@@ -34,6 +34,11 @@
     "url": "https://github.com/achtungonline/core/issues"
   },
   "homepage": "https://github.com/achtungonline/core",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
   "browserify": {
     "transform": [
       "babelify"

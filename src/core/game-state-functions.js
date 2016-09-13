@@ -73,33 +73,42 @@ function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius, 
 
 function addWormPathSegment(gameState, wormId, segment) {
     var segments = gameState.wormPathSegments[wormId];
-    if (segments.length === 0) {
-        segments.push(segment);
+    if (segment.index !== undefined) {
+        // This segment has been added to the gameState already. Probably sent from server to client
+        segments[segment.index] = segment;
     } else {
-        var lastSegment = segments[segments.length - 1];
-        if (segment.type === lastSegment.type &&
-            segment.speed === lastSegment.speed &&
-            segment.turningVelocity === lastSegment.turningVelocity &&
-            segment.size === lastSegment.size &&
-            segment.playerId === lastSegment.playerId &&
-            segment.jump === lastSegment.jump &&
-            segment.startDirection === lastSegment.endDirection &&
-            segment.startX === lastSegment.endX &&
-            segment.startY === lastSegment.endY) {
-
-            // Continue last segment
-            lastSegment.duration += segment.duration;
-            lastSegment.endTime += segment.duration; //= segment.endTime; // changed from segment += duration. Check if this was bad or not
-            lastSegment.endX = segment.endX;
-            lastSegment.endY = segment.endY;
-            lastSegment.endDirection = segment.endDirection;
-            if (segment.type === "arc") {
-                lastSegment.arcEndAngle = segment.arcEndAngle;
-                lastSegment.arcAngleDiff += segment.arcAngleDiff;
-            }
-        } else {
-            // Start new segment
+        if (segments.length === 0) {
+            segment.index = 0;
             segments.push(segment);
+        } else {
+            var lastSegment = segments[segments.length - 1];
+            if (segment.type === lastSegment.type &&
+                segment.speed === lastSegment.speed &&
+                segment.turningVelocity === lastSegment.turningVelocity &&
+                segment.size === lastSegment.size &&
+                segment.playerId === lastSegment.playerId &&
+                segment.jump === lastSegment.jump &&
+                segment.startDirection === lastSegment.endDirection &&
+                segment.startX === lastSegment.endX &&
+                segment.startY === lastSegment.endY) {
+
+                // Continue last segment
+                if (segment.type !== "clear") {
+                    lastSegment.duration += segment.duration;
+                    lastSegment.endTime += segment.duration;
+                    lastSegment.endX = segment.endX;
+                    lastSegment.endY = segment.endY;
+                    lastSegment.endDirection = segment.endDirection;
+                    if (segment.type === "arc") {
+                        lastSegment.arcEndAngle = segment.arcEndAngle;
+                        lastSegment.arcAngleDiff += segment.arcAngleDiff;
+                    }
+                }
+            } else {
+                // Start new segment
+                segment.index = segments.length;
+                segments.push(segment);
+            }
         }
     }
 }
@@ -374,6 +383,7 @@ function createGameState(map, seed) {
         wormPathSegments: {
             //  [
             //      type,           // straight | arc | still_arc
+            //      index,          // the position of the segment in the list
             //      duration,
             //      startTime,
             //      endTime,
@@ -383,6 +393,8 @@ function createGameState(map, seed) {
             //      startX,
             //      startY,
             //      startDirection,
+            //      speed,
+            //      turningVelocity
             //      endX,
             //      endY,
             //      endDirection

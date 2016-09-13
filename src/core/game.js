@@ -1,7 +1,5 @@
-var constants = require("./constants");
 var gameStateFunctions = require("./game-state-functions.js");
 var coreFunctions = require("./core-functions.js");
-var random = require("./util/random.js");
 
 module.exports = function Game(gameState, aiHandler) {
     function start() {

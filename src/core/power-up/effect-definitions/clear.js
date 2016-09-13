@@ -1,4 +1,5 @@
-var constants = require("./../../constants.js");
+var constants = require("../../constants.js");
+var gameStateFunctions = require("../../game-state-functions.js");
 
 var TYPE = "clear";
 
@@ -13,7 +14,7 @@ function activate({ gameState, wormId, affects}) {
 
     gameState.worms.forEach(function (worm) {
         if (affects === "all" || affects === "self" && worm.id === wormId || affects === "others" && worm.id !== wormId) {
-            gameState.wormPathSegments[worm.id].push({
+            gameStateFunctions.addWormPathSegment(gameState, worm.id, {
                 type: TYPE,
                 startTime: gameState.gameTime,
                 endTime: gameState.gameTime
