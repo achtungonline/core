@@ -1,4 +1,20 @@
 var shapeFactory = require("./geometry/shape-factory.js");
+var forEach = require("./util/for-each.js");
+
+var wormColors = {
+    blue: "#03A9F4",
+    pink: "#E91E63",
+    green: "#4CAF50",
+    purple: "#9C27B0",
+    orange: "#FF9800",
+    lime: "#CDDC39",
+    indigo: "#3F51B5",
+    teal: "#009688",
+    black: "#444",
+    bluegrey: "#607D8B"
+};
+var wormColorIds = [];
+forEach(wormColors, (color,id) => wormColorIds.push(id));
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
@@ -132,7 +148,10 @@ module.exports = {
     START_DISTANCE_TO_MAP: 50,
     START_DISTANCE_TO_WORMS: 70,
 
-    powerUpDefinitions: powerUpDefinitions,
+    wormColors,
+    wormColorIds,
+
+    powerUpDefinitions,
     POWER_UP_SPAWN_CHANCE: 0.12,            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds, average 5 seconds.
     POWER_UP_SHAPE: shapeFactory.createCircle(25),
 
