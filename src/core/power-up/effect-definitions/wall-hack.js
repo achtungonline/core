@@ -89,9 +89,6 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
             if (shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size})) {
                 var segmentId = wormId + "#" + secondaryId;
                 secondaryId++;
-                if (!gameState.wormPathSegments[segmentId]) {
-                    gameState.wormPathSegments[segmentId] = [];
-                }
 
                 //  TODO: Will get removed when we no longer have collision detection based on playArea
                 if (pathSegment.speed > 0 && !pathSegment.jump) {

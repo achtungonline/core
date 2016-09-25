@@ -73,6 +73,9 @@ function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius, 
 
 function addWormPathSegment(gameState, wormId, segment) {
     var segments = gameState.wormPathSegments[wormId];
+    if (!segments) {
+        segments = gameState.wormPathSegments[wormId] = [];
+    }
     if (segment.index !== undefined) {
         // This segment has been added to the gameState already. Probably sent from server to client
         segments[segment.index] = segment;
