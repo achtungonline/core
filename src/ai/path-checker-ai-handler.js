@@ -10,8 +10,7 @@ var trajectoryUtil = require("../core/geometry/trajectory/trajectory-util.js");
 
 var SIMULATION_DURATION = 2;
 var SIMULATION_DELTA = 0.05;
-var MIN_SLEEP_TIME = 0.2;
-var MAX_SLEEP_TIME = 0.3;
+var SEARCH_DIRECTION_VELOCITY = 8*Math.PI;
 
 module.exports = function PathCheckerAI() {
 
@@ -19,37 +18,50 @@ module.exports = function PathCheckerAI() {
         var aiData = player.aiData;
 
         if (aiData.trajectory === undefined) {
-            aiData.timeUntilNextSimulation = 0;
             aiData.trajectory = [];
+            aiData.searchDirection = 0;
         }
 
-        aiData.timeUntilNextSimulation -= deltaTime;
         var aliveWorms = gameStateFunctions.getAliveWorms(gameState, player.id);
         if (aliveWorms.length === 0) {
             return;
         }
         var worm = aliveWorms[0];
 
-        if (aiData.timeUntilNextSimulation < 0) {
-            if (coreFunctions.getWormSpeed(gameState, worm.id) === 0) {
-                aiData.trajectory = getBestStraightTrajectory(gameState, worm);
-            } else if (gameStateFunctions.hasWormEffect(gameState, worm.id, "tronTurn")) {
-                aiData.trajectory = getBestTronTurnTrajectory(gameState, worm);
-            } else {
-                aiData.trajectory = getBestCurveTrajectory(gameState, worm);
+        aiData.searchDirection += deltaTime * SEARCH_DIRECTION_VELOCITY;
+        while (aiData.searchDirection > Math.PI) {
+            aiData.searchDirection -= 2 * Math.PI;
+        }
+
+        // Trim the old trajectory
+        while (aiData.trajectory.length > 0 && deltaTime >= aiData.trajectory[0].duration) {
+            deltaTime -= aiData.trajectory[0].duration;
+            aiData.trajectory.shift();
+        }
+        if (aiData.trajectory.length > 0) {
+            aiData.trajectory[0].duration -= deltaTime;
+        }
+
+        var oldTrajectoryTime = checkTrajectory(gameState, worm, aiData.trajectory);
+        // Don't update trajectory if the old one is fine, or the movement will be jerky
+        if (oldTrajectoryTime < 3 / 4 * SIMULATION_DURATION) {
+            // Check if a random trajectory works better
+            var randomTrajectory = getRandomTrajectory(gameState, worm);
+            var randomTrajectoryTime = checkTrajectory(gameState, worm, randomTrajectory);
+            if (randomTrajectoryTime > oldTrajectoryTime) {
+                aiData.trajectory = randomTrajectory;
+                oldTrajectoryTime = randomTrajectoryTime;
             }
-            aiData.timeUntilNextSimulation = random.randInt(gameState, MIN_SLEEP_TIME*1000, MAX_SLEEP_TIME*1000) / 1000.0;
-        } else {
-            if (gameStateFunctions.isInStartPhase(gameState) && coreFunctions.getWormSpeed(gameState, worm.id) > 0) {
-                while (aiData.trajectory.length > 0 && deltaTime >= aiData.trajectory[0].duration) {
-                    deltaTime -= aiData.trajectory[0].duration;
-                    aiData.trajectory.shift();
-                }
-                if (aiData.trajectory.length > 0) {
-                    aiData.trajectory[0].duration -= deltaTime;
-                }
+
+            // Use angle scan to get out of tricky situations. Random has priority if both trajectories work, since this will make the bot less predictable
+            var angleTrajectory = getTrajectoryWithAngle(gameState, worm, aiData.searchDirection);
+            var angleTrajectoryTime = checkTrajectory(gameState, worm, angleTrajectory);
+            if (angleTrajectoryTime > oldTrajectoryTime) {
+                aiData.trajectory = angleTrajectory;
             }
         }
+
+        // Follow trajectory
         if (aiData.trajectory.length > 0) {
             // Make sure that the worm follows the generated directory. If the worms turning speed is negative (switched key bindings), we need to take that in consideration when deciding where we should turn.
             if ((aiData.trajectory[0].turningVelocity * coreFunctions.getWormTurningSpeed(gameState, worm.id)) < 0) {
@@ -60,22 +72,68 @@ module.exports = function PathCheckerAI() {
                 gameStateFunctions.setPlayerSteering(gameState, player.id, constants.STEERING_STRAIGHT);
             }
         }
-        gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
-            worm.trajectory = aiData.trajectory;
-        }, player.id);
     }
 
-    function getBestCurveTrajectory(gameState, worm) {
-        var trajectories = generateCurveTrajectories(gameState, worm);
-        return pickBestTrajectory(gameState, worm, trajectories);
+    function getRandomTrajectory(gameState, worm) {
+        if (gameStateFunctions.isInStartPhase(gameState) || coreFunctions.getWormSpeed(gameState, worm.id) === 0) {
+            return getRandomTwoStepTrajectory(gameState, worm, 0, coreFunctions.getWormTurningSpeed(gameState, worm.id), 50, 0);
+        } else if (gameStateFunctions.hasWormEffect(gameState, worm.id, "tronTurn")) {
+            return random.randomElement(gameState, generateTronTurnTrajectories(gameState, worm));
+        } else {
+            return getRandomTwoStepTrajectory(gameState, worm, coreFunctions.getWormSpeed(gameState, worm.id), coreFunctions.getWormTurningSpeed(gameState, worm.id), coreFunctions.getWormSpeed(gameState, worm.id), 0);
+        }
     }
 
-    function getBestStraightTrajectory(gameState, worm) {
-        var trajectories = generateStraightTrajectories(gameState, worm);
-        return pickBestTrajectory(gameState, worm, trajectories);
+    function getTrajectoryWithAngle(gameState, worm, angle) {
+        if (gameStateFunctions.isInStartPhase(gameState) || coreFunctions.getWormSpeed(gameState, worm.id) === 0) {
+            return getTwoStepTrajectoryWithAngle(worm, angle, 0, coreFunctions.getWormTurningSpeed(gameState, worm.id), 50, 0);
+        } else if (gameStateFunctions.hasWormEffect(gameState, worm.id, "tronTurn")) {
+            return random.randomElement(gameState, generateTronTurnTrajectories(gameState, worm));
+        } else {
+            return getTwoStepTrajectoryWithAngle(worm, angle, coreFunctions.getWormSpeed(gameState, worm.id), coreFunctions.getWormTurningSpeed(gameState, worm.id), coreFunctions.getWormSpeed(gameState, worm.id), 0);
+        }
     }
 
-    function getBestTronTurnTrajectory(gameState, worm) {
+    function getRandomTwoStepTrajectory(gameState, worm, speed1, turningSpeed1, speed2, turningSpeed2) {
+        var angle = random.random(gameState) * 2 * Math.PI - Math.PI;
+        return getTwoStepTrajectoryWithAngle(worm, angle, speed1, turningSpeed1, speed2, turningSpeed2);
+    }
+
+    function getTwoStepTrajectoryWithAngle(worm, angle, speed1, turningSpeed1, speed2, turningSpeed2) {
+        var turnDuration = Math.abs(angle / turningSpeed1);
+        var steering = constants.STEERING_STRAIGHT;
+        if (angle < 0) {
+            steering = constants.STEERING_LEFT;
+        } else if (angle > 0) {
+            steering = constants.STEERING_RIGHT;
+        }
+        var trajectory = [];
+        var x = worm.centerX;
+        var y = worm.centerY;
+        var direction = worm.direction;
+        trajectory.push(trajectoryUtil.createTrajectory({
+            startX: x,
+            startY: y,
+            startDirection: direction,
+            duration: turnDuration,
+            speed: speed1,
+            turningVelocity: steering * turningSpeed1
+        }));
+        x = trajectory[0].endX;
+        y = trajectory[0].endY;
+        direction = trajectory[0].endDirection;
+        trajectory.push(trajectoryUtil.createTrajectory({
+            startX: x,
+            startY: y,
+            startDirection: direction,
+            duration: SIMULATION_DURATION - turnDuration,
+            speed: speed2,
+            turningVelocity: steering * turningSpeed2
+        }));
+        return trajectory;
+    }
+
+    function generateTronTurnTrajectories(gameState, worm) {
         var turnTime = 0.0001;
         var speed = coreFunctions.getWormSpeed(gameState, worm.id);
         var trajectories = [];
@@ -102,84 +160,18 @@ module.exports = function PathCheckerAI() {
             }));
             trajectories.push(trajectory);
         });
-
-        return pickBestTrajectory(gameState, worm, trajectories);
-    }
-
-    function pickBestTrajectory(gameState, worm, trajectories) {
-        var bestTime = -1;
-        var bestTrajectories = [];
-        trajectories.forEach(function (trajectory) {
-            var time = checkTrajectory(gameState, worm, trajectory);
-            var direction = 0;
-            trajectory.forEach(function (curve) {
-                direction += curve.turningSpeed * curve.duration;
-            });
-            if (time > bestTime) {
-                bestTime = time;
-                bestTrajectories = [trajectory];
-            } else if (time === bestTime) {
-                bestTrajectories.push(trajectory);
-            }
-        });
-        return random.randomElement(gameState, bestTrajectories);
-    }
-
-    function generateCurveTrajectories(gameState, worm) {
-        return generateTwoStepTrajectories(worm, coreFunctions.getWormSpeed(gameState, worm.id), coreFunctions.getWormTurningSpeed(gameState, worm.id), coreFunctions.getWormSpeed(gameState, worm.id), 0);
-    }
-
-    function generateStraightTrajectories(gameState, worm) {
-        return generateTwoStepTrajectories(worm, 0, coreFunctions.getWormTurningSpeed(gameState, worm.id), 50, 0);
-    }
-
-    function generateTwoStepTrajectories(worm, speed1, turningSpeed1, speed2, turningSpeed2) {
-        var trajectories = [];
-        var moves = SIMULATION_DURATION / SIMULATION_DELTA;
-        // TurningSpeed can be negative so we need to do Math.abs so we don't get negative max turns.
-        var maxTurns = Math.min(moves, Math.abs(Math.floor(Math.PI / SIMULATION_DELTA / turningSpeed1)));
-        [constants.STEERING_RIGHT, constants.STEERING_LEFT].forEach(function (steering) {
-            for (var turns = 0; turns <= maxTurns; turns++) {
-                var trajectory = [];
-                var x = worm.centerX;
-                var y = worm.centerY;
-                var direction = worm.direction;
-                if (turns > 0) {
-                    trajectory.push(trajectoryUtil.createTrajectory({
-                        startX: x,
-                        startY: y,
-                        startDirection: direction,
-                        duration: turns * SIMULATION_DELTA,
-                        speed: speed1,
-                        turningVelocity: steering * turningSpeed1
-                    }));
-                    x = trajectory[0].endX;
-                    y = trajectory[0].endY;
-                    direction = trajectory[0].endDirection;
-                }
-                trajectory.push(trajectoryUtil.createTrajectory({
-                    startX: x,
-                    startY: y,
-                    startDirection: direction,
-                    duration: (moves - turns) * SIMULATION_DELTA,
-                    speed: speed2,
-                    turningVelocity: steering * turningSpeed2
-                }));
-                trajectories.push(trajectory);
-            }
-        });
         return trajectories;
     }
 
     function checkTrajectory(gameState, worm, trajectory) {
         var playArea = gameState.playArea;
-        var clonedWorm = clone(worm);
 
+        var wormRadius = coreFunctions.getWormRadius(gameState, worm.id);
         var segmentTime = 0;
         var time = 0;
         var trajectoryIndex = 0;
         var distanceTravelled = 0;
-        var immunityDistance = 3*worm.radius;
+        var immunityDistance = constants.IMMUNITY_DISTANCE_MULTIPLIER * worm.radius;
         while (trajectoryIndex < trajectory.length) {
             segmentTime += SIMULATION_DELTA;
             distanceTravelled += SIMULATION_DELTA * trajectory[trajectoryIndex].speed;
@@ -192,25 +184,19 @@ module.exports = function PathCheckerAI() {
                 segmentTime -= trajectory[trajectoryIndex].duration;
                 trajectoryIndex++;
             }
-            var xDiff = position.x - clonedWorm.centerX;
-            var yDiff = position.y - clonedWorm.centerY;
-            clonedWorm.centerX += xDiff;
-            clonedWorm.centerY += yDiff;
-            clonedWorm.direction = position.direction;
 
             var collision = false;
             // Map collision detection
-            if (!shapeSpatialRelations.contains(gameState.map.shape, clonedWorm)) {
+            if (!gameStateFunctions.hasWormEffect(gameState, worm.id, "wallHack") && !shapeSpatialRelations.contains(gameState.map.shape, {centerX: position.x, centerY: position.y, radius: wormRadius})) {
                 collision = true;
             }
             if (!collision) {
                 // Worm collision detection
-                var cells = shapeToGridConverter.convert(clonedWorm, playArea, RoundingModes.INTERSECTION);
-                cells.some(function (cell) {
+                var cells = shapeToGridConverter.convert({centerX: position.x, centerY: position.y, radius: wormRadius}, playArea, RoundingModes.INTERSECTION);
+                collision = cells.some(function (cell) {
                     var value = playArea.grid[cell];
                     if (value !== constants.PLAY_AREA_FREE) {
-                        if (value !== clonedWorm.id || distanceTravelled > immunityDistance) {
-                            collision = true;
+                        if (value !== worm.id || worm.distanceTravelled + distanceTravelled - worm.distanceTravelledFromCells[cell] > immunityDistance) {
                             return true;
                         }
                     }

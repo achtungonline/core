@@ -135,7 +135,7 @@ powerUpDefinitions["wall_hack_self"] = {
     affects: "self"
 };
 
-powerUpDefinitions["wall_hack_others"] = {
+powerUpDefinitions["wall_hack_all"] = {
     name: "wall_hack",
     effectType: "wallHack",
     effectDuration: 5,
