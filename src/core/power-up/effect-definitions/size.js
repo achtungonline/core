@@ -12,22 +12,17 @@ function activate({ strength, duration, wormId }) {
     };
 }
 
-function changeSize(gameState, effect, wormSize) {
+function changeWormRadius(gameState, effect, wormRadius) {
     var timeActive = effect.duration - effect.timeLeft;
-
-    if (timeActive <= FADE_DURATION) {
-        // Being applied.
-        return wormSize * (1 + ((effect.strength - 1) * timeActive / FADE_DURATION));
-    } else if (effect.timeLeft <= FADE_DURATION) {
-        // Fading away.
-        return wormSize * (1 + ((effect.strength - 1) * effect.timeLeft / FADE_DURATION));
+    if (timeActive <= FADE_DURATION || effect.timeLeft <= FADE_DURATION) {
+        return wormRadius;
+    } else {
+        return wormRadius * effect.strength;
     }
-
-    return wormSize * effect.strength;
 }
 
 module.exports = {
     type: TYPE,
-    activate: activate,
-    changeSize: changeSize
+    activate,
+    changeWormRadius
 };

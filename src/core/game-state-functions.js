@@ -46,25 +46,23 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function addWorm(gameState, {id, playerId, direction, centerX, centerY, radius, distanceTravelled, distanceTravelledFromCells}) {
-    id = (id === undefined ? getNextId(gameState) : id);
-    radius = (radius === undefined ? constants.WORM_RADIUS : radius);
+function addWorm(gameState, {id=getNextId(gameState), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
     var worm = {
         id,
         playerId,
         centerX,
         centerY,
-        radius: radius || constants.WORM_RADIUS,
-        direction: direction || 0,
-        speed: constants.WORM_SPEED,
-        turningSpeed: constants.WORM_TURNING_SPEED,
+        radius,
+        direction,
+        speed,
+        turningSpeed,
         alive: true,
         jump: {
             remainingJumpTime: 0,
             timeSinceLastJump: 0
         },
-        distanceTravelled: distanceTravelled || 0,
-        distanceTravelledFromCells: distanceTravelledFromCells || {}
+        distanceTravelled,
+        distanceTravelledFromCells
     };
     gameState.worms.push(worm);
     gameState.wormPathSegments[id] = [];

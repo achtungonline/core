@@ -93,7 +93,7 @@ function getWormDirection(gameState, wormId) {
 }
 
 function getWormRadius(gameState, wormId) {
-    var newSize = transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).radius, 'changeSize');
+    var newSize = transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).radius, 'changeWormRadius');
     return Math.max(1, newSize);
 }
 
@@ -145,7 +145,7 @@ function killWorm(gameState, wormId) {
 
 /**
  * Transform the given initValue based on effects owned by wormId. Each effect owned by wormId that has the function effectFunctionName in its definition will be called and the value will be changed in a pipe-line fashion.
- * Available effectFunctionNames: "changeSpeed", "changeTurningSpeed", "changeSize"
+ * Available effectFunctionNames: "changeSpeed", "changeTurningSpeed", "changeWormRadius"
  */
 function transformValueUsingEffects(gameState, wormId, initValue, effectFunctionName) {
     /**
@@ -245,7 +245,7 @@ function updateWorms(gameState, deltaTime) {
         worm.centerX = pathSegment.endX;
         worm.centerY = pathSegment.endY;
 
-        worm.distanceTravelled += shapeSpatialRelations.distanceSquared({centerX: pathSegment.startX, centerY: pathSegment.startY}, {centerX: pathSegment.endX, centerY: pathSegment.endY});
+        worm.distanceTravelled += pathSegment.speed * deltaTime;
         //TODO: Will get removed when we no longer have collision detection based on playArea
         // No body update during the start phase and also only render the body if we are not standing still
         if (getWormSpeed(gameState, worm.id) > 0 && !isWormJumping(gameState, worm.id)) {
