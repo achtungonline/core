@@ -113,6 +113,7 @@ function addWormPathSegment(gameState, id, segment) {
             }
         }
     }
+    return gameState;
 }
 
 function createMap(name, shape, blockingShapes) {
@@ -325,7 +326,17 @@ function createGameState({
     map,
     seed,
     players = [],
-    worms = []
+    worms = [],
+    powerUps = [],
+    effects = [],
+    playerSteeringSegments = {},
+    wormPathSegments = {},
+    gameEvents = [],
+    powerUpEvents = [],
+    effectEvents = [],
+    gameTime = 0,
+    gameActive = false,                                  // TODO: might get removed
+    startPhaseTimer = constants.START_PHASE_DURATION,
     } = {}) {
     function createPlayArea(width, height) {
         var playArea = {
@@ -339,6 +350,43 @@ function createGameState({
         return playArea;
     }
 
+    return createSimpleGameState({
+        players,
+        worms,
+        powerUps,
+        effects,
+        playerSteeringSegments,
+        wormPathSegments,
+        gameEvents,
+        powerUpEvents,
+        effectEvents,
+        map,
+        playArea: map ? createPlayArea(map.width, map.height) : null,
+        gameTime,
+        gameActive,
+        startPhaseTimer,
+        seed,
+        nextId: 0
+    })
+}
+
+function createSimpleGameState({
+    players,
+    worms,
+    powerUps,
+    effects,
+    playerSteeringSegments,
+    wormPathSegments,
+    gameEvents,
+    powerUpEvents,
+    effectEvents,
+    map,
+    playArea,
+    gameTime,
+    gameActive,
+    startPhaseTimer,
+    seed,
+    nextId} = {}) {
     return {
         players,
         //  [{
@@ -364,77 +412,78 @@ function createGameState({
         //      },
         //      immunityData: undefined
         //      }]
-        powerUps: [
-            //  {
-            //      id,
-            //      name,
-            //      shape,
-            //      effectType,
-            //      effectStrength, // Higher means more potent, negative could mean reversed. For speed effect, -1 means decreased speed for example
-            //      effectDuration, // The duration for the effect, if it has one
-            //      affects         // all | others | self
-            //  }
-        ],
-        effects: [                  // Effects only gets created from worms going into powerUps
-            //  {
-            //      type,
-            //      remainingDuration,
-            //      wormId,
-            //      strength            // Comes from the power-ups effectStrength
-            //  }
-        ],
-        playerSteeringSegments: {
-            //  [
-            //      steering,
-            //      startTime,
-            //      duration
-            //  ]
-        },
-        wormPathSegments: {
-            //  [
-            //      type,           // straight | arc | still_arc
-            //      index,          // the position of the segment in the list
-            //      duration,
-            //      startTime,
-            //      endTime,
-            //      jump,           // true | false
-            //      size,
-            //      playerId,
-            //      startX,
-            //      startY,
-            //      startDirection,
-            //      speed,
-            //      turningVelocity
-            //      endX,
-            //      endY,
-            //      endDirection
-            //  ]
-        },
-        gameEvents: [
-            //      type,           // game_start | player_died | game_over
-            //      time
-            //      (id)            // Only for type player_died
-        ],
-        powerUpEvents: [
-            //      type,           // spawn | despawn
-            //      time,
-            //      (powerUp),      // Only for type spawn
-            //      (id)            // Only for type despawn
-        ],
-        effectEvents: [
-            //      type,
-            //      time
-            //      (effect)        // Only for type spawn
-            //      (id)            // Only for type despawn
-        ],
+
+        powerUps,
+        //  [{
+        //      id,
+        //      name,
+        //      shape,
+        //      effectType,
+        //      effectStrength, // Higher means more potent, negative could mean reversed. For speed effect, -1 means decreased speed for example
+        //      effectDuration, // The duration for the effect, if it has one
+        //      affects         // all | others | self
+        //  }]
+
+        effects,
+        //  [{
+        //      type,
+        //      remainingDuration,
+        //      wormId,
+        //      strength            // Comes from the power-ups effectStrength
+        //  }]
+        playerSteeringSegments,
+        //  {[
+        //      steering,
+        //      startTime,
+        //      duration
+        //  ]}
+        wormPathSegments,
+        //  {[
+        //      type,           // straight | arc | still_arc
+        //      index,          // the position of the segment in the list
+        //      duration,
+        //      startTime,
+        //      endTime,
+        //      jump,           // true | false
+        //      size,
+        //      playerId,
+        //      startX,
+        //      startY,
+        //      startDirection,
+        //      speed,
+        //      turningVelocity
+        //      endX,
+        //      endY,
+        //      endDirection
+        //  ]}
+        gameEvents,
+        //  [{
+        //      type,           // game_start | player_died | game_over
+        //      time
+        //      (id)            // Only for type player_died
+        //  }],
+        powerUpEvents,
+        //  [{
+        //      type,           // spawn | despawn
+        //      time,
+        //      (powerUp),      // Only for type spawn
+        //      (id)            // Only for type despawn
+        //  }],
+        effectEvents,
+        //  [{
+        //      type,
+        //      time
+        //      (effect)        // Only for type spawn
+        //      (id)            // Only for type despawn
+        //  }],
         map,
-        playArea: map ? createPlayArea(map.width, map.height) : null,
-        gameTime: 0,
-        gameActive: false,                                  // TODO: might get removed
-        startPhaseTimer: constants.START_PHASE_DURATION,    // Time left until start phase ends
-        seed: seed,
-        nextId: 0
-    };
+        playArea,
+        gameTime,
+        gameActive, // TODO: might get removed
+        startPhaseTimer, // Time left until start phase ends
+        seed,
+        nextId
+    }
 }
 
 module.exports = {
