@@ -1,5 +1,5 @@
 var constants = require("./constants.js");
-var gameStateFunctions = require("./game-state-functions.js");
+var gsf = require("./game-state-functions.js");
 var shapeSpatialRelations = require("./geometry/shape-spatial-relations.js");
 var shapeModifierI = require("./geometry/shape-modifier-immutable.js");
 var random = require("./util/random.js");
@@ -48,17 +48,17 @@ function activatePowerUp(gameState, powerUpId, wormId) {
     if (effect) {
         effect.name = powerUp.name;
         if (powerUp.affects === "self" || powerUp.affects === "all") {
-            gameStateFunctions.addEffect(gameState, effect);
+            gsf.addEffect(gameState, effect);
         }
         if (powerUp.affects === "others" || powerUp.affects === "all") {
-            gameStateFunctions.getAliveEnemyWorms(gameState, wormId).forEach(function (worm) {
+            gsf.getAliveEnemyWorms(gameState, wormId).forEach(function (worm) {
                 var clonedEffect = clone(effect);
                 clonedEffect.wormId = worm.id;
-                gameStateFunctions.addEffect(gameState, clonedEffect);
+                gsf.addEffect(gameState, clonedEffect);
             })
         }
     }
-    gameStateFunctions.removePowerUp(gameState, powerUpId);
+    gsf.removePowerUp(gameState, powerUpId);
 }
 
 function getRandomPositionInsidePlayableArea(gameState, minDistance) {
@@ -89,21 +89,21 @@ function getRandomPositionInsidePlayableArea(gameState, minDistance) {
 }
 
 function getWormDirection(gameState, wormId) {
-    return transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).direction, 'changeDirection');
+    return transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).direction, 'changeDirection');
 }
 
 function getWormRadius(gameState, wormId) {
-    var newSize = transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).radius, 'changeWormRadius');
+    var newSize = transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).radius, 'changeWormRadius');
     return Math.max(1, newSize);
 }
 
 function getWormSpeed(gameState, wormId) {
-    var newSpeed = transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).speed, 'changeSpeed');
+    var newSpeed = transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).speed, 'changeSpeed');
     return Math.max(5, newSpeed);
 }
 
 function getWormTurningSpeed(gameState, wormId) {
-    var worm = gameStateFunctions.getWorm(gameState, wormId);
+    var worm = gsf.getWorm(gameState, wormId);
     var speedUp = getWormSpeed(gameState, wormId) / worm.speed;
     var initValue = worm.turningSpeed * speedUp;
     return Math.min(5, transformValueUsingEffects(gameState, wormId, initValue, 'changeTurningSpeed'));
@@ -111,8 +111,8 @@ function getWormTurningSpeed(gameState, wormId) {
 
 function getWormTurningVelocity(gameState, wormId, deltaTime) {
     var turningVelocity;
-    var player = gameStateFunctions.getPlayer(gameState, gameStateFunctions.getWorm(gameState, wormId).playerId);
-    var tronTurnEffects = gameStateFunctions.getWormEffects(gameState, wormId, 'tronTurn');
+    var player = gsf.getPlayer(gameState, gsf.getWorm(gameState, wormId).playerId);
+    var tronTurnEffects = gsf.getWormEffects(gameState, wormId, 'tronTurn');
     if (tronTurnEffects.length > 0) {
         turningVelocity = effectDefinitions['tronTurn'].getWormTurningVelocity(gameState, tronTurnEffects[0], deltaTime);
     } else {
@@ -122,11 +122,11 @@ function getWormTurningVelocity(gameState, wormId, deltaTime) {
 }
 
 function isWormJumping(gameState, wormId) {
-    return transformValueUsingEffects(gameState, wormId, gameStateFunctions.getWorm(gameState, wormId).jump.remainingJumpTime > 0, 'changeIsJumping');
+    return transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).jump.remainingJumpTime > 0, 'changeIsJumping');
 }
 
 function killPlayer(gameState, playerId) {
-    var player = gameStateFunctions.getPlayer(gameState, playerId);
+    var player = gsf.getPlayer(gameState, playerId);
     player.alive = false;
     gameState.gameEvents.push({
         type: "player_died",
@@ -136,9 +136,9 @@ function killPlayer(gameState, playerId) {
 }
 
 function killWorm(gameState, wormId) {
-    var worm = gameStateFunctions.getWorm(gameState, wormId);
+    var worm = gsf.getWorm(gameState, wormId);
     worm.alive = false;
-    if (gameStateFunctions.getAliveWorms(gameState, worm.playerId).length === 0) {
+    if (gsf.getAliveWorms(gameState, worm.playerId).length === 0) {
         killPlayer(gameState, worm.playerId);
     }
 }
@@ -152,7 +152,7 @@ function transformValueUsingEffects(gameState, wormId, initValue, effectFunction
      * Returns all effects currently owned by wormId and that has the function effectFunctionName in its definition
      */
     function getEffectsWithFunction(gameState, wormId, effectFunctionName) {
-        return gameStateFunctions.getWormEffects(gameState, wormId).filter(e => effectDefinitions[e.type][effectFunctionName]);
+        return gsf.getWormEffects(gameState, wormId).filter(e => effectDefinitions[e.type][effectFunctionName]);
     }
 
     return getEffectsWithFunction(gameState, wormId, effectFunctionName).reduce(function (accValue, effect) {
@@ -176,9 +176,9 @@ function updateCollision(gameState) {
             var value = playArea.grid[cell];
             if (value !== constants.PLAY_AREA_FREE) { // TODO Utility function to check if worm-id
                 if (!(worm.distanceTravelled - worm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)) {
-                    var twinEffects =  gameStateFunctions.getWormEffects(gameState, worm.id, "twin");
+                    var twinEffects =  gsf.getWormEffects(gameState, worm.id, "twin");
                     if(twinEffects.length > 0) {
-                        return twinEffects.map(te => gameStateFunctions.getWorm(gameState, te.twinWormId)).filter(function(twinWorm) {
+                        return twinEffects.map(te => gsf.getWorm(gameState, te.twinWormId)).filter(function(twinWorm) {
                             return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
                         }).length === 0;
                     }
@@ -199,12 +199,12 @@ function updateCollision(gameState) {
         return collidedPowerUps;
     }
 
-    gameStateFunctions.forEachAliveLatestWormPathSegment(gameState, function (segment) {
-        var worm = gameStateFunctions.getWorm(gameState, segment.wormId);
+    gsf.forEachAliveLatestWormPathSegment(gameState, function (segment) {
+        var worm = gsf.getWorm(gameState, segment.wormId);
         wormPowerUpCollision(gameState, segment).forEach(function (powerUpId) {
             activatePowerUp(gameState, powerUpId, worm.id);
         });
-        if (worm.alive && !gameStateFunctions.hasWormEffect(gameState, worm.id, wallHackEffectDefinition.type) && wormMapCollision(gameState, segment)) {
+        if (worm.alive && !gsf.hasWormEffect(gameState, worm.id, wallHackEffectDefinition.type) && wormMapCollision(gameState, segment)) {
             killWorm(gameState, worm.id);
         }
         if (worm.alive && !segment.jump && (wormWormCollision(gameState, worm, segment))) {
@@ -217,13 +217,13 @@ function updateCollision(gameState) {
  * Updates each worms
  */
 function updateWorms(gameState, deltaTime) {
-    gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
+    gsf.forEachAliveWorm(gameState, function (worm) {
         var direction = getWormDirection(gameState, worm.id);
         var speed = getWormSpeed(gameState, worm.id);
         var radius = getWormRadius(gameState, worm.id);
         var turningVelocity = getWormTurningVelocity(gameState, worm.id, deltaTime);
         var jump = isWormJumping(gameState, worm.id);
-        if (gameStateFunctions.isInStartPhase(gameState)) {
+        if (gsf.isInStartPhase(gameState)) {
             speed = 0;
         }
         var pathSegment = trajectoryUtil.createTrajectory({
@@ -247,17 +247,18 @@ function updateWorms(gameState, deltaTime) {
         worm.centerY = pathSegment.endY;
 
         worm.distanceTravelled += pathSegment.speed * deltaTime;
+        var segmentId = worm.playerId + '_' + worm.id;
         //TODO: Will get removed when we no longer have collision detection based on playArea
         // No body update during the start phase and also only render the body if we are not standing still
         if (getWormSpeed(gameState, worm.id) > 0 && !isWormJumping(gameState, worm.id)) {
-            gameStateFunctions.addPlayAreaShape(gameState, {centerX: pathSegment.startX, centerY: pathSegment.startY, radius: pathSegment.size}, pathSegment.wormId).forEach(function (cell) {
+            gsf.addPlayAreaShape(gameState, {centerX: pathSegment.startX, centerY: pathSegment.startY, radius: pathSegment.size}, segmentId).forEach(function (cell) {
                 worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
             });
         }
 
-        gameStateFunctions.addWormPathSegment(gameState, worm.id, pathSegment);
+        gsf.addWormPathSegment(gameState, segmentId, pathSegment);
 
-        if (gameStateFunctions.hasWormEffect(gameState, worm.id, "wallHack")) {
+        if (gsf.hasWormEffect(gameState, worm.id, "wallHack")) {
             wallHackEffectDefinition.updateWorm(gameState, deltaTime, worm.id, pathSegment);
         }
     });
@@ -273,14 +274,14 @@ function updateEffects(gameState, deltaTime) {
             effectDefinition.update(gameState, deltaTime, effect)
         }
         if (effect.timeLeft <= 0) {
-            gameStateFunctions.removeEffect(gameState, effect.id);
+            gsf.removeEffect(gameState, effect.id);
         }
     }
 }
 
 function updatePlayers(gameState, deltaTime) {
     gameState.players.forEach(function (player) {
-        gameStateFunctions.addPlayerSteeringSegment(gameState, player.id, player.steering, deltaTime);
+        gsf.addPlayerSteeringSegment(gameState, player.id, player.steering, deltaTime);
     });
 }
 
@@ -342,7 +343,7 @@ function updatePowerUps(gameState, deltaTime) {
                     affects: powerUpDefinition.affects
                 });
                 if (powerUp !== undefined) {
-                    gameStateFunctions.addPowerUp(gameState, powerUp);
+                    gsf.addPowerUp(gameState, powerUp);
                 }
             }
         });
@@ -352,7 +353,7 @@ function updatePowerUps(gameState, deltaTime) {
 }
 
 function updateWormJumps(gameState, deltaTime) {
-    gameStateFunctions.forEachAliveWorm(gameState, function (worm) {
+    gsf.forEachAliveWorm(gameState, function (worm) {
         if (worm.jump.remainingJumpTime <= 0) {
             worm.jump.timeSinceLastJump += deltaTime;
             if (worm.jump.timeSinceLastJump > constants.JUMP_COOLDOWN) {

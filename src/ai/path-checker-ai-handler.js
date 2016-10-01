@@ -196,7 +196,8 @@ module.exports = function PathCheckerAI() {
                 collision = cells.some(function (cell) {
                     var value = playArea.grid[cell];
                     if (value !== constants.PLAY_AREA_FREE) {
-                        if (value !== worm.id || worm.distanceTravelled + distanceTravelled - worm.distanceTravelledFromCells[cell] > immunityDistance) {
+                        if (value.indexOf(worm.id) === -1 //TODO Needs to get improved. Or just refactor when we dont have playArea left
+                            || worm.distanceTravelled + distanceTravelled - worm.distanceTravelledFromCells[cell] > immunityDistance) {
                             return true;
                         }
                     }

@@ -1,5 +1,5 @@
 var random = require("../../util/random");
-var gameStateFunctions = require("../../game-state-functions.js");
+var gsf = require("../../game-state-functions.js");
 var trajectoryUtil = require("../../geometry/trajectory/trajectory-util.js");
 var shapeSpatialRelations = require("../../geometry/shape-spatial-relations.js");
 
@@ -15,7 +15,7 @@ function activate({ strength, duration, wormId }) {
 }
 
 function updateWorm(gameState, deltaTime, wormId, pathSegment) {
-    var worm = gameStateFunctions.getWorm(gameState, wormId);
+    var worm = gsf.getWorm(gameState, wormId);
     if (!shapeSpatialRelations.contains(gameState.map.shape, worm)) {
         function getModifiedWallHackSegment({xDiff = 0, yDiff = 0, startDirectionDiff = 0}) {
             var wallHackPathSegment = trajectoryUtil.createTrajectory({
@@ -87,17 +87,17 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
         var secondaryId = 1;
         wallHackSegments.forEach(function (segment) {
             if (shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size})) {
-                var segmentId = wormId + "#" + secondaryId;
+                var segmentId = worm.playerId + '_' + wormId + "#" + secondaryId;
                 secondaryId++;
 
                 //  TODO: Will get removed when we no longer have collision detection based on playArea
                 if (pathSegment.speed > 0 && !pathSegment.jump) {
                     //TODO Rename addPlayAreaWormHead
-                    gameStateFunctions.addPlayAreaShape(gameState, {centerX: segment.startX, centerY: segment.startY, radius: segment.size}, pathSegment.wormId).forEach(function (cell) {
+                    gsf.addPlayAreaShape(gameState, {centerX: segment.startX, centerY: segment.startY, radius: segment.size}, segmentId).forEach(function (cell) {
                         worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
                     });
                 }
-                gameStateFunctions.addWormPathSegment(gameState, segmentId, segment);
+                gsf.addWormPathSegment(gameState, segmentId, segment);
             }
         });
 

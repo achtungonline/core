@@ -66,7 +66,6 @@ function addWorm(gameState, {id=getNextId(gameState, 'worm'), playerId, directio
         distanceTravelledFromCells
     };
     gameState.worms.push(worm);
-    gameState.wormPathSegments[id] = [];
     return worm;
 }
 
@@ -205,7 +204,12 @@ function getPlayer(gameState, id) {
     if (player) {
         return player;
     } else {
-        return getPlayer(gameState, getWorm(gameState, id).playerId);
+        var worm = getWorm(gameState, id);
+        if(worm) {
+            return getPlayer(gameState, worm.playerId);
+        } else {
+            return getPlayer(gameState, getLatestWormPathSegment(gameState, id).playerId);
+        }
     }
 }
 
@@ -214,11 +218,7 @@ function getPowerUp(gameState, powerUpId) {
 }
 
 function getWorm(gameState, wormId) {
-    var worm = gameState.worms.find(w => w.id === wormId);
-    if (!worm) {
-        throw new Error("Could not find worm with given id: " + wormId);
-    }
-    return worm;
+    return gameState.worms.find(w => w.id === wormId);
 }
 
 function getWormEffects(gameState, wormId, effectType) {
