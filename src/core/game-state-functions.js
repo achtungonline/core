@@ -116,6 +116,11 @@ function addWormPathSegment(gameState, id, segment) {
     return gameState;
 }
 
+function addLatestWormPathSegmentMetaData(gameState, id, metaData) {
+    var segment = getLatestWormPathSegment(gameState, id);
+    segment.metaData.push(metaData);
+}
+
 function createMap(name, shape, blockingShapes) {
     return {
         name,
@@ -488,6 +493,7 @@ function createSimpleGameState({
 
 module.exports = {
     addEffect,
+    addLatestWormPathSegmentMetaData,
     addPlayAreaObstacle,
     addPlayAreaShape,
     addPlayer,
@@ -496,6 +502,7 @@ module.exports = {
     addWorm,
     addWormPathSegment,
     createGameState,
+    createSimpleGameState,
     createMap,
     createMapCircle,
     createMapRectangle,

@@ -20,10 +20,9 @@ function activate({ gameState, wormId, affects}) {
 
     forEach(gameState.wormPathSegments, function (wormPathSegment, id) {
         if (shouldGetAffected(wormPathSegment[0].playerId)) {
-            gsf.addWormPathSegment(gameState, id, {
+            gsf.addLatestWormPathSegmentMetaData(gameState, id, {
                 type: TYPE,
-                startTime: gameState.gameTime,
-                endTime: gameState.gameTime
+                time: gameState.gameTime
             });
         }
     });

@@ -240,6 +240,7 @@ function updateWorms(gameState, deltaTime) {
         pathSegment.size = radius;
         pathSegment.playerId = worm.playerId;
         pathSegment.wormId = worm.id;
+        pathSegment.metaData = [];
 
         worm.direction += turningVelocity * deltaTime;
         worm.centerX = pathSegment.endX;
