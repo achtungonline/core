@@ -4,7 +4,7 @@ var shapeToGridConverter = require("./geometry/shape-to-grid-converter.js").crea
 var forEach = require("./util/for-each.js");
 
 function addEffect(gameState, effect) {
-    effect.id = getNextId(gameState);
+    effect.id = getNextId(gameState, 'effect');
     gameState.effects.push(effect);
     gameState.effectEvents.push({
         type: "spawn",
@@ -13,9 +13,10 @@ function addEffect(gameState, effect) {
     });
 }
 
-function addPlayer(gameState, id) {
+function addPlayer(gameState, {clientId, id=getNextId("player")}) {
     gameState.players.push({
         id,
+        clientId,
         alive: true,
         steering: constants.STEERING_STRAIGHT,
         gameTimeWhenSteeringChanged: 0
@@ -37,7 +38,7 @@ function addPlayerSteeringSegment(gameState, playerId, steering, duration) {
 }
 
 function addPowerUp(gameState, powerUp) {
-    powerUp.id = getNextId(gameState);
+    powerUp.id = getNextId(gameState, 'power-up');
     gameState.powerUps.push(powerUp);
     gameState.powerUpEvents.push({
         type: "spawn",
@@ -46,7 +47,7 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function addWorm(gameState, {id=getNextId(gameState), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
+function addWorm(gameState, {id=getNextId(gameState, 'worm'), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
     var worm = {
         id,
         playerId,
@@ -69,10 +70,10 @@ function addWorm(gameState, {id=getNextId(gameState), playerId, direction=0, cen
     return worm;
 }
 
-function addWormPathSegment(gameState, wormId, segment) {
-    var segments = gameState.wormPathSegments[wormId];
+function addWormPathSegment(gameState, id, segment) {
+    var segments = gameState.wormPathSegments[id];
     if (!segments) {
-        segments = gameState.wormPathSegments[wormId] = [];
+        segments = gameState.wormPathSegments[id] = [];
     }
     if (segment.index !== undefined) {
         // This segment has been added to the gameState already. Probably sent from server to client
@@ -191,11 +192,14 @@ function getAliveEnemyWorms(gamesState, wormId) {
 }
 
 function getPlayer(gameState, id) {
+    if (id === null || id === undefined) {
+        throw new Error("Id must be set");
+    }
     var player = gameState.players.find(p => p.id === id);
     if (player) {
         return player;
     } else {
-        return getWorm(gameState, id);
+        return getPlayer(gameState, getWorm(gameState, id).playerId);
     }
 }
 
@@ -204,9 +208,12 @@ function getPowerUp(gameState, powerUpId) {
 }
 
 function getWorm(gameState, wormId) {
-    return gameState.worms.find(w => w.id === wormId);
+    var worm = gameState.worms.find(w => w.id === wormId);
+    if (!worm) {
+        throw new Error("Could not find worm with given id: " + wormId);
+    }
+    return worm;
 }
-
 
 function getWormEffects(gameState, wormId, effectType) {
     var effects = gameState.effects.filter(function (effect) {
@@ -278,8 +285,8 @@ function extractReplayGameState(gameState) {
     };
 }
 
-function getNextId(gameState) {
-    var nextId = gameState.nextId + "";
+function getNextId(gameState, prefix = "") {
+    var nextId = prefix + "_" + gameState.nextId;
     gameState.nextId += 1;
     return nextId;
 }
@@ -314,7 +321,12 @@ function isInPlayPhase(gameState) {
     return gameState.gameActive && !isInStartPhase(gameState);
 }
 
-function createGameState(map, seed) {
+function createGameState({
+    map,
+    seed,
+    players = [],
+    worms = []
+    } = {}) {
     function createPlayArea(width, height) {
         var playArea = {
             rows: height,
@@ -328,33 +340,30 @@ function createGameState(map, seed) {
     }
 
     return {
-        players: [
-            //  {
-            //      id,
-            //      steering,
-            //      gameTimeWhenSteeringChanged,
-            //      alive
-            //  }
-        ],
-        worms: [
-            //  {
-            //      id,
-            //      playerId,
-            //      centerX,
-            //      centerY,
-            //      radius,
-            //      direction,
-            //      speed,
-            //      turningSpeed,
-            //      alive,
-            //      jump: {
-            //          remainingJumpTime: 0,
-            //          timeSinceLastJump: 0
-            //      },
-
-            //      immunityData: undefined
-            //      }
-        ],
+        players,
+        //  [{
+        //      id,
+        //      steering,
+        //      gameTimeWhenSteeringChanged,
+        //      alive
+        //  }]
+        worms,
+        //  [{
+        //      id,
+        //      playerId,
+        //      centerX,
+        //      centerY,
+        //      radius,
+        //      direction,
+        //      speed,
+        //      turningSpeed,
+        //      alive,
+        //      jump: {
+        //          remainingJumpTime: 0,
+        //          timeSinceLastJump: 0
+        //      },
+        //      immunityData: undefined
+        //      }]
         powerUps: [
             //  {
             //      id,
@@ -418,8 +427,8 @@ function createGameState(map, seed) {
             //      (effect)        // Only for type spawn
             //      (id)            // Only for type despawn
         ],
-        map: map,
-        playArea: createPlayArea(map.width, map.height),
+        map,
+        playArea: map ? createPlayArea(map.width, map.height) : null,
         gameTime: 0,
         gameActive: false,                                  // TODO: might get removed
         startPhaseTimer: constants.START_PHASE_DURATION,    // Time left until start phase ends

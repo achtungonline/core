@@ -1,20 +1,26 @@
 var constants = require("../../constants.js");
-var gameStateFunctions = require("../../game-state-functions.js");
+var gsf = require("../../game-state-functions.js");
+var forEach = require("../../util/for-each.js");
 
 var TYPE = "clear";
 
 function activate({ gameState, wormId, affects}) {
+    function shouldGetAffected(playerId) {
+        return affects === "all" || affects === "self" && playerId === gsf.getPlayer(gameState, wormId).id || affects === "others" && playerId !== gsf.getPlayer(gameState, wormId).id;
+    }
 
     var grid = gameState.playArea.grid;
     for (var i = 0; i < grid.length; i++) {
-        if (affects === "all" || affects === "self" && grid[i] === wormId || affects === "others" && grid[i] !== wormId) {
-            grid[i] = constants.PLAY_AREA_FREE;
+        if (grid[i] !== -1) {
+            if (shouldGetAffected(gsf.getPlayer(gameState, gsf.getPlayer(gameState, grid[i]).id).id)) {
+                grid[i] = constants.PLAY_AREA_FREE;
+            }
         }
     }
 
-    gameState.worms.forEach(function (worm) {
-        if (affects === "all" || affects === "self" && worm.id === wormId || affects === "others" && worm.id !== wormId) {
-            gameStateFunctions.addWormPathSegment(gameState, worm.id, {
+    forEach(gameState.wormPathSegments, function (wormPathSegment, id) {
+        if (shouldGetAffected(wormPathSegment[0].playerId)) {
+            gsf.addWormPathSegment(gameState, id, {
                 type: TYPE,
                 startTime: gameState.gameTime,
                 endTime: gameState.gameTime
