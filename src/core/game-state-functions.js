@@ -120,26 +120,43 @@ function addLatestWormPathSegmentMetaData(gameState, id, metaData) {
     segment.metaData.push(metaData);
 }
 
-function createMap(name, shape, blockingShapes) {
+function createMap({ name, shape, borderWidth=0, blockingShapes=[] }) {
     return {
         name,
         shape,
-        blockingShapes: blockingShapes || [],
-        width: shape.boundingBox.width,
-        height: shape.boundingBox.height
+        borderWidth,
+        blockingShapes,
+        width: shape.boundingBox.width + 2*borderWidth,
+        height: shape.boundingBox.height + 2*borderWidth
     }
 }
 
-function createMapCircle(name, radius, blockingShapes) {
-    return createMap(name, shapeFactory.createCircle(radius, 0, 0), blockingShapes);
+function createMapCircle({ radius, name="Circle " + radius, borderWidth=10, blockingShapes=[] }) {
+    return createMap({
+        name,
+        shape: shapeFactory.createCircle(radius, borderWidth, borderWidth),
+        borderWidth,
+        blockingShapes
+    });
 }
 
-function createMapRectangle(name, width, height, blockingShapes) {
-    return createMap(name, shapeFactory.createRectangle(width, height, 0, 0), blockingShapes);
+function createMapRectangle({ width, height, name="Rectangle " + width + " " + height, borderWidth=10, blockingShapes=[] }) {
+    return createMap({
+        name,
+        shape: shapeFactory.createRectangle(width, height, borderWidth, borderWidth),
+        borderWidth,
+        blockingShapes
+    });
 }
 
-function createMapSquare(name, size, blockingShapes) {
-    return createMapRectangle(name, size, size, blockingShapes);
+function createMapSquare({ size, name="Square " + size, borderWidth=10, blockingShapes=[] }) {
+    return createMapRectangle({
+        name,
+        width: size,
+        height: size,
+        borderWidth,
+        blockingShapes
+    });
 }
 
 function forEachAlivePlayer(gameState, callback) {
