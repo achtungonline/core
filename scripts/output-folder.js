@@ -1,14 +1,14 @@
-var mkdirp = require('mkdirp');
+var mkdirp = require("mkdirp");
 
 function getPath() {
-	return 'build';
+    return "build";
 }
 
 function ensureItExists() {
-	mkdirp.sync(getPath());
+    mkdirp.sync(getPath());
 }
 
 module.exports = {
-	ensureItExists: ensureItExists,
-	getPath: getPath
+    ensureItExists: ensureItExists,
+    getPath: getPath
 };
