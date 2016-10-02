@@ -2,6 +2,8 @@ var constants = require("./constants.js");
 var shapeFactory = require("./geometry/shape-factory.js");
 var shapeToGridConverter = require("./geometry/shape-to-grid-converter.js").createShapeToGridConverter();
 var forEach = require("./util/for-each.js");
+var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
+var clone = require("./util/clone.js");
 
 function addEffect(gameState, effect) {
     effect.id = getNextId(gameState, 'effect');
@@ -69,13 +71,14 @@ function addWorm(gameState, {id=getNextId(gameState, 'worm'), playerId, directio
     return worm;
 }
 
-function addWormPathSegment(gameState, id, segment) {
+function addWormPathSegment(gameState, id, segment, forceNewSegment = false) {
     var segments = gameState.wormPathSegments[id];
     if (!segments) {
         segments = gameState.wormPathSegments[id] = [];
+
     }
     if (segment.index !== undefined) {
-        // This segment has been added to the gameState already. Probably sent from server to client
+        // This segment has been added to the gameState already. Probably sent from server to client //TODO: Vill vi verkligen ha sånt här? Kanske kan få bort detta från core och försöka minimera server-relaterade saker.
         segments[segment.index] = segment;
     } else {
         if (segments.length === 0) {
@@ -83,7 +86,8 @@ function addWormPathSegment(gameState, id, segment) {
             segments.push(segment);
         } else {
             var lastSegment = segments[segments.length - 1];
-            if (segment.type === lastSegment.type &&
+            if (!forceNewSegment &&
+                segment.type === lastSegment.type &&
                 segment.speed === lastSegment.speed &&
                 segment.turningVelocity === lastSegment.turningVelocity &&
                 segment.size === lastSegment.size &&
@@ -112,12 +116,33 @@ function addWormPathSegment(gameState, id, segment) {
             }
         }
     }
-    return gameState;
 }
 
-function addLatestWormPathSegmentMetaData(gameState, id, metaData) {
+function addWormPathSegmentMetaData(gameState, id, metaData, singlePointInTime) {
     var segment = getLatestWormPathSegment(gameState, id);
-    segment.metaData.push(metaData);
+    if (singlePointInTime) {
+        var singlePointInTimeSegment = trajectoryUtil.createTrajectory({
+            duration: 0,
+            startX: segment.endX,
+            startY: segment.endY,
+            startDirection: segment.endDirection,
+            speed: segment.speed,
+            turningVelocity: segment.turningVelocity
+        });
+        singlePointInTimeSegment.startTime = gameState.gameTime;
+        singlePointInTimeSegment.endTime = gameState.gameTime;
+        singlePointInTimeSegment.jump = segment.jump;
+        singlePointInTimeSegment.size = segment.size;
+        singlePointInTimeSegment.playerId = segment.playerId;
+        singlePointInTimeSegment.wormId = segment.wormId;
+        singlePointInTimeSegment.metaData = clone(segment.metaData);
+        var segmentAfter = clone(singlePointInTimeSegment);
+        singlePointInTimeSegment.metaData.push(metaData);
+        addWormPathSegment(gameState, id, singlePointInTimeSegment, true);
+        addWormPathSegment(gameState, id, segmentAfter, true);
+    } else {
+        segment.metaData.push(metaData);
+    }
 }
 
 function createMap(name, shape, blockingShapes) {
@@ -205,7 +230,7 @@ function getPlayer(gameState, id) {
         return player;
     } else {
         var worm = getWorm(gameState, id);
-        if(worm) {
+        if (worm) {
             return getPlayer(gameState, worm.playerId);
         } else {
             return getPlayer(gameState, getLatestWormPathSegment(gameState, id).playerId);
@@ -342,6 +367,7 @@ function createGameState({
     gameTime = 0,
     gameActive = false,                                  // TODO: might get removed
     startPhaseTimer = constants.START_PHASE_DURATION,
+    nextId = 0
     } = {}) {
     function createPlayArea(width, height) {
         var playArea = {
@@ -356,43 +382,6 @@ function createGameState({
     }
 
     return createSimpleGameState({
-        players,
-        worms,
-        powerUps,
-        effects,
-        playerSteeringSegments,
-        wormPathSegments,
-        gameEvents,
-        powerUpEvents,
-        effectEvents,
-        map,
-        playArea: map ? createPlayArea(map.width, map.height) : null,
-        gameTime,
-        gameActive,
-        startPhaseTimer,
-        seed,
-        nextId: 0
-    })
-}
-
-function createSimpleGameState({
-    players,
-    worms,
-    powerUps,
-    effects,
-    playerSteeringSegments,
-    wormPathSegments,
-    gameEvents,
-    powerUpEvents,
-    effectEvents,
-    map,
-    playArea,
-    gameTime,
-    gameActive,
-    startPhaseTimer,
-    seed,
-    nextId} = {}) {
-    return {
         players,
         //  [{
         //      id,
@@ -482,18 +471,28 @@ function createSimpleGameState({
         //      (id)            // Only for type despawn
         //  }],
         map,
-        playArea,
+        playArea: map ? createPlayArea(map.width, map.height) : null,
         gameTime,
         gameActive, // TODO: might get removed
         startPhaseTimer, // Time left until start phase ends
         seed,
         nextId
-    }
+    })
+}
+
+function createSimpleGameState(options) {
+    var gameState = {};
+    forEach(options, function (value, key) {
+        if (value !== null && value !== undefined) {
+            gameState[key] = value;
+        }
+    });
+    return gameState;
 }
 
 module.exports = {
     addEffect,
-    addLatestWormPathSegmentMetaData,
+    addWormPathSegmentMetaData,
     addPlayAreaObstacle,
     addPlayAreaShape,
     addPlayer,

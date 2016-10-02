@@ -68,7 +68,7 @@ powerUpDefinitions["slow_turn"] = {
 powerUpDefinitions["switcharoonie"] = {
     name: "switcharoonie",
     effectType: "wormSwitch",
-    weightedSpawnChance: 0.5,
+    weightedSpawnChance: 1000.5,
     affects: "all"
 };
 powerUpDefinitions["key_switch"] = {
@@ -90,19 +90,19 @@ powerUpDefinitions["drunk"] = {
 powerUpDefinitions["clear_all"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 0.25,
+    weightedSpawnChance: 1000.25,
     affects: "all"
 };
 powerUpDefinitions["clear_self"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 0.25,
+    weightedSpawnChance: 1000.25,
     affects: "self"
 };
 powerUpDefinitions["clear_others"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 0.25,
+    weightedSpawnChance: 1000.25,
     affects: "others"
 };
 powerUpDefinitions["super_jump"] = {
