@@ -10,7 +10,7 @@ var trajectoryUtil = require("../core/geometry/trajectory/trajectory-util.js");
 
 var SIMULATION_DURATION = 2;
 var SIMULATION_DELTA = 0.05;
-var SEARCH_DIRECTION_VELOCITY = 8*Math.PI;
+var SEARCH_DIRECTION_VELOCITY = 7*Math.PI;
 
 module.exports = function PathCheckerAI() {
 

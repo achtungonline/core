@@ -37,15 +37,17 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
 
         var wallHackSegments;
         if (gameState.map.shape.type === "rectangle") {
+            var width = gameState.map.shape.width;
+            var height = gameState.map.shape.height;
             wallHackSegments = [
-                getModifiedWallHackSegment({xDiff: -gameState.map.width}),
-                getModifiedWallHackSegment({xDiff: gameState.map.width}),
-                getModifiedWallHackSegment({yDiff: -gameState.map.height}),
-                getModifiedWallHackSegment({yDiff: gameState.map.height}),
-                getModifiedWallHackSegment({xDiff: -gameState.map.width, yDiff: -gameState.map.height}),
-                getModifiedWallHackSegment({xDiff: gameState.map.width, yDiff: -gameState.map.height}),
-                getModifiedWallHackSegment({xDiff: -gameState.map.width, yDiff: gameState.map.height}),
-                getModifiedWallHackSegment({xDiff: gameState.map.width, yDiff: gameState.map.height})
+                getModifiedWallHackSegment({xDiff: -width}),
+                getModifiedWallHackSegment({xDiff: width}),
+                getModifiedWallHackSegment({yDiff: -height}),
+                getModifiedWallHackSegment({yDiff: height}),
+                getModifiedWallHackSegment({xDiff: -width, yDiff: -height}),
+                getModifiedWallHackSegment({xDiff: width, yDiff: -height}),
+                getModifiedWallHackSegment({xDiff: -width, yDiff: height}),
+                getModifiedWallHackSegment({xDiff: width, yDiff: height})
             ];
         } else if (gameState.map.shape.type === "circle") {
 
