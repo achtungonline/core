@@ -6,7 +6,7 @@ var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
 var clone = require("./util/clone.js");
 
 function addEffect(gameState, effect) {
-    effect.id = getNextId(gameState, 'effect');
+    effect.id = getNextId(gameState, "effect");
     gameState.effects.push(effect);
     gameState.effectEvents.push({
         type: "spawn",
@@ -40,7 +40,7 @@ function addPlayerSteeringSegment(gameState, playerId, steering, duration) {
 }
 
 function addPowerUp(gameState, powerUp) {
-    powerUp.id = getNextId(gameState, 'power-up');
+    powerUp.id = getNextId(gameState, "power-up");
     gameState.powerUps.push(powerUp);
     gameState.powerUpEvents.push({
         type: "spawn",
@@ -49,7 +49,7 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function addWorm(gameState, {id=getNextId(gameState, 'worm'), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
+function addWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
     var worm = {
         id,
         playerId,
@@ -151,8 +151,8 @@ function createMap({ name, shape, borderWidth=0, blockingShapes=[] }) {
         shape,
         borderWidth,
         blockingShapes,
-        width: shape.boundingBox.width + 2*borderWidth,
-        height: shape.boundingBox.height + 2*borderWidth
+        width: shape.boundingBox.width + 2 * borderWidth,
+        height: shape.boundingBox.height + 2 * borderWidth
     }
 }
 

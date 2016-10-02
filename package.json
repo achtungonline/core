@@ -28,8 +28,10 @@
     "babel-preset-react": "^6.3.13",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
+    "chalk": "^1.1.3",
     "jasmine-core": "^2.5.2",
     "jasmine-node": "^1.14.5",
+    "promise": "^7.1.1",
     "watchify": "^3.7.0"
   },
   "bugs": {
@@ -47,7 +49,8 @@
     ]
   },
   "scripts": {
-    "watch": "nodemon -q -w src --ext '.js' --exec 'npm run test'",
-    "test": "jasmine-node src"
+    "watch": "./scripts/cmd.js 'watch'",
+    "test": "./scripts/cmd.js 'test'"
   }
 }
+

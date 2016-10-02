@@ -89,16 +89,16 @@ function getRandomPositionInsidePlayableArea(gameState, minDistance) {
 }
 
 function getWormDirection(gameState, wormId) {
-    return transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).direction, 'changeDirection');
+    return transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).direction, "changeDirection");
 }
 
 function getWormRadius(gameState, wormId) {
-    var newSize = transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).radius, 'changeWormRadius');
+    var newSize = transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).radius, "changeWormRadius");
     return Math.max(1, newSize);
 }
 
 function getWormSpeed(gameState, wormId) {
-    var newSpeed = transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).speed, 'changeSpeed');
+    var newSpeed = transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).speed, "changeSpeed");
     return Math.max(5, newSpeed);
 }
 
@@ -106,23 +106,23 @@ function getWormTurningSpeed(gameState, wormId) {
     var worm = gsf.getWorm(gameState, wormId);
     var speedUp = getWormSpeed(gameState, wormId) / worm.speed;
     var initValue = worm.turningSpeed * speedUp;
-    return Math.min(5, transformValueUsingEffects(gameState, wormId, initValue, 'changeTurningSpeed'));
+    return Math.min(5, transformValueUsingEffects(gameState, wormId, initValue, "changeTurningSpeed"));
 }
 
 function getWormTurningVelocity(gameState, wormId, deltaTime) {
     var turningVelocity;
     var player = gsf.getPlayer(gameState, gsf.getWorm(gameState, wormId).playerId);
-    var tronTurnEffects = gsf.getWormEffects(gameState, wormId, 'tronTurn');
+    var tronTurnEffects = gsf.getWormEffects(gameState, wormId, "tronTurn");
     if (tronTurnEffects.length > 0) {
-        turningVelocity = effectDefinitions['tronTurn'].getWormTurningVelocity(gameState, tronTurnEffects[0], deltaTime);
+        turningVelocity = effectDefinitions["tronTurn"].getWormTurningVelocity(gameState, tronTurnEffects[0], deltaTime);
     } else {
         turningVelocity = player.steering * getWormTurningSpeed(gameState, wormId);
     }
-    return transformValueUsingEffects(gameState, wormId, turningVelocity, 'changeTurningVelocity');
+    return transformValueUsingEffects(gameState, wormId, turningVelocity, "changeTurningVelocity");
 }
 
 function isWormJumping(gameState, wormId) {
-    return transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).jump.remainingJumpTime > 0, 'changeIsJumping');
+    return transformValueUsingEffects(gameState, wormId, gsf.getWorm(gameState, wormId).jump.remainingJumpTime > 0, "changeIsJumping");
 }
 
 function killPlayer(gameState, playerId) {
@@ -247,7 +247,7 @@ function updateWorms(gameState, deltaTime) {
         worm.centerY = pathSegment.endY;
 
         worm.distanceTravelled += pathSegment.speed * deltaTime;
-        var segmentId = worm.playerId + '_' + worm.id;
+        var segmentId = worm.playerId + "_" + worm.id;
         //TODO: Will get removed when we no longer have collision detection based on playArea
         // No body update during the start phase and also only render the body if we are not standing still
         if (getWormSpeed(gameState, worm.id) > 0 && !isWormJumping(gameState, worm.id)) {

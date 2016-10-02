@@ -1,8 +1,8 @@
 var gsf = require("./game-state-functions.js");
 
-jasmine.pp = function (obj) {
-    return JSON.stringify(obj, undefined, 2);
-};
+//jasmine.pp = function (obj) {
+//    return JSON.stringify(obj, undefined, 2);
+//};
 
 describe("game-state-functions", function () {
 
