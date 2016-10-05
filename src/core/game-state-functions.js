@@ -75,7 +75,6 @@ function addWormPathSegment(gameState, id, segment, forceNewSegment = false) {
     var segments = gameState.wormPathSegments[id];
     if (!segments) {
         segments = gameState.wormPathSegments[id] = [];
-
     }
     if (segment.index !== undefined) {
         // This segment has been added to the gameState already. Probably sent from server to client //TODO: Vill vi verkligen ha sånt här? Kanske kan få bort detta från core och försöka minimera server-relaterade saker.
