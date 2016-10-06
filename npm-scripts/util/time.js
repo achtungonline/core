@@ -6,7 +6,11 @@ module.exports = function time(cb) {
         const args = [elapsedSeconds].concat(arguments);
 
         if (!cb) {
-            cb = _cb;
+            if (!_cb) {
+                return elapsedSeconds;
+            } else {
+                cb = _cb;
+            }
         }
 
         cb.apply(cb, args);

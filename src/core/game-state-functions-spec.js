@@ -1,4 +1,5 @@
 var gsf = require("./game-state-functions.js");
+require("phantomjs-polyfill-find/find-polyfill.js");
 
 //jasmine.pp = function (obj) {
 //    return JSON.stringify(obj, undefined, 2);
