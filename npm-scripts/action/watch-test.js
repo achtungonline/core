@@ -6,7 +6,7 @@ const testerMaker = require('../util/test-runner');
 const Promise = require('promise');
 
 module.exports = function build() {
-    var builder = builderMaker();
+    var builder = builderMaker({testFiles: 'src/**/*spec.js'});
     var tester = testerMaker();
     var linter = linterMaker();
 
