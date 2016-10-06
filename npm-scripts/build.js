@@ -50,7 +50,7 @@ module.exports = function builderMaker({testFiles}) {
     function buildModuleCode() {
 
         var b = browserify({
-            entries: ['./main.js'],
+            entries: ['./src/js/index.js'],
             debug: true,
             cache: getCache(),
             packageCache: getPackageCache()
@@ -68,7 +68,7 @@ module.exports = function builderMaker({testFiles}) {
         var eventEmitter = new EventEmitter();
 
         var b = browserify({
-            entries: ['./main.js'],
+            entries: ['./src/js/index.js'],
             debug: true,
             cache: getCache(),
             packageCache: getPackageCache(),
