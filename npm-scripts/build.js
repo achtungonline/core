@@ -2,12 +2,12 @@ const through = require('through2');
 const watchify = require('watchify');
 const EventEmitter = require('events').EventEmitter;
 const stream = require('stream');
-const glob = require('glob');
+const glob = require("multi-glob").glob;
 const browserify = require('browserify');
 const path = require('path');
 const xtend = require('xtend');
 
-module.exports = function builderMaker() {
+module.exports = function builderMaker({testFiles}) {
     // We want the browserify instances to share cache as much as we can (since it reduces the build times).
     // However, there is a problem when multiple ongoing processes (e.g., watchify) shares cache because then there is a race condition when the file is invalidated/rebuilt in the cache.
     // So an ongoing process may claim ownership of the cache (others may read from it, but may not write to it), so that there cannot be any write race conditions.
@@ -98,7 +98,7 @@ module.exports = function builderMaker() {
     function buildTestCode() {
         var outputStream = new stream.PassThrough();
 
-        glob('src/**/*spec.js', function (err, files) {
+        glob(testFiles, function (err, files) {
             if (err) {
                 console.error(err);
                 return;
@@ -126,7 +126,7 @@ module.exports = function builderMaker() {
         var eventEmitter = new EventEmitter();
 
         // TODO: Not enough for when files are added while watching.
-        glob('src/**/*spec.js', function (err, files) {
+        glob(testFiles, function (err, files) {
             if (err) {
                 console.error(err);
                 return;

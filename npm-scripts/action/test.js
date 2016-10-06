@@ -7,7 +7,7 @@ const linterMaker = require('../util/lint-runner');
 const testerMaker = require('../util/test-runner');
 
 module.exports = function build() {
-    var builder = builderMaker();
+    var builder = builderMaker({testFiles: 'src/**/*spec.js'});
     var linter = linterMaker();
     var tester = testerMaker();
 
@@ -15,7 +15,7 @@ module.exports = function build() {
         promiseUtils.runSerially([
             () => fileWriter.streamToFileTimed('build/tests.js', builder.buildTestCode()),
             () => tester.test(['build/tests.js']),
-            () => linter.lint(['*.js', 'js/**/*.js', 'documentation/**/*.js']),
+            () => linter.lint(['*.js', 'src/**/*.js']),
             () => console.log(chalk.green('\The code is amazing :)'))
         ])
     ]).catch((err) => err && console.error(err));

@@ -38,6 +38,7 @@
     "karma-mocha-reporter": "^2.0.0",
     "karma-phantomjs-launcher": "^1.0.1",
     "mkdirp": "^0.5.1",
+    "multi-glob": "^1.0.1",
     "phantomjs-polyfill-find": "github:ptim/phantomjs-polyfill-find",
     "phantomjs-prebuilt": "^2.1.7",
     "promise": "^7.1.1",
@@ -57,9 +58,6 @@
     "transform": [
       "babelify"
     ]
-  },
-  "bin": {
-    "core-build-scripts": "npm-scripts/bin/cmd.js"
   },
   "scripts": {
     "watch": "./npm-scripts/bin/cmd.js 'watch'",
