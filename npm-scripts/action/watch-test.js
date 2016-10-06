@@ -1,5 +1,3 @@
-const connect = require('connect');
-const serveStatic = require('serve-static');
 const builderMaker = require('../build');
 const fileWriter = require('../util/fileWriter');
 const promiseUtils = require('../util/promise-utils');
@@ -40,29 +38,15 @@ module.exports = function build() {
         });
     }
 
-    const port = 9000;
-
-    const server = connect();
-    server.use(serveStatic('./'));
-    server.listen(port);
-    console.log('Listening on http://localhost:' + port + '/');
-    console.log('');
-
-    builder.watchModuleCode()
-        .on('initialBuild', (stream) => {
-            //fileWriter.streamToFileTimed('build/main.js', stream).then(() => {
-                builder.watchTestCode()
-                    .on('initialBuild', (stream) => promiseUtils.runSerially([
-                        () => fileWriter.streamToFileTimed('build/tests.js', stream),
-                        test,
-                        lint
-                    ]).catch(handleError))
-                    .on('updateBuild', (stream) => promiseUtils.runSerially([
-                        () => fileWriter.streamToFile('build/tests.js', stream),
-                        test,
-                        lint
-                    ]).catch(handleError));
-            //}, handleError);
-        })
-        .on('updateBuild', (stream) => fileWriter.streamToFile('build/main.js', stream).catch(handleError));
+    builder.watchTestCode()
+        .on('initialBuild', (stream) => promiseUtils.runSerially([
+            () => fileWriter.streamToFileTimed('build/tests.js', stream),
+            test,
+            lint
+        ]).catch(handleError))
+        .on('updateBuild', (stream) => promiseUtils.runSerially([
+            () => fileWriter.streamToFile('build/tests.js', stream),
+            test,
+            lint
+        ]).catch(handleError));
 };

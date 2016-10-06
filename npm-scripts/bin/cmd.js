@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 
 const test = require('../action/test');
-const watch = require('../action/watch');
+const watch = require('../action/watch-test');
 
 const command = process.argv[2];
 
