@@ -19,24 +19,5 @@
         "wrap-iife": 2,
         "indent": [2, 4],
         "no-trailing-spaces": 2
-    },
-    "globals": {
-        "define": true,
-        "require": true,
-        "module": true,
-        "requirejs": true,
-        "it": true,
-        "expect": true,
-        "describe": true,
-        "spyOn": true,
-        "afterEach": true,
-        "test": true,
-        "ok": true,
-        "console": true,
-        "runs": true,
-        "waitsFor": true,
-        "beforeEach": true,
-        "xit": true,
-        "xdescribe": true
     }
 }

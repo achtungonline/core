@@ -90,7 +90,7 @@ powerUpDefinitions["drunk"] = {
 powerUpDefinitions["clear_all"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 1000.25,
+    weightedSpawnChance: 0.25,
     affects: "all"
 };
 powerUpDefinitions["clear_self"] = {
@@ -139,7 +139,7 @@ powerUpDefinitions["wall_hack_all"] = {
     name: "wall_hack",
     effectType: "wallHack",
     effectDuration: 5,
-    weightedSpawnChance: 0.5,
+    weightedSpawnChance: 1000.5,
     affects: "all"
 };
 
@@ -152,7 +152,7 @@ module.exports = {
     wormColorIds,
 
     powerUpDefinitions,
-    POWER_UP_SPAWN_CHANCE: 0.12,            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds, average 5 seconds.
+    POWER_UP_SPAWN_CHANCE: 0.5, //0.12,            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds, average 5 seconds.
     POWER_UP_SHAPE: shapeFactory.createCircle(25),
 
     WORM_RADIUS: 4,

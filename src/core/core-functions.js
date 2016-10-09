@@ -138,6 +138,8 @@ function killPlayer(gameState, playerId) {
 function killWorm(gameState, wormId) {
     var worm = gsf.getWorm(gameState, wormId);
     worm.alive = false;
+    updateWormPathSegments(gameState, 0, wormId, {type: "worm_died"});
+
     if (gsf.getAliveWorms(gameState, worm.playerId).length === 0) {
         killPlayer(gameState, worm.playerId);
     }
@@ -176,11 +178,11 @@ function updateCollision(gameState) {
             var value = playArea.grid[cell];
             if (value !== constants.PLAY_AREA_FREE) { // TODO Utility function to check if worm-id
                 if (!(worm.distanceTravelled - worm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)) {
-                    var twinEffects =  gsf.getWormEffects(gameState, worm.id, "twin");
-                    if(twinEffects.length > 0) {
-                        return twinEffects.map(te => gsf.getWorm(gameState, te.twinWormId)).filter(function(twinWorm) {
-                            return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
-                        }).length === 0;
+                    var twinEffects = gsf.getWormEffects(gameState, worm.id, "twin");
+                    if (twinEffects.length > 0) {
+                        return twinEffects.map(te => gsf.getWorm(gameState, te.twinWormId)).filter(function (twinWorm) {
+                                return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
+                            }).length === 0;
                     }
                     return true;
                 }
@@ -213,54 +215,65 @@ function updateCollision(gameState) {
     });
 }
 
+function updateWormPathSegments(gameState, deltaTime, wormId, {type} = {}) {
+    var worm = gsf.getWorm(gameState, wormId);
+    var direction = getWormDirection(gameState, worm.id);
+    var speed = getWormSpeed(gameState, worm.id);
+    var radius = getWormRadius(gameState, worm.id);
+    var turningVelocity = getWormTurningVelocity(gameState, worm.id, deltaTime);
+    var jump = isWormJumping(gameState, worm.id);
+    if (gsf.isInStartPhase(gameState)) {
+        speed = 0;
+    }
+    var pathSegment = trajectoryUtil.createTrajectory({
+        duration: deltaTime,
+        startX: worm.centerX,
+        startY: worm.centerY,
+        startDirection: direction,
+        speed,
+        turningVelocity
+    });
+
+    if(type) {
+        pathSegment.type = type;
+    }
+    pathSegment.startTime = gameState.gameTime - deltaTime;
+    pathSegment.endTime = gameState.gameTime;
+    pathSegment.jump = jump;
+    pathSegment.size = radius;
+    pathSegment.playerId = worm.playerId;
+    pathSegment.wormId = worm.id;
+
+    //TODO Remove this from usage at all
+    worm.direction += turningVelocity * deltaTime;
+    worm.centerX = pathSegment.endX;
+    worm.centerY = pathSegment.endY;
+
+    worm.distanceTravelled += pathSegment.speed * deltaTime;
+    var segmentId = worm.playerId + "_" + worm.id;
+    //TODO: Will get removed when we no longer have collision detection based on playArea
+    // No body update during the start phase and also only render the body if we are not standing still
+    if (getWormSpeed(gameState, worm.id) > 0 && !isWormJumping(gameState, worm.id)) {
+        gsf.addPlayAreaShape(gameState, {centerX: pathSegment.startX, centerY: pathSegment.startY, radius: pathSegment.size}, segmentId).forEach(function (cell) {
+            worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
+        });
+    }
+
+    gsf.addWormPathSegment(gameState, segmentId, pathSegment);
+
+    if (gsf.hasWormEffect(gameState, worm.id, "wallHack")) {
+        wallHackEffectDefinition.updateWorm(gameState, deltaTime, worm.id, pathSegment);
+    }
+
+    return pathSegment;
+}
+
 /**
  * Updates each worms
  */
 function updateWorms(gameState, deltaTime) {
     gsf.forEachAliveWorm(gameState, function (worm) {
-        var direction = getWormDirection(gameState, worm.id);
-        var speed = getWormSpeed(gameState, worm.id);
-        var radius = getWormRadius(gameState, worm.id);
-        var turningVelocity = getWormTurningVelocity(gameState, worm.id, deltaTime);
-        var jump = isWormJumping(gameState, worm.id);
-        if (gsf.isInStartPhase(gameState)) {
-            speed = 0;
-        }
-        var pathSegment = trajectoryUtil.createTrajectory({
-            duration: deltaTime,
-            startX: worm.centerX,
-            startY: worm.centerY,
-            startDirection: direction,
-            speed,
-            turningVelocity
-        });
-        pathSegment.startTime = gameState.gameTime - deltaTime;
-        pathSegment.endTime = gameState.gameTime;
-        pathSegment.jump = jump;
-        pathSegment.size = radius;
-        pathSegment.playerId = worm.playerId;
-        pathSegment.wormId = worm.id;
-        pathSegment.metaData = [];
-
-        worm.direction += turningVelocity * deltaTime;
-        worm.centerX = pathSegment.endX;
-        worm.centerY = pathSegment.endY;
-
-        worm.distanceTravelled += pathSegment.speed * deltaTime;
-        var segmentId = worm.playerId + "_" + worm.id;
-        //TODO: Will get removed when we no longer have collision detection based on playArea
-        // No body update during the start phase and also only render the body if we are not standing still
-        if (getWormSpeed(gameState, worm.id) > 0 && !isWormJumping(gameState, worm.id)) {
-            gsf.addPlayAreaShape(gameState, {centerX: pathSegment.startX, centerY: pathSegment.startY, radius: pathSegment.size}, segmentId).forEach(function (cell) {
-                worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
-            });
-        }
-
-        gsf.addWormPathSegment(gameState, segmentId, pathSegment);
-
-        if (gsf.hasWormEffect(gameState, worm.id, "wallHack")) {
-            wallHackEffectDefinition.updateWorm(gameState, deltaTime, worm.id, pathSegment);
-        }
+        updateWormPathSegments(gameState, deltaTime, worm.id);
     });
 }
 

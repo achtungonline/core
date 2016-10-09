@@ -26,6 +26,7 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
                 speed: pathSegment.speed,
                 turningVelocity: pathSegment.turningVelocity
             });
+            wallHackPathSegment.type = pathSegment.type;
             wallHackPathSegment.startTime = pathSegment.startTime;
             wallHackPathSegment.endTime = pathSegment.endTime;
             wallHackPathSegment.jump = pathSegment.jump;
