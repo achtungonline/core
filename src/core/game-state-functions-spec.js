@@ -21,7 +21,6 @@ describe("game-state-functions", function () {
                 0: [
                     {
                         duration: 0.9020000000000006,
-                        index: 0,
                         startTime: 200,
                         type: 'arc'
                     }]
@@ -35,7 +34,6 @@ describe("game-state-functions", function () {
                 0: [
                     {
                         duration: 0.9020000000000006,
-                        index: 0,
                         startTime: 200,
                         type: 'arc'
                     },
@@ -43,8 +41,7 @@ describe("game-state-functions", function () {
                         duration: 0,
                         startTime: 200,
                         endTime: 200,
-                        type: 'clear',
-                        index: 1
+                        type: 'clear'
                     }
                 ]
             }
