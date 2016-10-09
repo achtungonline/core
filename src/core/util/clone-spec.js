@@ -1,6 +1,6 @@
 var clone = require("./clone");
 
-describe("clone", function () {
+describe("util", function () {
 
     it("test basic cloning", function () {
         var object = {
