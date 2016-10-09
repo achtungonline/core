@@ -1,8 +1,8 @@
-const fs = require('fs');
-const mkdirp = require('mkdirp');
-const path = require('path');
-const Promise = require('promise');
-const time = require('./time');
+const fs = require("fs");
+const mkdirp = require("mkdirp");
+const path = require("path");
+const Promise = require("promise");
+const time = require("./time");
 
 function writeToFile(outfile, inContent) {
     if (inContent.pipe && inContent.on) {
@@ -32,17 +32,17 @@ function streamToFile(outfile, inStream, options) {
     return new Promise(function (resolve, reject) {
         const outStream = fs.createWriteStream(outfile);
 
-        outStream.on('finish', () => {
+        outStream.on("finish", () => {
             if (log) {
-                console.log('[' + outfile + '] built');
+                console.log("[" + outfile + "] built");
             }
             resolve();
         });
 
         inStream
-            .on('error', (err) => reject(err))
+            .on("error", (err) => reject(err))
             .pipe(outStream)
-            .on('error', (err) => reject(err));
+            .on("error", (err) => reject(err));
     });
 }
 
@@ -51,7 +51,7 @@ function streamToFileTimed(outfile, inStream) {
 
     return new Promise(function (resolve, reject) {
         streamToFile(outfile, inStream, { log: false }).then(function () {
-            console.log('[' + outfile + '] built (' + endTime() + ' seconds)');
+            console.log("[" + outfile + "] built (" + endTime() + " seconds)");
             resolve();
         }, reject);
     });

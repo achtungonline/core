@@ -4,7 +4,6 @@ var scoreUtil = require("./score/score-util.js");
 
 module.exports = function Match({ matchConfig }) {
 
-    var gameFactory = GameFactory();
 
     var matchState = {
         roundsData: []

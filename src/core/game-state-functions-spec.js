@@ -14,36 +14,13 @@ describe("game-state-functions", function () {
         expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], wormPathSegments: {"1": [{playerId: "0"}]}}), "1")).toEqual({id: "0"});
     });
 
-    it("addWormPathSegmentMetaData", function () {
+    it("addClearPathSegment", function () {
         var gameState = gsf.createSimpleGameState({
-            wormPathSegments: {
-                0: [
-                    {someValue: "something", metaData: []}]
-            }
-        });
-        gsf.addWormPathSegmentMetaData(gameState, 0, {type: "clear"}, false);
-        expect(gameState).toEqual({
-            wormPathSegments: {
-                0: [
-                    {someValue: "something", metaData: [{type: "clear"}]}]
-            }
-        });
-
-
-        //duration: 0,
-        //    startX: segment.endX,
-        //    startY: segment.endY,
-        //    startDirection: segment.endDirection,
-        //    speed: segment.speed,
-        //    turningVelocity: segment.turningVelocity
-
-        gameState = gsf.createSimpleGameState({
             gameTime: 200,
             wormPathSegments: {
                 0: [
                     {
                         duration: 0.9020000000000006,
-                        metaData: [],
                         index: 0,
                         startTime: 200,
                         type: 'arc'
@@ -51,33 +28,23 @@ describe("game-state-functions", function () {
             }
         });
 
-        gsf.addWormPathSegmentMetaData(gameState, 0, {type: "clear"}, true);
+        gsf.addClearPathSegment(gameState, 0);
         expect(objectCleaner(gameState)).toEqual({
             gameTime: 200,
             wormPathSegments: {
                 0: [
                     {
                         duration: 0.9020000000000006,
-                        metaData: [],
                         index: 0,
                         startTime: 200,
                         type: 'arc'
                     },
                     {
                         duration: 0,
-                        metaData: [{type: "clear"}],
                         startTime: 200,
                         endTime: 200,
-                        type: 'arc',
+                        type: 'clear',
                         index: 1
-                    },
-                    {
-                        duration: 0,
-                        startTime: 200,
-                        endTime: 200,
-                        metaData: [],
-                        type: 'arc',
-                        index: 2
                     }
                 ]
             }

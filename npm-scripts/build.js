@@ -1,13 +1,13 @@
-const through = require('through2');
-const watchify = require('watchify');
-const EventEmitter = require('events').EventEmitter;
-const stream = require('stream');
+const through = require("through2");
+const watchify = require("watchify");
+const EventEmitter = require("events").EventEmitter;
+const stream = require("stream");
 const glob = require("multi-glob").glob;
-const browserify = require('browserify');
-const path = require('path');
-const xtend = require('xtend');
+const browserify = require("browserify");
+const path = require("path");
+const xtend = require("xtend");
 
-module.exports = function builderMaker({testFiles}) {
+module.exports = function builderMaker({sourceFiles, testFiles}) {
     // We want the browserify instances to share cache as much as we can (since it reduces the build times).
     // However, there is a problem when multiple ongoing processes (e.g., watchify) shares cache because then there is a race condition when the file is invalidated/rebuilt in the cache.
     // So an ongoing process may claim ownership of the cache (others may read from it, but may not write to it), so that there cannot be any write race conditions.
@@ -29,14 +29,14 @@ module.exports = function builderMaker({testFiles}) {
     }
 
     function attachCacheSystem(browserify) {
-        browserify.on('package', function (pkg) {
-            var file = path.join(pkg.__dirname, 'package.json');
+        browserify.on("package", function (pkg) {
+            var file = path.join(pkg.__dirname, "package.json");
             if (packageCache) {
                 packageCache[file] = pkg;
             }
         });
 
-        browserify.pipeline.get('deps').push(through.obj(function (row, enc, next) {
+        browserify.pipeline.get("deps").push(through.obj(function (row, enc, next) {
             var file = row.expose ? browserify._expose[row.id] : row.file;
             cache[file] = {
                 source: row.source,
@@ -50,14 +50,14 @@ module.exports = function builderMaker({testFiles}) {
     function buildModuleCode() {
 
         var b = browserify({
-            entries: ['./src/js/index.js'],
+            entries: sourceFiles,
             debug: true,
             cache: getCache(),
             packageCache: getPackageCache()
         });
 
         b
-        .transform('babelify', { presets: ['es2015', 'react']});
+        .transform("babelify", { presets: ["es2015", "react"]});
 
         attachCacheSystem(b);
 
@@ -68,7 +68,7 @@ module.exports = function builderMaker({testFiles}) {
         var eventEmitter = new EventEmitter();
 
         var b = browserify({
-            entries: ['./src/js/index.js'],
+            entries: sourceFiles,
             debug: true,
             cache: getCache(),
             packageCache: getPackageCache(),
@@ -82,14 +82,14 @@ module.exports = function builderMaker({testFiles}) {
         }
 
         b
-        .transform('babelify', { presets: ['es2015', 'react']})
-        .on('update', () => {
-            eventEmitter.emit('updateBuild', internalBundle());
+        .transform("babelify", { presets: ["es2015", "react"]})
+        .on("update", () => {
+            eventEmitter.emit("updateBuild", internalBundle());
         });
 
         // Delay, otherwise it is impossible to catch this event since there are no listeners at this point.
-        process.nextTick(function () {
-            eventEmitter.emit('initialBuild', internalBundle());
+        process.nextTick(function () { // eslint-disable-line no-undef
+            eventEmitter.emit("initialBuild", internalBundle());
         });
 
         return eventEmitter;
@@ -112,7 +112,7 @@ module.exports = function builderMaker({testFiles}) {
             });
 
             b.
-            transform('babelify', { presets: ['es2015', 'react']});
+            transform("babelify", { presets: ["es2015", "react"]});
 
             attachCacheSystem(b);
 
@@ -147,13 +147,13 @@ module.exports = function builderMaker({testFiles}) {
             }
 
             b
-            .transform('babelify', { presets: ['es2015', 'react']})
-            .on('update', () => {
-                eventEmitter.emit('updateBuild', internalBundle());
+            .transform("babelify", { presets: ["es2015", "react"]})
+            .on("update", () => {
+                eventEmitter.emit("updateBuild", internalBundle());
             });
 
-            process.nextTick(function () {
-                eventEmitter.emit('initialBuild', internalBundle());
+            process.nextTick(function () { // eslint-disable-line no-undef
+                eventEmitter.emit("initialBuild", internalBundle());
             });
         });
 

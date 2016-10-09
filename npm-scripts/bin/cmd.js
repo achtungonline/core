@@ -1,9 +1,9 @@
 #! /usr/bin/env node
 
-const test = require('../action/test');
-const watch = require('../action/watch-test');
+const test = require("../action/test");
+const watch = require("../action/watch-test");
 
-const command = process.argv[2];
+const command = process.argv[2]; // eslint-disable-line no-undef
 
 const commands = {
     test: test,
@@ -15,5 +15,5 @@ const fn = commands[command];
 if (fn) {
     fn();
 } else {
-    console.error('Unknown command: ' + command);
+    console.error("Unknown command: " + command);
 }

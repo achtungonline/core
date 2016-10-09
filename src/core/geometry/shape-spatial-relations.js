@@ -1,17 +1,64 @@
-var spatialRelations = module.exports = {};
+// -- UTILITY-FUNCTIONS --
+function isRelationTrue(spatialRelationsFunctions, shape, otherShape) {
+    function convertWormToCircle(w) {
+        return {
+            type: "circle",
+            centerX: w.centerX,
+            centerY: w.centerY,
+            x: w.centerX - w.radius,
+            y: w.centerY - w.radius,
+            maxX: w.centerX + w.radius,
+            maxY: w.centerY + w.radius,
+            radius: w.radius,
+            boundingBox: {
+                width: w.radius * 2,
+                height: w.radius * 2
+            }
+        }
+    }
+    // TODO Not the prettiest but works for now. This handles special worm treatment
+    if (!shape.type) {
+        shape = convertWormToCircle(shape);
+    }
 
-spatialRelations.intersects = function intersects(shape, otherShape) {
-    return isRelationTrue(intersectsFunctions, shape, otherShape);
-};
+    if(!otherShape.type) {
+        otherShape = convertWormToCircle(otherShape);
+    }
 
-spatialRelations.contains = function contains(outerShape, innerShape) {
-    return isRelationTrue(containmentFunctions, outerShape, innerShape);
-};
+    return spatialRelationsFunctions[shape.type][otherShape.type](shape, otherShape);
+}
 
-spatialRelations.distanceSquared = function distance(shape, otherShape) {
+function boundingBoxesIntersects(shape, otherShape) {
     var dist = getXYDist(shape, otherShape);
-    return dist.x * dist.x + dist.y * dist.y;
-};
+
+    var minBoundingDistX = shape.boundingBox.width / 2 + otherShape.boundingBox.width / 2;
+    var minBoundingDistY = shape.boundingBox.height / 2 + otherShape.boundingBox.height / 2;
+
+    return !(dist.x > minBoundingDistX || dist.y > minBoundingDistY);
+}
+
+function boundingBoxesContains(outerShape, innerShape) {
+    var dist = getXYDist(outerShape, innerShape);
+
+    dist.x += innerShape.boundingBox.width / 2;
+    dist.y += innerShape.boundingBox.height / 2;
+
+    return dist.x < outerShape.boundingBox.width / 2 && dist.y < outerShape.boundingBox.height / 2;
+}
+
+function createShapeRelationMatrix() {
+    var matrix = [];
+    matrix["circle"] = [];
+    matrix["rectangle"] = [];
+    return matrix;
+}
+
+function getXYDist(shape, otherShape) {
+    var dist = {};
+    dist.x = Math.abs(shape.centerX - otherShape.centerX);
+    dist.y = Math.abs(shape.centerY - otherShape.centerY);
+    return dist;
+}
 
 // -- INTERSECTION-FUNCTIONS --
 var intersectsFunctions = createShapeRelationMatrix();
@@ -91,65 +138,19 @@ containmentFunctions["rectangle"]["circle"] = function rectangleCircleContainmen
     return boundingBoxesContains(outerRectangle, innerCircle);
 };
 
+var spatialRelations = module.exports = {};
 
-// -- UTILITY-FUNCTIONS --
-function isRelationTrue(spatialRelationsFunctions, shape, otherShape) {
-    function convertWormToCircle(w) {
-        return {
-            type: "circle",
-            centerX: w.centerX,
-            centerY: w.centerY,
-            x: w.centerX - w.radius,
-            y: w.centerY - w.radius,
-            maxX: w.centerX + w.radius,
-            maxY: w.centerY + w.radius,
-            radius: w.radius,
-            boundingBox: {
-                width: w.radius * 2,
-                height: w.radius * 2
-            }
-        }
-    }
-    // TODO Not the prettiest but works for now. This handles special worm treatment
-    if (!shape.type) {
-        shape = convertWormToCircle(shape);
-    }
+spatialRelations.intersects = function intersects(shape, otherShape) {
+    return isRelationTrue(intersectsFunctions, shape, otherShape);
+};
 
-    if(!otherShape.type) {
-        otherShape = convertWormToCircle(otherShape);
-    }
+spatialRelations.contains = function contains(outerShape, innerShape) {
+    return isRelationTrue(containmentFunctions, outerShape, innerShape);
+};
 
-    return spatialRelationsFunctions[shape.type][otherShape.type](shape, otherShape);
-}
-
-function boundingBoxesIntersects(shape, otherShape) {
+spatialRelations.distanceSquared = function distance(shape, otherShape) {
     var dist = getXYDist(shape, otherShape);
+    return dist.x * dist.x + dist.y * dist.y;
+};
 
-    var minBoundingDistX = shape.boundingBox.width / 2 + otherShape.boundingBox.width / 2;
-    var minBoundingDistY = shape.boundingBox.height / 2 + otherShape.boundingBox.height / 2;
 
-    return !(dist.x > minBoundingDistX || dist.y > minBoundingDistY);
-}
-
-function boundingBoxesContains(outerShape, innerShape) {
-    var dist = getXYDist(outerShape, innerShape);
-
-    dist.x += innerShape.boundingBox.width / 2;
-    dist.y += innerShape.boundingBox.height / 2;
-
-    return dist.x < outerShape.boundingBox.width / 2 && dist.y < outerShape.boundingBox.height / 2;
-}
-
-function createShapeRelationMatrix() {
-    var matrix = [];
-    matrix["circle"] = [];
-    matrix["rectangle"] = [];
-    return matrix;
-}
-
-function getXYDist(shape, otherShape) {
-    var dist = {};
-    dist.x = Math.abs(shape.centerX - otherShape.centerX);
-    dist.y = Math.abs(shape.centerY - otherShape.centerY);
-    return dist;
-}

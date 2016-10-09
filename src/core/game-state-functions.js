@@ -71,7 +71,7 @@ function addWorm(gameState, {id=getNextId(gameState, "worm"), playerId, directio
     return worm;
 }
 
-function addWormPathSegment(gameState, id, segment, forceNewSegment = false) {
+function addWormPathSegment(gameState, id, segment) {
     var segments = gameState.wormPathSegments[id];
     if (!segments) {
         segments = gameState.wormPathSegments[id] = [];
@@ -85,8 +85,7 @@ function addWormPathSegment(gameState, id, segment, forceNewSegment = false) {
             segments.push(segment);
         } else {
             var lastSegment = segments[segments.length - 1];
-            if (!forceNewSegment &&
-                segment.type === lastSegment.type &&
+            if (segment.type === lastSegment.type &&
                 segment.speed === lastSegment.speed &&
                 segment.turningVelocity === lastSegment.turningVelocity &&
                 segment.size === lastSegment.size &&
@@ -97,16 +96,14 @@ function addWormPathSegment(gameState, id, segment, forceNewSegment = false) {
                 segment.startY === lastSegment.endY) {
 
                 // Continue last segment
-                if (segment.type !== "clear") {
-                    lastSegment.duration += segment.duration;
-                    lastSegment.endTime += segment.duration;
-                    lastSegment.endX = segment.endX;
-                    lastSegment.endY = segment.endY;
-                    lastSegment.endDirection = segment.endDirection;
-                    if (segment.type === "arc") {
-                        lastSegment.arcEndAngle = segment.arcEndAngle;
-                        lastSegment.arcAngleDiff += segment.arcAngleDiff;
-                    }
+                lastSegment.duration += segment.duration;
+                lastSegment.endTime += segment.duration;
+                lastSegment.endX = segment.endX;
+                lastSegment.endY = segment.endY;
+                lastSegment.endDirection = segment.endDirection;
+                if (segment.type === "arc") {
+                    lastSegment.arcEndAngle = segment.arcEndAngle;
+                    lastSegment.arcAngleDiff += segment.arcAngleDiff;
                 }
             } else {
                 // Start new segment
@@ -117,31 +114,24 @@ function addWormPathSegment(gameState, id, segment, forceNewSegment = false) {
     }
 }
 
-function addWormPathSegmentMetaData(gameState, id, metaData, singlePointInTime) {
+function addClearPathSegment(gameState, id) {
     var segment = getLatestWormPathSegment(gameState, id);
-    if (singlePointInTime) {
-        var singlePointInTimeSegment = trajectoryUtil.createTrajectory({
-            duration: 0,
-            startX: segment.endX,
-            startY: segment.endY,
-            startDirection: segment.endDirection,
-            speed: segment.speed,
-            turningVelocity: segment.turningVelocity
-        });
-        singlePointInTimeSegment.startTime = gameState.gameTime;
-        singlePointInTimeSegment.endTime = gameState.gameTime;
-        singlePointInTimeSegment.jump = segment.jump;
-        singlePointInTimeSegment.size = segment.size;
-        singlePointInTimeSegment.playerId = segment.playerId;
-        singlePointInTimeSegment.wormId = segment.wormId;
-        singlePointInTimeSegment.metaData = clone(segment.metaData);
-        var segmentAfter = clone(singlePointInTimeSegment);
-        singlePointInTimeSegment.metaData.push(metaData);
-        addWormPathSegment(gameState, id, singlePointInTimeSegment, true);
-        addWormPathSegment(gameState, id, segmentAfter, true);
-    } else {
-        segment.metaData.push(metaData);
-    }
+    var clearSegment = trajectoryUtil.createTrajectory({
+        duration: 0,
+        startX: segment.endX,
+        startY: segment.endY,
+        startDirection: segment.endDirection,
+        speed: segment.speed,
+        turningVelocity: segment.turningVelocity
+    });
+    clearSegment.type = "clear";
+    clearSegment.startTime = gameState.gameTime;
+    clearSegment.endTime = gameState.gameTime;
+    clearSegment.jump = segment.jump;
+    clearSegment.size = segment.size;
+    clearSegment.playerId = segment.playerId;
+    clearSegment.wormId = segment.wormId;
+    addWormPathSegment(gameState, id, clearSegment);
 }
 
 function createMap({ name, shape, borderWidth=0, blockingShapes=[] }) {
@@ -508,7 +498,7 @@ function createSimpleGameState(options) {
 
 module.exports = {
     addEffect,
-    addWormPathSegmentMetaData,
+    addClearPathSegment,
     addPlayAreaObstacle,
     addPlayAreaShape,
     addPlayer,

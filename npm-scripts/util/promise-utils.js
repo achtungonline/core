@@ -1,4 +1,4 @@
-var Promise = require('promise');
+var Promise = require("promise");
 
 function runSerially(fns) {
     return new Promise(function (resolve, reject) {

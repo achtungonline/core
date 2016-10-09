@@ -1,5 +1,5 @@
-const fs = require('fs');
-const PassThrough = require('stream').PassThrough;
+const fs = require("fs");
+const PassThrough = require("stream").PassThrough;
 
 module.exports = function concat(files) {
     var outputStream = new PassThrough();
@@ -18,10 +18,10 @@ function readFile(files, outputStream) {
         const file = files.splice(0, 1)[0]; // Remove the first file from the beginning of the array.
         const stream = fs.createReadStream(file);
 
-        outputStream.write('\n\n// ' + file + '\n\n');
+        outputStream.write("\n\n// " + file + "\n\n");
 
         stream.pipe(outputStream, {end: false});
-        stream.on('end', () => {
+        stream.on("end", () => {
             readFile(files, outputStream);
         });
     }

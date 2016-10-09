@@ -1,82 +1,82 @@
-var Promise = require('promise');
-var promiseUtils = require('./promise-utils');
+var Promise = require("promise");
+var promiseUtils = require("./promise-utils");
 
 const runSerially = promiseUtils.runSerially;
 
-describe('promiseUtils', () => {
-    describe('runSerially', () => {
-        it('should resolve on empty array', function (done) {
+describe("promiseUtils", () => {
+    describe("runSerially", () => {
+        it("should resolve on empty array", function (done) {
             runSerially([]).then(done);
         });
 
-        it('should run promise fns serially', function (done) {
-            var output = '';
+        it("should run promise fns serially", function (done) {
+            var output = "";
 
             function a() {
                 return new Promise((resolve, reject) => {
-                    output += 'a';
+                    output += "a";
                     resolve();
                 });
             }
 
             function b() {
                 return new Promise((resolve, reject) => {
-                    output += 'b';
+                    output += "b";
                     resolve();
                 });
             }
 
             runSerially([a, a, a, b, a, b, b]).then(() => {
-                expect(output).toEqual('aaababb');
+                expect(output).toEqual("aaababb");
                 done();
             });
         });
 
-        it('should exit on reject', function (done) {
-            var output = '';
+        it("should exit on reject", function (done) {
+            var output = "";
 
             function a() {
                 return new Promise((resolve, reject) => {
-                    output += 'a';
+                    output += "a";
                     resolve();
                 });
             }
 
             function b() {
                 return new Promise((resolve, reject) => {
-                    output += 'b';
+                    output += "b";
                     reject();
                 });
             }
 
             runSerially([a, a, a, b, a, b, b]).then(null, () => {
-                expect(output).toEqual('aaab');
+                expect(output).toEqual("aaab");
                 done();
             });
         });
 
-        it('should exit on reject with err', function (done) {
-            var output = '';
+        it("should exit on reject with err", function (done) {
+            var output = "";
 
             function err() {
                 return new Promise((resolve, reject) => {
-                    reject('err');
+                    reject("err");
                 });
             }
 
             runSerially([err]).then(null, (err) => {
-                expect(err).toEqual('err');
+                expect(err).toEqual("err");
                 done();
             });
         });
 
-        it('should run promise fns serially also when async', function (done) {
-            var output = '';
+        it("should run promise fns serially also when async", function (done) {
+            var output = "";
 
             function a() {
                 return new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        output += 'a';
+                        output += "a";
                         resolve();
                     }, 0);
                 });
@@ -84,13 +84,13 @@ describe('promiseUtils', () => {
 
             function b() {
                 return new Promise((resolve, reject) => {
-                    output += 'b';
+                    output += "b";
                     resolve();
                 });
             }
 
             runSerially([a, a, a, b, a, b, b]).then(() => {
-                expect(output).toEqual('aaababb');
+                expect(output).toEqual("aaababb");
                 done();
             });
         });

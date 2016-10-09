@@ -20,9 +20,7 @@ function activate({ gameState, wormId, affects}) {
 
     forEach(gameState.wormPathSegments, function (wormPathSegment, id) {
         if (shouldGetAffected(wormPathSegment[0].playerId)) {
-            gsf.addWormPathSegmentMetaData(gameState, id, {
-                type: TYPE
-            }, true);
+            gsf.addClearPathSegment(gameState, id);
         }
     });
 }
