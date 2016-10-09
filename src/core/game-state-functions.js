@@ -76,12 +76,7 @@ function addWormPathSegment(gameState, id, segment) {
     if (!segments) {
         segments = gameState.wormPathSegments[id] = [];
     }
-    if (segment.index !== undefined) {
-        // This segment has been added to the gameState already. Probably sent from server to client //TODO: Vill vi verkligen ha sånt här? Kanske kan få bort detta från core och försöka minimera server-relaterade saker.
-        segments[segment.index] = segment;
-    } else {
         if (segments.length === 0) {
-            segment.index = 0;
             segments.push(segment);
         } else {
             var lastSegment = segments[segments.length - 1];
@@ -107,11 +102,10 @@ function addWormPathSegment(gameState, id, segment) {
                 }
             } else {
                 // Start new segment
-                segment.index = segments.length;
                 segments.push(segment);
             }
         }
-    }
+    //}
 }
 
 function addClearPathSegment(gameState, id) {
