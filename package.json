@@ -35,6 +35,7 @@
     "jasmine-node": "^1.14.5",
     "karma": "^1.1.1",
     "karma-jasmine": "^1.0.2",
+    "karma-jasmine-diff-reporter": "^0.6.2",
     "karma-mocha-reporter": "^2.0.0",
     "karma-phantomjs-launcher": "^1.0.1",
     "mkdirp": "^0.5.1",

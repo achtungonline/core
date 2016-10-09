@@ -16,7 +16,22 @@ module.exports = function testRunnerMaker() {
                     files: files,
                     singleRun: true,
                     logLevel: 'WARN',
-                    reporters: ['mocha'],
+                    reporters: ['jasmine-diff', 'mocha'],
+                    jasmineDiffReporter: {
+                        pretty: true,       // 2 spaces by default for one indent level
+                        // pretty: '   '    // string - string to be used for one indent level
+                        // pretty: 4        // number - number of spaces for one indent level
+
+                        matchers: {
+                            toEqual: {
+                                pretty: true   // disable pretty print for toEqual
+                            },
+
+                            toHaveBeenCalledWith: {
+                                pretty: '___'   // use 3 underscores for one indent level
+                            }
+                        }
+                    },
                     colors: chalk.supportsColor
                 }, function (exitCode) {
                     if (exitCode === 0) {

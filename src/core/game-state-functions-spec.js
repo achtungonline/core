@@ -85,7 +85,7 @@ describe("game-state-functions", function () {
                         arcAngleDiff: 2.7060000000000013,
                         arcEndAngle: 13.469175412460098,
                         endX: 479.59384931496,
-                        endY: 162.41934809129864,
+                        endY: 162.4193480912986,
                         endDirection: 15.039971739254995,
                         startTime: 26.76199999999935,
                         endTime: 27.663999999999312,
