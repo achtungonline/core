@@ -4,14 +4,33 @@ require("phantomjs-polyfill-find/find-polyfill.js");
 import objectCleaner from './util/object-cleaner.js';
 
 describe("game-state-functions", function () {
-    it("getPlayer", function () {
-        expect(() => gsf.getPlayer(gsf.createGameState({}))).toThrow();
-        expect(() => gsf.getPlayer(gsf.createGameState({}), "0")).toThrow();
 
-        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}]}), "0")).toEqual({id: "0"});
-        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], worms: [{id: "1", playerId: "0"}]}), "1")).toEqual({id: "0"});
-        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], worms: [{id: "1", playerId: "0"}]}), "1")).toEqual({id: "0"});
-        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], wormPathSegments: {"1": [{playerId: "0"}]}}), "1")).toEqual({id: "0"});
+    it("addWormPathSegment", function () {
+        var gameState = gsf.createSimpleGameState({wormPathSegments: {}});
+        gsf.addWormPathSegment(gameState, "1", {wormId: "2", type: "arc", duration: 1});
+        expect(objectCleaner(gameState)).toEqual({
+            wormPathSegments: {
+                "1": [
+                    {wormId: "2", type: "arc", duration: 1}]
+            }
+        });
+
+        gsf.addWormPathSegment(gameState, '1', {wormId: "2", type: "arc", duration: 2});
+        expect(objectCleaner(gameState)).toEqual({
+            wormPathSegments: {
+                "1": [
+                    {wormId: "2", type: "arc", duration: 3}]
+            }
+        });
+
+        gsf.addWormPathSegment(gameState, '1', {wormId: "2", type: "straight", duration: 2});
+        expect(objectCleaner(gameState)).toEqual({
+            wormPathSegments: {
+                "1": [
+                    {wormId: "2", type: "arc", duration: 3},
+                    {wormId: "2", type: "straight", duration: 2}]
+            }
+        });
     });
 
     it("addClearPathSegment", function () {
@@ -46,5 +65,15 @@ describe("game-state-functions", function () {
                 ]
             }
         });
+    });
+
+    it("getPlayer", function () {
+        expect(() => gsf.getPlayer(gsf.createGameState({}))).toThrow();
+        expect(() => gsf.getPlayer(gsf.createGameState({}), "0")).toThrow();
+
+        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}]}), "0")).toEqual({id: "0"});
+        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], worms: [{id: "1", playerId: "0"}]}), "1")).toEqual({id: "0"});
+        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], worms: [{id: "1", playerId: "0"}]}), "1")).toEqual({id: "0"});
+        expect(gsf.getPlayer(gsf.createGameState({players: [{id: "0"}], wormPathSegments: {"1": [{playerId: "0"}]}}), "1")).toEqual({id: "0"});
     });
 });

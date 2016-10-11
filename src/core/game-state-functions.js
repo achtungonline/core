@@ -49,8 +49,8 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function addWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
-    var worm = {
+function createWorm({id, playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
+    return {
         id,
         playerId,
         centerX,
@@ -67,6 +67,10 @@ function addWorm(gameState, {id=getNextId(gameState, "worm"), playerId, directio
         distanceTravelled,
         distanceTravelledFromCells
     };
+}
+
+function addWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
+    var worm = createWorm({id, playerId, direction, centerX, centerY, radius, speed, turningSpeed, distanceTravelled, distanceTravelledFromCells})
     gameState.worms.push(worm);
     return worm;
 }
@@ -76,35 +80,35 @@ function addWormPathSegment(gameState, id, segment) {
     if (!segments) {
         segments = gameState.wormPathSegments[id] = [];
     }
-        if (segments.length === 0) {
-            segments.push(segment);
-        } else {
-            var lastSegment = segments[segments.length - 1];
-            if (segment.type === lastSegment.type &&
-                segment.speed === lastSegment.speed &&
-                segment.turningVelocity === lastSegment.turningVelocity &&
-                segment.size === lastSegment.size &&
-                segment.playerId === lastSegment.playerId &&
-                segment.jump === lastSegment.jump &&
-                segment.startDirection === lastSegment.endDirection &&
-                segment.startX === lastSegment.endX &&
-                segment.startY === lastSegment.endY) {
+    if (segments.length === 0) {
+        segments.push(segment);
+    } else {
+        var lastSegment = segments[segments.length - 1];
+        if (segment.type === lastSegment.type &&
+            segment.speed === lastSegment.speed &&
+            segment.turningVelocity === lastSegment.turningVelocity &&
+            segment.size === lastSegment.size &&
+            segment.playerId === lastSegment.playerId &&
+            segment.jump === lastSegment.jump &&
+            segment.startDirection === lastSegment.endDirection &&
+            segment.startX === lastSegment.endX &&
+            segment.startY === lastSegment.endY) {
 
-                // Continue last segment
-                lastSegment.duration += segment.duration;
-                lastSegment.endTime += segment.duration;
-                lastSegment.endX = segment.endX;
-                lastSegment.endY = segment.endY;
-                lastSegment.endDirection = segment.endDirection;
-                if (segment.type === "arc") {
-                    lastSegment.arcEndAngle = segment.arcEndAngle;
-                    lastSegment.arcAngleDiff += segment.arcAngleDiff;
-                }
-            } else {
-                // Start new segment
-                segments.push(segment);
+            // Continue last segment
+            lastSegment.duration += segment.duration;
+            lastSegment.endTime += segment.duration;
+            lastSegment.endX = segment.endX;
+            lastSegment.endY = segment.endY;
+            lastSegment.endDirection = segment.endDirection;
+            if (segment.type === "arc") {
+                lastSegment.arcEndAngle = segment.arcEndAngle;
+                lastSegment.arcAngleDiff += segment.arcAngleDiff;
             }
+        } else {
+            // Start new segment
+            segments.push(segment);
         }
+    }
     //}
 }
 
@@ -506,6 +510,7 @@ module.exports = {
     createMapCircle,
     createMapRectangle,
     createMapSquare,
+    createWorm,
     extractReplayGameState,
     forEachAlivePlayer,
     forEachAliveWorm,
