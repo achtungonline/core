@@ -34,15 +34,13 @@ module.exports = function GameFactory() {
                 counter++;
             }
 
-            gsf.addWorm(gameState, {
+            gsf.addWorm(gameState, gsf.createWorm(gameState, {
                 playerId: player.id,
                 direction: random.random(gameState) * Math.PI * 2,
                 centerX: position.x,
                 centerY: position.y,
                 radius: constants.WORM_RADIUS
-            });
-
-
+            }));
         });
 
         var aiHandler = AIHandler();

@@ -5,64 +5,125 @@ import objectCleaner from './util/object-cleaner.js';
 
 describe("game-state-functions", function () {
 
-    it("addWormPathSegment", function () {
-        var gameState = gsf.createSimpleGameState({wormPathSegments: {}});
-        gsf.addWormPathSegment(gameState, "1", {wormId: "2", type: "arc", duration: 1});
-        expect(objectCleaner(gameState)).toEqual({
-            wormPathSegments: {
-                "1": [
-                    {wormId: "2", type: "arc", duration: 1}]
-            }
+    describe("createWormPathSegment", function () {
+        it("basic test", function () {
+            expect(gsf.createWormPathSegment({
+                gameTime: 1,
+                players: [{id: "p1"}],
+                worms: [{id: "w1", playerId: "p1"}],
+                wormPathSegments: {"p1_w1": [{}]}
+            }, "w1", {duration: 1, centerX: 10, centerY: 20, direction: 2, speed: 60, turningVelocity: 0, jump: false, size: 2})).toEqual(
+                {
+                    duration: 1,
+                    startX: 10,
+                    startY: 20,
+                    endX: -14.968810192828546,
+                    endY: 74.5578456095409,
+                    startDirection: 2,
+                    endDirection: 2,
+                    speed: 60,
+                    turningVelocity: 0,
+                    type: "straight",
+                    startTime: 0,
+                    endTime: 1,
+                    jump: false,
+                    size: 2,
+                    playerId: "p1",
+                    wormId: "w1",
+                    id: "p1_w1"
+                }
+            );
         });
 
-        gsf.addWormPathSegment(gameState, '1', {wormId: "2", type: "arc", duration: 2});
-        expect(objectCleaner(gameState)).toEqual({
-            wormPathSegments: {
-                "1": [
-                    {wormId: "2", type: "arc", duration: 3}]
-            }
+        it("Test with duration 0", function () {
+            expect(gsf.createWormPathSegment({
+                gameTime: 1,
+                players: [{id: "p1"}],
+                worms: [{id: "w1", playerId: "p1"}],
+                wormPathSegments: {"p1_w1": [{}]}
+            }, "w1", {duration: 0, centerX: 10, centerY: 20, direction: 2, speed: 60, turningVelocity: 0, jump: false, size: 2})).toEqual(
+                {
+                    duration: 0,
+                    startX: 10,
+                    startY: 20,
+                    endX: 10,
+                    endY: 20,
+                    startDirection: 2,
+                    endDirection: 2,
+                    speed: 60,
+                    turningVelocity: 0,
+                    type: "straight",
+                    startTime: 1,
+                    endTime: 1,
+                    jump: false,
+                    size: 2,
+                    playerId: "p1",
+                    wormId: "w1",
+                    id: "p1_w1"
+                }
+            );
         });
 
-        gsf.addWormPathSegment(gameState, '1', {wormId: "2", type: "straight", duration: 2});
-        expect(objectCleaner(gameState)).toEqual({
-            wormPathSegments: {
-                "1": [
-                    {wormId: "2", type: "arc", duration: 3},
-                    {wormId: "2", type: "straight", duration: 2}]
-            }
+        it("Test without parameters", function () {
+            expect(gsf.createWormPathSegment({
+                gameTime: 1,
+                players: [{id: "p1"}],
+                worms: [{id: "w1", playerId: "p1"}],
+                wormPathSegments: {"p1_w1": [{endX: 10, endY: 20, endDirection: 50, speed: 60, jump: false, turningVelocity: 0, size: 2}]}
+            }, "w1")).toEqual(
+                {
+                    duration: 0,
+                    startX: 10,
+                    startY: 20,
+                    endX: 10,
+                    endY: 20,
+                    startDirection: 50,
+                    endDirection: 50,
+                    speed: 60,
+                    turningVelocity: 0,
+                    type: "straight",
+                    startTime: 1,
+                    endTime: 1,
+                    jump: false,
+                    size: 2,
+                    playerId: "p1",
+                    wormId: "w1",
+                    id: "p1_w1"
+                }
+            );
         });
     });
 
-    it("addClearPathSegment", function () {
-        var gameState = gsf.createSimpleGameState({
-            gameTime: 200,
+    it("getLatestWormPathSegment", function () {
+        expect(gsf.getLatestWormPathSegment({wormPathSegments: {"1": []}}, "1")).toEqual(null);
+        expect(gsf.getLatestWormPathSegment({wormPathSegments: {}}, "1")).toEqual(null);
+        expect(gsf.getLatestWormPathSegment({wormPathSegments: {"1": [{id: "1"}, {id: "1", someVal: "someVal"}]}}, "1")).toEqual({id: "1", someVal: "someVal"});
+    });
+
+    it("addWormPathSegment", function () {
+        var gameState = {wormPathSegments: {}};
+        gsf.addWormPathSegment(gameState, {id: "1", wormId: "2", type: "arc", duration: 1});
+        expect(objectCleaner(gameState)).toEqual({
             wormPathSegments: {
-                0: [
-                    {
-                        duration: 0.9020000000000006,
-                        startTime: 200,
-                        type: 'arc'
-                    }]
+                "1": [
+                    {id: "1", wormId: "2", type: "arc", duration: 1}]
             }
         });
 
-        gsf.addClearPathSegment(gameState, 0);
+        gsf.addWormPathSegment(gameState, {id: "1", wormId: "2", type: "arc", duration: 2});
         expect(objectCleaner(gameState)).toEqual({
-            gameTime: 200,
             wormPathSegments: {
-                0: [
-                    {
-                        duration: 0.9020000000000006,
-                        startTime: 200,
-                        type: 'arc'
-                    },
-                    {
-                        duration: 0,
-                        startTime: 200,
-                        endTime: 200,
-                        type: 'clear'
-                    }
-                ]
+                "1": [
+                    {id: "1", wormId: "2", type: "arc", duration: 3}]
+            }
+        });
+
+        gsf.addWormPathSegment(gameState, {id: "1", wormId: "2", type: "straight", duration: 2});
+        expect(objectCleaner(gameState)).toEqual({
+            wormPathSegments: {
+                "1": [
+                    {id: "1", wormId: "2", type: "arc", duration: 3},
+                    {id: "1", wormId: "2", type: "straight", duration: 2}]
             }
         });
     });

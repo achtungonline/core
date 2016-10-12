@@ -91,6 +91,7 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
         wallHackSegments.forEach(function (segment) {
             if (shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size})) {
                 var segmentId = worm.playerId + '_' + wormId + "#" + secondaryId;
+                segment.id = segmentId;
                 secondaryId++;
 
                 //  TODO: Will get removed when we no longer have collision detection based on playArea
@@ -100,7 +101,7 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
                         worm.distanceTravelledFromCells[cell.index] = worm.distanceTravelled;
                     });
                 }
-                gsf.addWormPathSegment(gameState, segmentId, segment);
+                gsf.addWormPathSegment(gameState, segment);
             }
         });
 

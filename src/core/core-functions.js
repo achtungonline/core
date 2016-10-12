@@ -17,7 +17,7 @@ var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
 var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
 var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
 var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
-var clearEffectDefinition = require("./power-up/effect-definitions/clear.js");
+import * as clearEffectDefinition from "./power-up/effect-definitions/clear.js";
 var superJumpEffectDefinition = require("./power-up/effect-definitions/super-jump.js");
 var tronTurnEffectDefinition = require("./power-up/effect-definitions/tron-turn.js");
 var twinEffectDefinition = require("./power-up/effect-definitions/twin.js");
@@ -138,7 +138,7 @@ function killPlayer(gameState, playerId) {
 function killWorm(gameState, wormId) {
     var worm = gsf.getWorm(gameState, wormId);
     worm.alive = false;
-    addWormPathSegment(gameState, createWormPathSegment(gameState, wormId, {duration: 0, type: "worm_died"}));
+    addWormPathSegment(gameState, createWormPathSegmentWormDied(gameState, wormId));
 
     if (gsf.getAliveWorms(gameState, worm.playerId).length === 0) {
         killPlayer(gameState, worm.playerId);
@@ -215,38 +215,27 @@ function updateCollision(gameState) {
     });
 }
 
-function createWormPathSegment(gameState, wormId, {duration, type}) {
+function createWormPathSegment(gameState, wormId, {duration}) {
     var worm = gsf.getWorm(gameState, wormId);
     var direction = getWormDirection(gameState, wormId);
-    var radius = getWormRadius(gameState, wormId);
+    var size = getWormRadius(gameState, wormId);
     var turningVelocity = getWormTurningVelocity(gameState, wormId);
     var jump = isWormJumping(gameState, wormId);
-
     var speed = gsf.isInStartPhase(gameState) ? 0 : getWormSpeed(gameState, wormId);
-    var pathSegment = trajectoryUtil.createTrajectory({
-        duration: duration,
-        startX: worm.centerX,
-        startY: worm.centerY,
-        startDirection: direction,
-        speed,
-        turningVelocity
-    });
 
-    if(type) { //Otherwise we got the type from createTrajectory
-        pathSegment.type = type;
-    }
-    pathSegment.startTime = gameState.gameTime - duration;
-    pathSegment.endTime = gameState.gameTime;
-    pathSegment.jump = jump;
-    pathSegment.size = radius;
-    pathSegment.playerId = worm.playerId;
-    pathSegment.wormId = worm.id;
-    pathSegment.id = worm.playerId + "_" + wormId;
-    return pathSegment;
+    return gsf.createWormPathSegment(gameState, wormId, {duration, centerX: worm.centerX, centerY: worm.centerY, direction, speed, turningVelocity, jump, size});
+}
+
+
+
+function createWormPathSegmentWormDied(gameState, wormId) {
+    var wps = createWormPathSegment(gameState, wormId, {duration: 0});
+    wps.type = "worm_died";
+    return wps;
 }
 
 function addWormPathSegment(gameState, wormPathSegment) {
-    gsf.addWormPathSegment(gameState, wormPathSegment.id, wormPathSegment);
+    gsf.addWormPathSegment(gameState, wormPathSegment);
 
     if (gsf.hasWormEffect(gameState, wormPathSegment.wormId, "wallHack")) {
         wallHackEffectDefinition.updateWorm(gameState, wormPathSegment.duration, wormPathSegment.wormId, wormPathSegment);
@@ -390,6 +379,7 @@ function updateWormJumps(gameState, deltaTime) {
 module.exports = {
     activatePowerUp,
     createWormPathSegment,
+    createWormPathSegmentWormDied,
     getRandomPositionInsidePlayableArea,
     getWormDirection,
     getWormRadius,

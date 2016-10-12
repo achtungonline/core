@@ -49,7 +49,7 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function createWorm({id, playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
+function createWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
     return {
         id,
         playerId,
@@ -69,16 +69,17 @@ function createWorm({id, playerId, direction=0, centerX, centerY, radius=constan
     };
 }
 
-function addWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
-    var worm = createWorm({id, playerId, direction, centerX, centerY, radius, speed, turningSpeed, distanceTravelled, distanceTravelledFromCells})
+function addWorm(gameState, worm) {
     gameState.worms.push(worm);
+    var wormPathSegment = createWormPathSegment(gameState, worm.id, {duration: 0, centerX: worm.centerX, centerY: worm.centerY, direction: worm.direction, speed: worm.speed, turningVelocity: 0, jump: false, size: worm.radius});
+    addWormPathSegment(gameState, wormPathSegment);
     return worm;
 }
 
-function addWormPathSegment(gameState, id, segment) {
-    var segments = gameState.wormPathSegments[id];
+function addWormPathSegment(gameState, segment) {
+    var segments = gameState.wormPathSegments[segment.id];
     if (!segments) {
-        segments = gameState.wormPathSegments[id] = [];
+        segments = gameState.wormPathSegments[segment.id] = [];
     }
     if (segments.length === 0) {
         segments.push(segment);
@@ -109,27 +110,28 @@ function addWormPathSegment(gameState, id, segment) {
             segments.push(segment);
         }
     }
-    //}
 }
 
-function addClearPathSegment(gameState, id) {
-    var segment = getLatestWormPathSegment(gameState, id);
-    var clearSegment = trajectoryUtil.createTrajectory({
-        duration: 0,
-        startX: segment.endX,
-        startY: segment.endY,
-        startDirection: segment.endDirection,
-        speed: segment.speed,
-        turningVelocity: segment.turningVelocity
+function createWormPathSegment(gameState, wormId, {duration = 0, centerX, centerY, direction, speed, turningVelocity, jump, size} = {}) {
+    var playerId = getPlayer(gameState, wormId).id;
+    var segmentId = playerId + "_" + wormId;
+    var latestWormPathSegment = getLatestWormPathSegment(gameState, segmentId);
+    var pathSegment = trajectoryUtil.createTrajectory({
+        duration: duration,
+        startX: centerX !== undefined ? centerX : latestWormPathSegment.endX,
+        startY: centerY !== undefined ? centerY : latestWormPathSegment.endY,
+        startDirection: direction !== undefined ? direction : latestWormPathSegment.endDirection,
+        speed: speed !== undefined ? speed : latestWormPathSegment.speed,
+        turningVelocity: turningVelocity !== undefined ? turningVelocity : latestWormPathSegment.turningVelocity
     });
-    clearSegment.type = "clear";
-    clearSegment.startTime = gameState.gameTime;
-    clearSegment.endTime = gameState.gameTime;
-    clearSegment.jump = segment.jump;
-    clearSegment.size = segment.size;
-    clearSegment.playerId = segment.playerId;
-    clearSegment.wormId = segment.wormId;
-    addWormPathSegment(gameState, id, clearSegment);
+    pathSegment.startTime = gameState.gameTime - duration;
+    pathSegment.endTime = gameState.gameTime;
+    pathSegment.jump = jump !== undefined ? jump : latestWormPathSegment.jump;
+    pathSegment.size = size !== undefined ? size : latestWormPathSegment.size;
+    pathSegment.playerId = playerId;
+    pathSegment.wormId = wormId;
+    pathSegment.id = segmentId;
+    return pathSegment;
 }
 
 function createMap({ name, shape, borderWidth=0, blockingShapes=[] }) {
@@ -214,7 +216,11 @@ function getAliveWorms(gameState, playerId) {
 }
 
 function getLatestWormPathSegment(gameState, segmentId) {
-    return gameState.wormPathSegments[segmentId][gameState.wormPathSegments[segmentId].length - 1];
+    var segments = gameState.wormPathSegments[segmentId];
+    if(!segments || segments.length === 0) {
+        return null
+    }
+    return gameState.wormPathSegments[segmentId][segments.length - 1];
 }
 
 function getEffect(gameState, effectId) {
@@ -385,7 +391,7 @@ function createGameState({
         return playArea;
     }
 
-    return createSimpleGameState({
+    return {
         players,
         //  [{
         //      id,
@@ -481,22 +487,11 @@ function createGameState({
         startPhaseTimer, // Time left until start phase ends
         seed,
         nextId
-    })
-}
-
-function createSimpleGameState(options) {
-    var gameState = {};
-    forEach(options, function (value, key) {
-        if (value !== null && value !== undefined) {
-            gameState[key] = value;
-        }
-    });
-    return gameState;
+    }
 }
 
 module.exports = {
     addEffect,
-    addClearPathSegment,
     addPlayAreaObstacle,
     addPlayAreaShape,
     addPlayer,
@@ -504,8 +499,8 @@ module.exports = {
     addPowerUp,
     addWorm,
     addWormPathSegment,
+    createWormPathSegment,
     createGameState,
-    createSimpleGameState,
     createMap,
     createMapCircle,
     createMapRectangle,
