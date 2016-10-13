@@ -62,7 +62,7 @@
     ]
   },
   "scripts": {
-    "watch": "./npm-scripts/bin/cmd.js 'watch'",
-    "test": "./npm-scripts/bin/cmd.js 'test'"
+    "watch": "node npm-scripts/bin/cmd.js watch",
+    "test": "node npm-scripts/bin/cmd.js test"
   }
 }
