@@ -1,5 +1,4 @@
-var random = require("./random.js");
-var timeBasedChance = module.exports = {};
+import * as random from "./random.js";
 
 /**
  * Uses a time based chance calculator and at each call to update, there is a chance that that the given callback will be triggered.
@@ -7,7 +6,7 @@ var timeBasedChance = module.exports = {};
  *
  * @param timeBasedChanceCalculator
  */
-timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBasedChanceCalculator) {
+function TimeBasedChanceTrigger(timeBasedChanceCalculator) {
 
     function update(gameState, deltaTime, callback) {
 
@@ -25,7 +24,7 @@ timeBasedChance.TimeBasedChanceTrigger = function TimeBasedChanceTrigger(timeBas
     };
 };
 
-timeBasedChance.calculators = {};
+var calculators = {};
 
 /**
  * Exponential and uses pow on doubles (expensive).
@@ -33,7 +32,7 @@ timeBasedChance.calculators = {};
  * 1 second passed = baseChance. When time goes to infinity, chance goes towards 100%.
  * (1 - (1 - baseChance)^time) = chance
  */
-timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function ExpoTimeBaseChanceCalculator(baseChance) {
+calculators.ExpoTimeBasedChanceCalculator = function ExpoTimeBaseChanceCalculator(baseChance) {
     var currentChance = 0;
 
     function update(deltaTime) {
@@ -60,7 +59,7 @@ timeBasedChance.calculators.ExpoTimeBasedChanceCalculator = function ExpoTimeBas
  * 1 second passed = baseChance. When 1/baseChance time has passed, chance becomes 100%
  * (time * baseChance)  = chance
  */
-timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTimeBasedChanceCalculator(baseChance) {
+calculators.LinearTimeBasedChanceCalculator = function LinearTimeBasedChanceCalculator(baseChance) {
     var currentChance;
     var totalTime;
 
@@ -86,3 +85,8 @@ timeBasedChance.calculators.LinearTimeBasedChanceCalculator = function LinearTim
         reset: reset
     };
 };
+
+export {
+    TimeBasedChanceTrigger,
+    calculators
+}

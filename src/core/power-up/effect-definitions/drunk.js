@@ -1,5 +1,5 @@
-var random = require("./../../util/random.js");
-var TYPE = "drunk";
+import * as random from "./../../util/random.js";
+var type = "drunk";
 
 var FADE_DURATION = 0.3;
 
@@ -8,7 +8,7 @@ function activate({ strength, duration, wormId }) {
         timeLeft: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE,
+        type: type,
         speedChange: 0,
         speedChangeTimeLeft: 0,
         prevSpeedChange: 0,
@@ -46,10 +46,10 @@ function changeTurningVelocity(gameState, effect, turningVelocity) {
     return turningVelocity + effect.strength * effect.turningVelocityChange;
 }
 
-module.exports = {
-    type: TYPE,
-    activate: activate,
-    update: update,
-    changeSpeed: changeSpeed,
-    changeTurningVelocity: changeTurningVelocity
+export {
+    type,
+    activate,
+    update,
+    changeSpeed,
+    changeTurningVelocity
 };

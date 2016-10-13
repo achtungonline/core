@@ -1,4 +1,4 @@
-var shapeFactory = require("./shape-factory.js");
+import * as shapeFactory from "./shape-factory.js";
 
 var setSizeFunctions = {};
 setSizeFunctions["circle"] = function setCircleSize(circle, newDiameter) {
@@ -50,7 +50,7 @@ function setSize(shape, boundingBoxWidth, boundingBoxHeight) {
     return changeSizeFunction(shape, boundingBoxWidth, boundingBoxHeight);
 }
 
-module.exports = {
+export {
     changeSize,
     move,
     setPosition,

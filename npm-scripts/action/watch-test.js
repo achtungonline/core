@@ -20,7 +20,7 @@ module.exports = function build() {
 
     function lint() {
         return new Promise((resolve) => {
-            linter.lint(["*.js", "js/**/*.js", "npm-scripts/**/*.js"]).then(resolve, (err) => {
+            linter.lint(["*.js", "src/**/*.js"]).then(resolve, (err) => {
                 console.log("lint reject");
                 handleError(err);
                 resolve();

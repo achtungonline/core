@@ -1,8 +1,8 @@
-var GameFactory = require("../game-factory.js");
-var gameStateFunctions = require("./game-state-functions.js");
-var scoreUtil = require("./score/score-util.js");
+import GameFactory from "../game-factory.js";
+import * as gameStateFunctions from "./game-state-functions.js";
+import * as scoreUtil from "./score/score-util.js";
 
-module.exports = function Match({ matchConfig }) {
+export default function Match({ matchConfig }) {
     var gameFactory = GameFactory();
 
     var matchState = {

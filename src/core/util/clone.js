@@ -2,7 +2,7 @@ function isPrimitive(object) {
     return typeof object !== 'object' ||  object === null || object === undefined
 }
 
-module.exports = function clone(source) {
+export default function clone(source) {
 
     if (Array.isArray(source)) {
         var clonedArray = [];

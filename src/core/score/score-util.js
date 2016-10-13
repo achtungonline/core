@@ -1,4 +1,4 @@
-var forEach = require("./../util/for-each.js");
+import forEach from "./../util/for-each.js";
 
 function combineScores(scores1, scores2) {
     var res = {};
@@ -56,7 +56,7 @@ function createSortedList(scores) {
     return res;
 }
 
-module.exports = {
+export {
     combineScores,
     calculateRoundScore,
     getStartScore,

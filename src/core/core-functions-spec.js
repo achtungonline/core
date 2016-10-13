@@ -1,5 +1,5 @@
-var gsf = require("./game-state-functions.js");
-var cf = require("./core-functions.js");
+import * as gsf from "./game-state-functions.js";
+import * as cf from "./core-functions.js";
 
 require("phantomjs-polyfill-find/find-polyfill.js");
 

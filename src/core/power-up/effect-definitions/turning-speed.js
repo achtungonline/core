@@ -1,11 +1,11 @@
-var TYPE = "turningSpeed";
+var type = "turningSpeed";
 
 function activate({ strength, duration, wormId }) {
     return {
         timeLeft: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE
+        type: type
     };
 }
 
@@ -13,8 +13,8 @@ function changeTurningSpeed(gameState, effect, turningSpeed) {
     return turningSpeed * effect.strength;
 }
 
-module.exports = {
-    type: TYPE,
-    activate: activate,
-    changeTurningSpeed: changeTurningSpeed
+export {
+    type,
+    activate,
+    changeTurningSpeed
 };

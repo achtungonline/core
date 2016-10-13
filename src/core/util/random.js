@@ -1,5 +1,5 @@
-var forEach = require("./for-each.js");
-var MersenneTwister = require('mersennetwister');
+import forEach from "./for-each.js";
+import MersenneTwister from 'mersennetwister';
 
 function toSignedInt32(x) {
     return x | 0;
@@ -75,13 +75,13 @@ function randomPermutation(gameState, n, avoidFixedPoints) {
 
 }
 
-module.exports = {
-    generateSeed: generateSeed,
-    random: random,
-    randInt: randInt,
-    randomElementIndex: randomElementIndex,
-    randomElement: randomElement,
-    randomObjectProperty: randomObjectProperty,
-    randomObjectValue: randomObjectValue,
-    randomPermutation: randomPermutation
+export {
+    generateSeed,
+    random,
+    randInt,
+    randomElementIndex,
+    randomElement,
+    randomObjectProperty,
+    randomObjectValue,
+    randomPermutation
 };

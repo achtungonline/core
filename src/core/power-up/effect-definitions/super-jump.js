@@ -1,4 +1,4 @@
-var TYPE = "superJump";
+var type = "superJump";
 
 function activate({ strength, duration, wormId }) {
     return {
@@ -13,8 +13,8 @@ function changeIsJumping(gameState, effect, wormSpeed) {
     return true;
 }
 
-module.exports = {
-    type: TYPE,
-    activate: activate,
-    changeIsJumping: changeIsJumping
+export {
+    type,
+    activate,
+    changeIsJumping
 };

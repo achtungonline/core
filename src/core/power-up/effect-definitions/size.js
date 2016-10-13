@@ -1,4 +1,4 @@
-var TYPE = "size";
+var type = "size";
 
 var FADE_DURATION = 0.4;
 
@@ -8,7 +8,7 @@ function activate({ strength, duration, wormId }) {
         timeLeft: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE
+        type: type
     };
 }
 
@@ -21,8 +21,8 @@ function changeWormRadius(gameState, effect, wormRadius) {
     }
 }
 
-module.exports = {
-    type: TYPE,
+export {
+    type,
     activate,
     changeWormRadius
 };

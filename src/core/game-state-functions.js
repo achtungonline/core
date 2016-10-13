@@ -1,9 +1,11 @@
-var constants = require("./constants.js");
-var shapeFactory = require("./geometry/shape-factory.js");
-var shapeToGridConverter = require("./geometry/shape-to-grid-converter.js").createShapeToGridConverter();
-var forEach = require("./util/for-each.js");
-var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
-var clone = require("./util/clone.js");
+import * as constants from "./constants.js";
+import * as shapeFactory from "./geometry/shape-factory.js";
+import * as shapeToGridConverterMaker from "./geometry/shape-to-grid-converter.js";
+import forEach from "./util/for-each.js";
+import * as trajectoryUtil from "./geometry/trajectory/trajectory-util.js";
+import clone from "./util/clone.js";
+
+var shapeToGridConverter = shapeToGridConverterMaker.createShapeToGridConverter();
 
 function addEffect(gameState, effect) {
     effect.id = getNextId(gameState, "effect");
@@ -490,7 +492,7 @@ function createGameState({
     }
 }
 
-module.exports = {
+export {
     addEffect,
     addPlayAreaObstacle,
     addPlayAreaShape,

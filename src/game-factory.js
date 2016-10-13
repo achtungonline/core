@@ -1,12 +1,12 @@
-var Game = require("./core/game.js");
-var AIHandler = require("./ai/ai-handler.js");
-var gsf = require("./core/game-state-functions.js");
-var random = require("./core/util/random.js");
-var coreFunctions = require("./core/core-functions.js");
-var constants = require("./core/constants.js");
-var shapeSpatialRelations = require("./core/geometry/shape-spatial-relations.js");
+import Game from "./core/game.js";
+import AIHandler from "./ai/ai-handler.js";
+import * as gsf from "./core/game-state-functions.js";
+import * as random from "./core/util/random.js";
+import * as coreFunctions from "./core/core-functions.js";
+import * as constants from "./core/constants.js";
+import * as shapeSpatialRelations from "./core/geometry/shape-spatial-relations.js";
 
-module.exports = function GameFactory() {
+export default function GameFactory() {
     function create({map, seed, players}) {
         var gameState = gsf.createGameState({map, seed});
 

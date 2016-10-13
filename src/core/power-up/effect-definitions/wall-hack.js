@@ -1,16 +1,16 @@
-var random = require("../../util/random");
-var gsf = require("../../game-state-functions.js");
-var trajectoryUtil = require("../../geometry/trajectory/trajectory-util.js");
-var shapeSpatialRelations = require("../../geometry/shape-spatial-relations.js");
+import * as random from "../../util/random";
+import * as gsf from "../../game-state-functions.js";
+import * as trajectoryUtil from "../../geometry/trajectory/trajectory-util.js";
+import * as shapeSpatialRelations from "../../geometry/shape-spatial-relations.js";
 
-var TYPE = "wallHack";
+var type = "wallHack";
 
 function activate({ strength, duration, wormId }) {
     return {
         timeLeft: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE
+        type: type
     };
 }
 
@@ -117,8 +117,8 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
     }
 }
 
-module.exports = {
-    type: TYPE,
+export {
+    type,
     updateWorm,
     activate
 };

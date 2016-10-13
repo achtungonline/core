@@ -1,7 +1,7 @@
-var gameStateFunctions = require("./game-state-functions.js");
-var coreFunctions = require("./core-functions.js");
+import * as gameStateFunctions from "./game-state-functions.js";
+import * as coreFunctions from "./core-functions.js";
 
-module.exports = function Game(gameState, aiHandler) {
+export default function Game(gameState, aiHandler) {
     function start() {
         gameState.gameActive = true;
     }

@@ -1,4 +1,4 @@
-var trajectoryUtil = require("../geometry/trajectory/trajectory-util.js");
+import * as trajectoryUtil from "../geometry/trajectory/trajectory-util.js";
 
 // TODO Should replace this with some binary format, probably protobuf
 function compressWormSegment(segment) {
@@ -36,7 +36,7 @@ function decompressWormSegment(data) {
     return trajectory;
 }
 
-module.exports = {
+export {
     compressWormSegment,
     decompressWormSegment
 };

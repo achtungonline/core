@@ -62,7 +62,7 @@ function createSquare(size, x, y) {
     return createRectangle(size, size, x, y);
 }
 
-module.exports = {
+export {
     createCircle,
     createRectangle,
     createSquare

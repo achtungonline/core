@@ -1,7 +1,7 @@
-var gameStateFunctions = require("../../game-state-functions.js");
-var random = require("../../util/random");
+import * as gameStateFunctions from "../../game-state-functions.js";
+import * as random from "../../util/random";
 
-var TYPE = "wormSwitch";
+var type = "wormSwitch";
 
 function activate({ gameState }) {
     var aliveWorms = gameStateFunctions.getAliveWorms(gameState);
@@ -26,7 +26,7 @@ function activate({ gameState }) {
     });
 }
 
-module.exports = {
-    type: TYPE,
-    activate: activate
+export {
+    type,
+    activate
 };

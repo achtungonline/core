@@ -1,27 +1,27 @@
-var constants = require("./constants.js");
-var gsf = require("./game-state-functions.js");
-var shapeSpatialRelations = require("./geometry/shape-spatial-relations.js");
-var shapeModifierI = require("./geometry/shape-modifier-immutable.js");
-var random = require("./util/random.js");
-var clone = require("./util/clone.js");
-var forEach = require("./util/for-each.js");
-var trajectoryUtil = require("./geometry/trajectory/trajectory-util.js");
-var ShapeToGridConverter = require("./geometry/shape-to-grid-converter.js");
+import * as constants from "./constants.js";
+import * as gsf from "./game-state-functions.js";
+import * as shapeSpatialRelations from "./geometry/shape-spatial-relations.js";
+import * as shapeModifierI from "./geometry/shape-modifier-immutable.js";
+import * as random from "./util/random.js";
+import clone from "./util/clone.js";
+import forEach from "./util/for-each.js";
+import * as trajectoryUtil from "./geometry/trajectory/trajectory-util.js";
+import * as ShapeToGridConverter from "./geometry/shape-to-grid-converter.js";
 var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
-var timeBasedChance = require("./util/time-based-chance.js");
+import * as timeBasedChance from "./util/time-based-chance.js";
 var powerUpTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
 var jumpTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(constants.JUMP_CHANCE));
 
-var speedEffectDefinition = require("./power-up/effect-definitions/speed.js");
-var sizeEffectDefinition = require("./power-up/effect-definitions/size.js");
-var turningSpeedEffectDefinition = require("./power-up/effect-definitions/turning-speed.js");
-var wormSwitchEffectDefinition = require("./power-up/effect-definitions/worm-switch.js");
-var drunkEffectDefinition = require("./power-up/effect-definitions/drunk.js");
+import * as speedEffectDefinition from "./power-up/effect-definitions/speed.js";
+import * as sizeEffectDefinition from "./power-up/effect-definitions/size.js";
+import * as turningSpeedEffectDefinition from "./power-up/effect-definitions/turning-speed.js";
+import * as wormSwitchEffectDefinition from "./power-up/effect-definitions/worm-switch.js";
+import * as drunkEffectDefinition from "./power-up/effect-definitions/drunk.js";
 import * as clearEffectDefinition from "./power-up/effect-definitions/clear.js";
-var superJumpEffectDefinition = require("./power-up/effect-definitions/super-jump.js");
-var tronTurnEffectDefinition = require("./power-up/effect-definitions/tron-turn.js");
-var twinEffectDefinition = require("./power-up/effect-definitions/twin.js");
-var wallHackEffectDefinition = require("./power-up/effect-definitions/wall-hack.js");
+import * as superJumpEffectDefinition from "./power-up/effect-definitions/super-jump.js";
+import * as tronTurnEffectDefinition from "./power-up/effect-definitions/tron-turn.js";
+import * as twinEffectDefinition from "./power-up/effect-definitions/twin.js";
+import * as wallHackEffectDefinition from "./power-up/effect-definitions/wall-hack.js";
 
 var effectDefinitions = {};
 effectDefinitions[speedEffectDefinition.type] = speedEffectDefinition;
@@ -376,7 +376,7 @@ function updateWormJumps(gameState, deltaTime) {
     });
 }
 
-module.exports = {
+export {
     activatePowerUp,
     createWormPathSegment,
     createWormPathSegmentWormDied,

@@ -1,5 +1,5 @@
-var clear = require("./clear");
-var gsf = require("../../game-state-functions.js");
+import * as clear from "./clear";
+import * as gsf from "../../game-state-functions.js";
 
 describe("effect", function () {
 

@@ -1,18 +1,18 @@
-var gameStateFunctions = require("./../../game-state-functions.js");
-var TYPE = "tronTurn";
+import * as gameStateFunctions from "./../../game-state-functions.js";
+var type = "tronTurn";
 var MIN_REACTION_TIME = 0.1;
 
 function activate({ duration, wormId }) {
     return {
         timeLeft: duration,
         wormId: wormId,
-        type: TYPE
+        type: type
     };
 }
 
 function update(gameState, deltaTime, effect) {
     var player = gameStateFunctions.getPlayer(gameState, effect.wormId);
-    var tronTurnEffects = gameStateFunctions.getWormEffects(gameState, effect.wormId, TYPE);
+    var tronTurnEffects = gameStateFunctions.getWormEffects(gameState, effect.wormId, type);
     if (tronTurnEffects.filter(e => e.timeLeft > effect.timeLeft).length > 0) {
         // Only one tronTurn is allowed to update data, and makes sure all other tronTurn for this player has the same data (for when this timer runs out)
         return;
@@ -58,9 +58,9 @@ function getWormTurningVelocity(gameState, effect, deltaTime) {
     }
 }
 
-module.exports = {
-    type: TYPE,
-    activate: activate,
-    update: update,
-    getWormTurningVelocity: getWormTurningVelocity
+export {
+    type,
+    activate,
+    update,
+    getWormTurningVelocity
 };

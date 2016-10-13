@@ -1,4 +1,4 @@
-var TYPE = "speed";
+var type = "speed";
 
 var FADE_DURATION = 0.4;
 
@@ -8,7 +8,7 @@ function activate({ strength, duration, wormId }) {
         timeLeft: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE
+        type: type
     };
 }
 
@@ -26,8 +26,8 @@ function changeSpeed(gameState, effect, wormSpeed) {
     return wormSpeed * effect.strength;
 }
 
-module.exports = {
-    type: TYPE,
-    activate: activate,
-    changeSpeed: changeSpeed
+export {
+    type,
+    activate,
+    changeSpeed
 };

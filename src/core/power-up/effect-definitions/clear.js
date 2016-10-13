@@ -1,6 +1,6 @@
-var constants = require("../../constants.js");
-var gsf = require("../../game-state-functions.js");
-var forEach = require("../../util/for-each.js");
+import * as constants from "../../constants.js";
+import * as gsf from "../../game-state-functions.js";
+import forEach from "../../util/for-each.js";
 
 var type = "clear";
 

@@ -70,7 +70,7 @@ intersectsFunctions["circle"]["circle"] = function circleCircleIntersection(circ
 
     var maxAllowedDist = circle.radius + otherCircle.radius;
 
-    return spatialRelations.distanceSquared(circle, otherCircle) < maxAllowedDist * maxAllowedDist;
+    return distanceSquared(circle, otherCircle) < maxAllowedDist * maxAllowedDist;
 };
 
 intersectsFunctions["rectangle"]["rectangle"] = function rectangleRectangleIntersection(rectangle, otherRectangle) {
@@ -115,7 +115,7 @@ containmentFunctions["circle"]["circle"] = function circleCircleContainment(oute
 
     var maxAllowedDist = outerCircle.radius - innerCircle.radius;
 
-    return spatialRelations.distanceSquared(outerCircle, innerCircle) < maxAllowedDist * maxAllowedDist;
+    return distanceSquared(outerCircle, innerCircle) < maxAllowedDist * maxAllowedDist;
 };
 
 containmentFunctions["rectangle"]["rectangle"] = function rectangleRectangleContainment(outerRectangle, innerRectangle) {
@@ -138,19 +138,23 @@ containmentFunctions["rectangle"]["circle"] = function rectangleCircleContainmen
     return boundingBoxesContains(outerRectangle, innerCircle);
 };
 
-var spatialRelations = module.exports = {};
-
-spatialRelations.intersects = function intersects(shape, otherShape) {
+function intersects(shape, otherShape) {
     return isRelationTrue(intersectsFunctions, shape, otherShape);
-};
+}
 
-spatialRelations.contains = function contains(outerShape, innerShape) {
+function contains(outerShape, innerShape) {
     return isRelationTrue(containmentFunctions, outerShape, innerShape);
-};
+}
 
-spatialRelations.distanceSquared = function distance(shape, otherShape) {
+function distanceSquared(shape, otherShape) {
     var dist = getXYDist(shape, otherShape);
     return dist.x * dist.x + dist.y * dist.y;
-};
+}
+
+export {
+    intersects,
+    contains,
+    distanceSquared
+}
 
 

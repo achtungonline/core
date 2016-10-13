@@ -1,4 +1,4 @@
-var gsf = require("./game-state-functions.js");
+import * as gsf from "./game-state-functions.js";
 require("phantomjs-polyfill-find/find-polyfill.js");
 
 import objectCleaner from './util/object-cleaner.js';

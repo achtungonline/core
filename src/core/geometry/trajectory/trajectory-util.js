@@ -56,7 +56,7 @@ function createTrajectory({ startX, startY, startDirection, speed, turningVeloci
     return trajectory;
 }
 
-module.exports = {
+export {
     createTrajectory,
     followTrajectory
 };

@@ -1,5 +1,5 @@
-var shapeFactory = require("../shape-factory.js");
-var shapeSpatialRelations = require("../shape-spatial-relations.js");
+import * as shapeFactory from "../shape-factory.js";
+import * as shapeSpatialRelations from "../shape-spatial-relations.js";
 
 describe("Shape spatial relations", function() {
 

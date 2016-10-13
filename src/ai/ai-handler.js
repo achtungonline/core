@@ -1,6 +1,6 @@
-var PathCheckerAIHandler = require("./path-checker-ai-handler.js");
+import PathCheckerAIHandler from "./path-checker-ai-handler.js";
 
-module.exports = function AIHandler() {
+export default function AIHandler() {
     var pathCheckerAiHandler = PathCheckerAIHandler();
 
     function addAIPlayer(player) {

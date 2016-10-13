@@ -1,4 +1,4 @@
-var gridUtils = require("./../util/grid.js");
+import * as gridUtils from "./../util/grid.js";
 
 var convertFunctions = {};
 convertFunctions["rectangle"] = function rectToGrid(rect, grid, roundingMode) {
@@ -56,25 +56,29 @@ function createRoundingMode(roundLeft, roundRight) {
     return {roundLeft: roundLeft, roundRight: roundRight};
 }
 
-var ShapeToGridConverter = module.exports = {};
 
-ShapeToGridConverter.RoundingModes = {};
-ShapeToGridConverter.RoundingModes.ROUND = createRoundingMode(Math.round, Math.round);
-ShapeToGridConverter.RoundingModes.CONTAINMENT = createRoundingMode(Math.ceil, Math.floor);
-ShapeToGridConverter.RoundingModes.INTERSECTION = createRoundingMode(Math.floor, Math.ceil);
+var RoundingModes = {};
+RoundingModes.ROUND = createRoundingMode(Math.round, Math.round);
+RoundingModes.CONTAINMENT = createRoundingMode(Math.ceil, Math.floor);
+RoundingModes.INTERSECTION = createRoundingMode(Math.floor, Math.ceil);
 
-ShapeToGridConverter.createShapeToGridConverter = function createShapeToGridConverter() {
+function createShapeToGridConverter() {
     function convert(shape, grid, roundingMode) {
         var type = shape.type || "worm";
         var convertFunction = convertFunctions[type];
 
-        roundingMode = roundingMode || ShapeToGridConverter.RoundingModes.ROUND;
+        roundingMode = roundingMode || RoundingModes.ROUND;
 
-        if(shape)
-        return convertFunction(shape, grid, roundingMode);
+        if (shape)
+            return convertFunction(shape, grid, roundingMode);
     }
 
     return {
         convert: convert
     };
-};
+}
+
+export {
+    RoundingModes,
+    createShapeToGridConverter
+}

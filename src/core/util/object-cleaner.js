@@ -6,7 +6,7 @@ function isToBeCleaned(object) {
     return object === undefined || object === null || (typeof object === 'number' && isNaN(object));
 }
 
-module.exports = function objectCleaner(source) {
+export default function objectCleaner(source) {
     if (Array.isArray(source)) {
         var clonedArray = [];
         source.forEach(function (item) {

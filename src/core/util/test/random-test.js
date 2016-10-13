@@ -1,4 +1,4 @@
-var Random = require("../random.js");
+import * as Random from "../random.js";
 
 describe("Random", function() {
 

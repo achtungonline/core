@@ -1,8 +1,8 @@
-var constants = require("./../../constants.js");
-var gsf = require("./../../game-state-functions.js");
-var clone = require("../../util/clone.js");
+import * as constants from "./../../constants.js";
+import * as gsf from "./../../game-state-functions.js";
+import clone from "../../util/clone.js";
 
-var TYPE = "twin";
+var type = "twin";
 
 function activate({ gameState, wormId, affects}) {
     var affectedWorms = [];
@@ -32,12 +32,12 @@ function activate({ gameState, wormId, affects}) {
             gsf.addEffect(gameState, clonedEffect);
         });
         //TODO Instead of timeLeft, make sure the effects are removed when worm and twin-worm no longer intersect (maybe with a margin)
-        gsf.addEffect(gameState, {timeLeft: 0.2, wormId: newWorm.id, type: TYPE, twinWormId: worm.id});
-        gsf.addEffect(gameState, {timeLeft: 0.2, wormId: worm.id, type: TYPE, twinWormId: newWorm.id});
+        gsf.addEffect(gameState, {timeLeft: 0.2, wormId: newWorm.id, type: type, twinWormId: worm.id});
+        gsf.addEffect(gameState, {timeLeft: 0.2, wormId: worm.id, type: type, twinWormId: newWorm.id});
     });
 }
 
-module.exports = {
-    type: TYPE,
+export {
+    type,
     activate
 };

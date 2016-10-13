@@ -1,18 +1,20 @@
-var constants = require("../core/constants.js");
-var clone = require("../core/util/clone.js");
-var shapeToGridConverter = require("../core/geometry/shape-to-grid-converter.js").createShapeToGridConverter();
-var shapeSpatialRelations = require("../core/geometry/shape-spatial-relations.js");
-var RoundingModes = require("../core/geometry/shape-to-grid-converter.js").RoundingModes;
-var random = require("../core/util/random.js");
-var coreFunctions = require("../core/core-functions.js");
-var gameStateFunctions = require("../core/game-state-functions.js");
-var trajectoryUtil = require("../core/geometry/trajectory/trajectory-util.js");
+import * as constants from "../core/constants.js";
+import clone from "../core/util/clone.js";
+import * as shapeToGridConverterMaker from "../core/geometry/shape-to-grid-converter.js";
+import * as shapeSpatialRelations from "../core/geometry/shape-spatial-relations.js";
+import * as random from "../core/util/random.js";
+import * as coreFunctions from "../core/core-functions.js";
+import * as gameStateFunctions from "../core/game-state-functions.js";
+import * as trajectoryUtil from "../core/geometry/trajectory/trajectory-util.js";
+
+var RoundingModes = shapeToGridConverterMaker.RoundingModes;
+var shapeToGridConverter = shapeToGridConverterMaker.createShapeToGridConverter();
 
 var SIMULATION_DURATION = 2;
 var SIMULATION_DELTA = 0.05;
 var SEARCH_DIRECTION_VELOCITY = 7*Math.PI;
 
-module.exports = function PathCheckerAI() {
+export default function PathCheckerAI() {
 
     function update(gameState, deltaTime, player) {
         var aiData = player.aiData;
