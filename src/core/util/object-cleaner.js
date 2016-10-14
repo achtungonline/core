@@ -1,9 +1,9 @@
 function isPrimitive(object) {
-    return typeof object !== 'object' ||  object === null || object === undefined
+    return typeof object !== "object" ||  object === null || object === undefined
 }
 
 function isToBeCleaned(object) {
-    return object === undefined || object === null || (typeof object === 'number' && isNaN(object));
+    return object === undefined || object === null || (typeof object === "number" && isNaN(object));
 }
 
 export default function objectCleaner(source) {

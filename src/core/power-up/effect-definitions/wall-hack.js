@@ -90,7 +90,7 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
         var secondaryId = 1;
         wallHackSegments.forEach(function (segment) {
             if (shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size})) {
-                var segmentId = worm.playerId + '_' + wormId + "#" + secondaryId;
+                var segmentId = worm.playerId + "_" + wormId + "#" + secondaryId;
                 segment.id = segmentId;
                 secondaryId++;
 

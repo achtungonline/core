@@ -181,8 +181,8 @@ function updateCollision(gameState) {
                     var twinEffects = gsf.getWormEffects(gameState, worm.id, "twin");
                     if (twinEffects.length > 0) {
                         return twinEffects.map(te => gsf.getWorm(gameState, te.twinWormId)).filter(function (twinWorm) {
-                                return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
-                            }).length === 0;
+                            return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
+                        }).length === 0;
                     }
                     return true;
                 }

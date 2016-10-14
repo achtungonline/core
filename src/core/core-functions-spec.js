@@ -1,7 +1,7 @@
 import * as gsf from "./game-state-functions.js";
 import * as cf from "./core-functions.js";
 
-require("phantomjs-polyfill-find/find-polyfill.js");
+import "phantomjs-polyfill-find/find-polyfill.js";
 
 describe("core-functions", function () {
 

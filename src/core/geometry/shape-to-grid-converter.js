@@ -69,8 +69,9 @@ function createShapeToGridConverter() {
 
         roundingMode = roundingMode || RoundingModes.ROUND;
 
-        if (shape)
+        if (shape) {
             return convertFunction(shape, grid, roundingMode);
+        }
     }
 
     return {

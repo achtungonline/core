@@ -5,7 +5,7 @@ function activate({ strength, duration, wormId }) {
         timeLeft: duration,
         strength: strength,
         wormId: wormId,
-        type: TYPE
+        type
     };
 }
 

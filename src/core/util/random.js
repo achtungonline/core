@@ -1,5 +1,5 @@
 import forEach from "./for-each.js";
-import MersenneTwister from 'mersennetwister';
+import MersenneTwister from "mersennetwister";
 
 function toSignedInt32(x) {
     return x | 0;

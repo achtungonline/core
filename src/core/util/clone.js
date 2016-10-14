@@ -1,5 +1,5 @@
 function isPrimitive(object) {
-    return typeof object !== 'object' ||  object === null || object === undefined
+    return typeof object !== "object" ||  object === null || object === undefined
 }
 
 export default function clone(source) {
