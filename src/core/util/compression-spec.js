@@ -3,7 +3,6 @@ import {compressWormSegment, decompressWormSegment} from "./compression";
 describe("util", function () {
 
     var objectsEqual = function(actual, expected) {
-        console.log("Custom equal wohoo");
         var result = Object.keys(actual).every((key) => {
             var v1 = actual[key], v2 = expected[key];
             if (v1 === v2) {
