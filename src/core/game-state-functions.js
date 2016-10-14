@@ -114,8 +114,7 @@ function addWormPathSegment(gameState, segment) {
     }
 }
 
-function createWormPathSegment(gameState, wormId, {duration = 0, centerX, centerY, direction, speed, turningVelocity, jump, size} = {}) {
-    var playerId = getPlayer(gameState, wormId).id;
+function createWormPathSegment(gameState, wormId, { playerId = getPlayer(gameState, wormId).id, duration = 0, startTime = gameState.gameTime - duration, endTime = gameState.gameTime, centerX, centerY, direction, speed, turningVelocity, jump, size} = {}) {
     var segmentId = playerId + "_" + wormId;
     var latestWormPathSegment = getLatestWormPathSegment(gameState, segmentId);
     var pathSegment = trajectoryUtil.createTrajectory({
@@ -126,8 +125,8 @@ function createWormPathSegment(gameState, wormId, {duration = 0, centerX, center
         speed: speed !== undefined ? speed : latestWormPathSegment.speed,
         turningVelocity: turningVelocity !== undefined ? turningVelocity : latestWormPathSegment.turningVelocity
     });
-    pathSegment.startTime = gameState.gameTime - duration;
-    pathSegment.endTime = gameState.gameTime;
+    pathSegment.startTime = startTime;
+    pathSegment.endTime = endTime;
     pathSegment.jump = jump !== undefined ? jump : latestWormPathSegment.jump;
     pathSegment.size = size !== undefined ? size : latestWormPathSegment.size;
     pathSegment.playerId = playerId;
