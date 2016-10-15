@@ -2,6 +2,7 @@ import * as random from "../../util/random";
 import * as gsf from "../../game-state-functions.js";
 import * as trajectoryUtil from "../../geometry/trajectory/trajectory-util.js";
 import * as shapeSpatialRelations from "../../geometry/shape-spatial-relations.js";
+import * as cc from "../../core-functions.js";
 
 var type = "wallHack";
 
@@ -18,22 +19,19 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
     var worm = gsf.getWorm(gameState, wormId);
     if (!shapeSpatialRelations.contains(gameState.map.shape, worm)) {
         function getModifiedWallHackSegment({xDiff = 0, yDiff = 0, startDirectionDiff = 0}) {
-            var wallHackPathSegment = trajectoryUtil.createTrajectory({
-                duration: pathSegment.duration,
-                startX: pathSegment.startX + xDiff,
-                startY: pathSegment.startY + yDiff,
-                startDirection: pathSegment.startDirection + startDirectionDiff,
-                speed: pathSegment.speed,
-                turningVelocity: pathSegment.turningVelocity
-            });
-            wallHackPathSegment.type = pathSegment.type;
-            wallHackPathSegment.startTime = pathSegment.startTime;
-            wallHackPathSegment.endTime = pathSegment.endTime;
-            wallHackPathSegment.jump = pathSegment.jump;
-            wallHackPathSegment.size = pathSegment.size;
-            wallHackPathSegment.playerId = pathSegment.playerId;
-            wallHackPathSegment.wormId = pathSegment.wormId;
-            return wallHackPathSegment
+            var modifiedSegment = gsf.createWormPathSegment(gameState, wormId,
+                {
+                    duration: pathSegment.duration,
+                    centerX: pathSegment.startX + xDiff,
+                    centerY: pathSegment.startY + yDiff,
+                    direction: pathSegment.startDirection + startDirectionDiff,
+                    speed: pathSegment.speed,
+                    turningVelocity: pathSegment.turningVelocity,
+                    jump: pathSegment.jump,
+                    size: pathSegment.size
+                });
+            modifiedSegment.type = pathSegment.type;
+            return modifiedSegment
         }
 
         var wallHackSegments;

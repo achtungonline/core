@@ -51,7 +51,7 @@ function addPowerUp(gameState, powerUp) {
     })
 }
 
-function createWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX, centerY, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
+function createWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direction=0, centerX=0, centerY=0, radius=constants.WORM_RADIUS, speed=constants.WORM_SPEED, turningSpeed=constants.WORM_TURNING_SPEED, distanceTravelled=0, distanceTravelledFromCells={}}) {
     return {
         id,
         playerId,
@@ -69,6 +69,10 @@ function createWorm(gameState, {id=getNextId(gameState, "worm"), playerId, direc
         distanceTravelled,
         distanceTravelledFromCells
     };
+}
+
+function createWorms(gameState, ...wormsData) {
+    return wormsData.map(wd => createWorm(gameState, wd));
 }
 
 function addWorm(gameState, worm) {
@@ -114,7 +118,7 @@ function addWormPathSegment(gameState, segment) {
     }
 }
 
-function createWormPathSegment(gameState, wormId, { playerId = getPlayer(gameState, wormId).id, duration = 0, startTime = gameState.gameTime - duration, endTime = gameState.gameTime, centerX, centerY, direction, speed, turningVelocity, jump, size} = {}) {
+function createWormPathSegment(gameState, wormId, { playerId = getPlayer(gameState, wormId).id, duration = 0, centerX, centerY, direction, speed, turningVelocity, jump, size} = {}) {
     var segmentId = playerId + "_" + wormId;
     var latestWormPathSegment = getLatestWormPathSegment(gameState, segmentId);
     var pathSegment = trajectoryUtil.createTrajectory({
@@ -125,8 +129,8 @@ function createWormPathSegment(gameState, wormId, { playerId = getPlayer(gameSta
         speed: speed !== undefined ? speed : latestWormPathSegment.speed,
         turningVelocity: turningVelocity !== undefined ? turningVelocity : latestWormPathSegment.turningVelocity
     });
-    pathSegment.startTime = startTime;
-    pathSegment.endTime = endTime;
+    pathSegment.startTime = gameState.gameTime - duration;
+    pathSegment.endTime = gameState.gameTime;
     pathSegment.jump = jump !== undefined ? jump : latestWormPathSegment.jump;
     pathSegment.size = size !== undefined ? size : latestWormPathSegment.size;
     pathSegment.playerId = playerId;
@@ -365,7 +369,7 @@ function isInPlayPhase(gameState) {
 
 function createGameState({
     map,
-    seed,
+    seed = 0,
     players = [],
     worms = [],
     powerUps = [],
@@ -507,6 +511,7 @@ export {
     createMapRectangle,
     createMapSquare,
     createWorm,
+    createWorms,
     extractReplayGameState,
     forEachAlivePlayer,
     forEachAliveWorm,
