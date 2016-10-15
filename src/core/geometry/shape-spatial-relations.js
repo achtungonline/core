@@ -151,9 +151,14 @@ function distanceSquared(shape, otherShape) {
     return dist.x * dist.x + dist.y * dist.y;
 }
 
+function distance(shape, otherShape) {
+    return Math.sqrt(distanceSquared(shape, otherShape));
+}
+
 export {
     intersects,
     contains,
+    distance,
     distanceSquared
 }
 

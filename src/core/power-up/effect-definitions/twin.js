@@ -1,6 +1,8 @@
 import * as constants from "./../../constants.js";
 import * as gsf from "./../../game-state-functions.js";
 import clone from "../../util/clone.js";
+import * as shapeSpatialRelations from "./../../geometry/shape-spatial-relations.js";
+import * as cf from "./../../core-functions.js";
 
 var type = "twin";
 
@@ -32,12 +34,21 @@ function activate({ gameState, wormId, affects}) {
             gsf.addEffect(gameState, clonedEffect);
         });
         //TODO Instead of timeLeft, make sure the effects are removed when worm and twin-worm no longer intersect (maybe with a margin)
-        gsf.addEffect(gameState, {timeLeft: 0.2, wormId: newWorm.id, type: type, twinWormId: worm.id});
-        gsf.addEffect(gameState, {timeLeft: 0.2, wormId: worm.id, type: type, twinWormId: newWorm.id});
+        gsf.addEffect(gameState, {timeLeft: 10000, wormId: newWorm.id, type: type, twinWormId: worm.id});
+        gsf.addEffect(gameState, {timeLeft: 10000, wormId: worm.id, type: type, twinWormId: newWorm.id});
     });
+}
+
+function update(gameState, deltaTime, effect) {
+    var worm = gsf.getWorm(gameState, effect.wormId);
+    var twinWorm = gsf.getWorm(gameState, effect.twinWormId);
+    if (shapeSpatialRelations.distance(worm, twinWorm) >= (cf.getWormRadius(gameState, worm.id) + cf.getWormRadius(gameState, twinWorm.id) + 1)) {
+        effect.timeLeft = 0;
+    }
 }
 
 export {
     type,
-    activate
+    activate,
+    update
 };

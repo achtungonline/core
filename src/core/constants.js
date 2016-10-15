@@ -123,7 +123,7 @@ powerUpDefinitions["twin"] = {
     name: "twin",
     effectType: "twin",
     effectDuration: 5,
-    weightedSpawnChance: 1,
+    weightedSpawnChance: 1000,
     affects: "self"
 };
 
