@@ -180,9 +180,10 @@ function updateCollision(gameState) {
                 if (!(worm.distanceTravelled - worm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)) {
                     var twinEffects = gsf.getWormEffects(gameState, worm.id, "twin");
                     if (twinEffects.length > 0) {
-                        return twinEffects.map(te => gsf.getWorm(gameState, te.twinWormId)).filter(function (twinWorm) {
-                            return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
-                        }).length === 0;
+                        return twinEffects.map(te => gsf.getWorm(gameState, te.twinWormId))
+                                .filter(function (twinWorm) {
+                                    return (twinWorm.distanceTravelled - twinWorm.distanceTravelledFromCells[cell] <= constants.IMMUNITY_DISTANCE_MULTIPLIER * segment.size)
+                                }).length === 0;
                     }
                     return true;
                 }
@@ -225,7 +226,6 @@ function createWormPathSegment(gameState, wormId, {duration}) {
 
     return gsf.createWormPathSegment(gameState, wormId, {duration, centerX: worm.centerX, centerY: worm.centerY, direction, speed, turningVelocity, jump, size});
 }
-
 
 
 function createWormPathSegmentWormDied(gameState, wormId) {
