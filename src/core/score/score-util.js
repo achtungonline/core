@@ -2,8 +2,16 @@ import forEach from "./../util/for-each.js";
 
 function combineScores(scores1, scores2) {
     var res = {};
-    forEach(scores1, function(score, id) {
-        res[id] = score + scores2[id];
+    forEach(scores1, (score,id) => {
+        res[id] = score;
+        if (scores2[id] !== undefined) {
+            res[id] += scores2[id];
+        }
+    });
+    forEach(scores2, (score,id) => {
+        if (scores1[id] === undefined) {
+            res[id] = scores2[id];
+        }
     });
     return res;
 }
@@ -52,7 +60,7 @@ function createSortedList(scores) {
     forEach(scores, function(score, id) {
         res.push({ score, id })
     });
-    res.sort((p1, p2) => p1.score <= p2.score);
+    res.sort((p1, p2) => p2.score - p1.score);
     return res;
 }
 
