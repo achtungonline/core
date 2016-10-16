@@ -106,11 +106,12 @@ function updateWorm(gameState, deltaTime, wormId, pathSegment) {
         if (!shapeSpatialRelations.intersects(gameState.map.shape, worm)) {
             // Main worm segment is outside of map, switch with one of the wallHackSegments, that should be fully inside the map
             var wallHackSegmentInsideMap = wallHackSegments.find(segment => shapeSpatialRelations.contains(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size}));
-            if (wallHackSegmentInsideMap) {
-                worm.direction = wallHackSegmentInsideMap.startDirection;
-                worm.centerX = wallHackSegmentInsideMap.endX;
-                worm.centerY = wallHackSegmentInsideMap.endY;
+            if (!wallHackSegmentInsideMap) {
+                wallHackSegmentInsideMap = wallHackSegments.find(segment => shapeSpatialRelations.intersects(gameState.map.shape, {centerX: segment.endX, centerY: segment.endY, radius: segment.size}));
             }
+            worm.direction = wallHackSegmentInsideMap.startDirection;
+            worm.centerX = wallHackSegmentInsideMap.endX;
+            worm.centerY = wallHackSegmentInsideMap.endY;
         }
     }
 }
