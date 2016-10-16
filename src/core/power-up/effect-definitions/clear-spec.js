@@ -56,5 +56,18 @@ describe("effect", function () {
             expect(gsf.getLatestWormPathSegment(gameState, "p1_w2").type).not.toEqual("clear");
             expect(gsf.getLatestWormPathSegment(gameState, "p2_w1").type).toEqual("clear");
         });
+
+        it("Test after wallhack (that have different segment ids)", function () {
+            var gameState = gsf.createGameState({
+                players: [{id: "p1"}],
+                map: gsf.createMapSquare({size: 10}),
+                worms: gsf.createWorms(null, {id: "w1", playerId: "p1"}),
+                wormPathSegments: {"p1_w1": [{id: "p1_w1", playerId: "p1", wormId: "w1"}], "p1_w1#1": [{id: "p1_w1#1", playerId: "p1", wormId: "w1"}]}
+            });
+
+            clear.activate({gameState, wormId: "w1", affects: "self"});
+            expect(gsf.getLatestWormPathSegment(gameState, "p1_w1").type).toEqual("clear");
+            expect(gsf.getLatestWormPathSegment(gameState, "p1_w1#1").type).toEqual("clear");
+        });
     });
 });

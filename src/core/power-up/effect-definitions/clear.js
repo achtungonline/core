@@ -20,7 +20,7 @@ function activate({ gameState, wormId, affects}) {
 
     forEach(gameState.wormPathSegments, function (wormPathSegment) {
         if (shouldGetAffected(wormPathSegment[0].playerId)) {
-            var wps = gsf.createWormPathSegment(gameState, wormPathSegment[0].wormId, {playerId: wormPathSegment[0].playerId});
+            var wps = gsf.createWormPathSegment(gameState, wormPathSegment[0].wormId, {segmentId: wormPathSegment[0].id, playerId: wormPathSegment[0].playerId});
             wps.type = "clear";
             gsf.addWormPathSegment(gameState, wps);
         }
