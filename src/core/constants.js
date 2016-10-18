@@ -68,7 +68,7 @@ powerUpDefinitions["slow_turn"] = {
 powerUpDefinitions["switcharoonie"] = {
     name: "switcharoonie",
     effectType: "wormSwitch",
-    weightedSpawnChance: 1000.5,
+    weightedSpawnChance: 0.5,
     affects: "all"
 };
 powerUpDefinitions["key_switch"] = {
@@ -96,13 +96,13 @@ powerUpDefinitions["clear_all"] = {
 powerUpDefinitions["clear_self"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 1000.25,
+    weightedSpawnChance: 0.25,
     affects: "self"
 };
 powerUpDefinitions["clear_others"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 1000.25,
+    weightedSpawnChance: 0.25,
     affects: "others"
 };
 powerUpDefinitions["super_jump"] = {
@@ -123,7 +123,7 @@ powerUpDefinitions["twin"] = {
     name: "twin",
     effectType: "twin",
     effectDuration: 5,
-    weightedSpawnChance: 1000,
+    weightedSpawnChance: 1,
     affects: "self"
 };
 
@@ -139,7 +139,7 @@ powerUpDefinitions["wall_hack_all"] = {
     name: "wall_hack",
     effectType: "wallHack",
     effectDuration: 5,
-    weightedSpawnChance: 1000.5,
+    weightedSpawnChance: 0.5,
     affects: "all"
 };
 
