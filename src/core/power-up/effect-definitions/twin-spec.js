@@ -28,17 +28,17 @@ describe("effect", function () {
             expect(gsf.getAliveWorms(gameState, "p2").length).toEqual(1);
 
             expect(objectCleaner(gameState.effects)).toEqual([{
-                id: 'effect_1',
+                id: "effect_1",
                 timeLeft: 10000,
-                twinWormId: 'w1',
-                type: 'twin',
-                wormId: 'worm_0'
+                twinWormId: "w1",
+                type: "twin",
+                wormId: "worm_0"
             }, {
-                id: 'effect_2',
+                id: "effect_2",
                 timeLeft: 10000,
-                twinWormId: 'worm_0',
-                type: 'twin',
-                wormId: 'w1'
+                twinWormId: "worm_0",
+                type: "twin",
+                wormId: "w1"
             }]);
         });
 
@@ -51,17 +51,17 @@ describe("effect", function () {
             expect(gsf.getAliveWorms(gameState, "p2").length).toEqual(2);
 
             expect(objectCleaner(gameState.effects)).toEqual([{
-                id: 'effect_1',
+                id: "effect_1",
                 timeLeft: 10000,
-                twinWormId: 'w2',
-                type: 'twin',
-                wormId: 'worm_0'
+                twinWormId: "w2",
+                type: "twin",
+                wormId: "worm_0"
             }, {
-                id: 'effect_2',
+                id: "effect_2",
                 timeLeft: 10000,
-                twinWormId: 'worm_0',
-                type: 'twin',
-                wormId: 'w2'
+                twinWormId: "worm_0",
+                type: "twin",
+                wormId: "w2"
             }]);
 
         });
@@ -75,29 +75,29 @@ describe("effect", function () {
             expect(gsf.getAliveWorms(gameState, "p2").length).toEqual(2);
 
             expect(objectCleaner(gameState.effects)).toEqual([{
-                id: 'effect_1',
+                id: "effect_1",
                 timeLeft: 10000,
-                twinWormId: 'w1',
-                type: 'twin',
-                wormId: 'worm_0'
+                twinWormId: "w1",
+                type: "twin",
+                wormId: "worm_0"
             }, {
-                id: 'effect_2',
+                id: "effect_2",
                 timeLeft: 10000,
-                twinWormId: 'worm_0',
-                type: 'twin',
-                wormId: 'w1'
+                twinWormId: "worm_0",
+                type: "twin",
+                wormId: "w1"
             }, {
-                id: 'effect_4',
+                id: "effect_4",
                 timeLeft: 10000,
-                twinWormId: 'w2',
-                type: 'twin',
-                wormId: 'worm_3'
+                twinWormId: "w2",
+                type: "twin",
+                wormId: "worm_3"
             }, {
-                id: 'effect_5',
+                id: "effect_5",
                 timeLeft: 10000,
-                twinWormId: 'worm_3',
-                type: 'twin',
-                wormId: 'w2'
+                twinWormId: "worm_3",
+                type: "twin",
+                wormId: "w2"
             }]);
         });
 
@@ -120,17 +120,17 @@ describe("effect", function () {
             twin.update(gameState, null, gameState.effects[1]);
             // Nothing should have happened
             expect(objectCleaner(gameState.effects)).toEqual([{
-                id: 'effect_1',
+                id: "effect_1",
                 timeLeft: 10000,
-                twinWormId: 'w1',
-                type: 'twin',
-                wormId: 'worm_0'
+                twinWormId: "w1",
+                type: "twin",
+                wormId: "worm_0"
             }, {
-                id: 'effect_2',
+                id: "effect_2",
                 timeLeft: 10000,
-                twinWormId: 'worm_0',
-                type: 'twin',
-                wormId: 'w1'
+                twinWormId: "worm_0",
+                type: "twin",
+                wormId: "w1"
             }]);
 
             // Now we move "w1" a bit further
@@ -138,17 +138,17 @@ describe("effect", function () {
             twin.update(gameState, null, gameState.effects[0]);
             twin.update(gameState, null, gameState.effects[1]);
             expect(objectCleaner(gameState.effects)).toEqual([{
-                id: 'effect_1',
+                id: "effect_1",
                 timeLeft: 0,
-                twinWormId: 'w1',
-                type: 'twin',
-                wormId: 'worm_0'
+                twinWormId: "w1",
+                type: "twin",
+                wormId: "worm_0"
             }, {
-                id: 'effect_2',
+                id: "effect_2",
                 timeLeft: 0,
-                twinWormId: 'worm_0',
-                type: 'twin',
-                wormId: 'w1'
+                twinWormId: "worm_0",
+                type: "twin",
+                wormId: "w1"
             }]);
         });
     });
