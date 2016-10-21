@@ -177,6 +177,15 @@ function createMapSquare({ size, name="Square " + size, borderWidth=10, blocking
     });
 }
 
+function enterStartPhase(gameState, duration=constants.START_PHASE_DURATION) {
+    gameState.startPhaseTimer = duration;
+    gameState.gameEvents.push({
+        type: "start_phase",
+        time: gameState.gameTime,
+        duration: duration
+    });
+}
+
 function forEachAlivePlayer(gameState, callback) {
     gameState.players.forEach(function (player) {
         if (player.alive) {
@@ -380,7 +389,7 @@ function createGameState({
     effectEvents = [],
     gameTime = 0,
     gameActive = false,                                  // TODO: might get removed
-    startPhaseTimer = constants.START_PHASE_DURATION,
+    startPhaseTimer = 0,
     nextId = 0
     } = {}) {
     function createPlayArea(width, height) {
@@ -511,6 +520,7 @@ export {
     createMapSquare,
     createWorm,
     createWorms,
+    enterStartPhase,
     extractReplayGameState,
     forEachAlivePlayer,
     forEachAliveWorm,

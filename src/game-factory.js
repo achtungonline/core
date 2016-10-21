@@ -20,6 +20,8 @@ export default function GameFactory() {
             return false;
         }
 
+        gsf.enterStartPhase(gameState);
+
         map.blockingShapes.forEach(blockingShape => gsf.addPlayAreaObstacle(gameState, blockingShape));
 
         players.forEach(function (player) {
