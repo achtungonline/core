@@ -47,6 +47,8 @@ function activatePowerUp(gameState, powerUpId, wormId) {
     });
     if (effect) {
         effect.name = powerUp.name;
+        effect.time = gameState.gameTime;
+
         if (powerUp.affects === "self" || powerUp.affects === "all") {
             gsf.addEffect(gameState, effect);
         }

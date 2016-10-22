@@ -13,7 +13,7 @@ function addEffect(gameState, effect) {
     gameState.effectEvents.push({
         type: "spawn",
         time: gameState.gameTime,
-        effect: effect
+        effect: clone(effect)
     });
 }
 
@@ -244,6 +244,22 @@ function getAliveEnemyWorms(gamesState, wormId) {
     return getAliveWorms(gamesState).filter(w => w.playerId !== getWorm(gamesState, wormId).playerId);
 }
 
+function getWormPathSegmentAtTime(gameState, segmentId, time) {
+    return gameState.wormPathSegments[segmentId].find(function(segment) {
+        //TODO More optimized searching, could divide search by half all the time.
+        return segment.startTime <= time && segment.endTime >= time;
+    });
+}
+
+function getWormPathSegmentPositionAtTime(gameState, segmentId, time) {
+    var segment = getWormPathSegmentAtTime(gameState, segmentId, time);
+    if(!segment) {
+        return null;
+    }
+
+    return trajectoryUtil.followTrajectory(segment, time - segment.startTime);
+}
+
 function getPlayer(gameState, id) {
     if (id === null || id === undefined) {
         throw new Error("Id must be set");
@@ -297,7 +313,7 @@ function removeEffect(gameState, effectId) {
     gameState.effectEvents.push({
         type: "despawn",
         time: gameState.gameTime,
-        id: effectId
+        effectId
     });
     gameState.effects.splice(gameState.effects.findIndex(effect => effect.id === effectId), 1);
 }
@@ -530,6 +546,8 @@ export {
     getAliveWorms,
     getEffect,
     getLatestWormPathSegment,
+    getWormPathSegmentAtTime,
+    getWormPathSegmentPositionAtTime,
     getNextId,
     getPowerUp,
     getPlayer,
