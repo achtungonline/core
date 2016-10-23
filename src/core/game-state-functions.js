@@ -251,13 +251,13 @@ function getWormPathSegmentAtTime(gameState, segmentId, time) {
     });
 }
 
-function getWormPathSegmentPositionAtTime(gameState, segmentId, time) {
+function getWormPathSegmentDataAtTime(gameState, segmentId, time) {
     var segment = getWormPathSegmentAtTime(gameState, segmentId, time);
     if(!segment) {
         return null;
     }
 
-    return trajectoryUtil.followTrajectory(segment, time - segment.startTime);
+    return {segment, position: trajectoryUtil.followTrajectory(segment, time - segment.startTime)};
 }
 
 function getPlayer(gameState, id) {
@@ -547,7 +547,7 @@ export {
     getEffect,
     getLatestWormPathSegment,
     getWormPathSegmentAtTime,
-    getWormPathSegmentPositionAtTime,
+    getWormPathSegmentDataAtTime,
     getNextId,
     getPowerUp,
     getPlayer,
