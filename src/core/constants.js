@@ -143,7 +143,7 @@ powerUpDefinitions["wall_hack_all"] = {
     affects: "all"
 };
 
-var START_PHASE_DURATION = 2.5;
+var START_PHASE_DURATION = 3;
 var START_DISTANCE_TO_MAP = 50;
 var START_DISTANCE_TO_WORMS = 70;
 
