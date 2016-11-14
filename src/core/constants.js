@@ -84,7 +84,7 @@ powerUpDefinitions["drunk"] = {
     effectType: "drunk",
     effectDuration: 5,
     effectStrength: 1,
-    weightedSpawnChance: 1,
+    weightedSpawnChance: 5,
     affects: "others"
 };
 powerUpDefinitions["clear_all"] = {
