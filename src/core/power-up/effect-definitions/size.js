@@ -13,12 +13,12 @@ function activate({ strength, duration, wormId }) {
 }
 
 function changeWormRadius(gameState, effect, wormRadius) {
-    var timeActive = effect.duration - effect.timeLeft;
-    if (timeActive <= FADE_DURATION || effect.timeLeft <= FADE_DURATION) {
-        return wormRadius;
-    } else {
-        return wormRadius * effect.strength;
-    }
+    //var timeActive = effect.duration - effect.timeLeft;
+    //if (timeActive <= FADE_DURATION || effect.timeLeft <= FADE_DURATION) {
+    //    return wormRadius;
+    //} else {
+    return wormRadius * effect.strength;
+    //}
 }
 
 export {

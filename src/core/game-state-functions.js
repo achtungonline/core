@@ -361,6 +361,10 @@ function getNextId(gameState, prefix = "") {
     return nextId;
 }
 
+function isRoundMap(gameState) {
+    return gameState.map.shape.type === "circle";
+}
+
 function addPlayAreaShape(gameState, shape, value) {
     var playArea = gameState.playArea;
     var points = shapeToGridConverter.convert(shape, playArea);
@@ -558,6 +562,7 @@ export {
     isInStartPhase,
     isInPlayPhase,
     isPlayerAlive,
+    isRoundMap,
     removeEffect,
     removePowerUp,
     resetPlayArea,
