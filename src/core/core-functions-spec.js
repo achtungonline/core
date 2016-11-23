@@ -48,7 +48,7 @@ describe("core-functions", function () {
             var gameState = gsf.createGameState({
                 gameTime: 10,
                 gameActive: true,
-                startPhaseTimer: 1,
+                startPhaseTime: 30,
                 players: [{id: "p1", steering: 0}],
                 wormPathSegments: {"p1_w1": [{wormId: "w1"}]},
                 worms: [gsf.createWorm(null, {

@@ -17,10 +17,9 @@ export default function Game(gameState, aiHandler) {
         gameState.gameTime += deltaTime;
         aiHandler.update(gameState, deltaTime);
 
-        if (gameState.startPhaseTimer > 0) {
+        if (gameStateFunctions.isInStartPhase(gameState)) {
             coreFunctions.updatePlayers(gameState, deltaTime);
             coreFunctions.updateWorms(gameState, deltaTime);
-            gameState.startPhaseTimer -= deltaTime;
         } else {
             coreFunctions.updatePowerUps(gameState, deltaTime);
             coreFunctions.updateEffects(gameState, deltaTime);

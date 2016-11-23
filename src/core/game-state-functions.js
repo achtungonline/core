@@ -178,7 +178,6 @@ function createMapSquare({ size, name="Square " + size, borderWidth=10, blocking
 }
 
 function enterStartPhase(gameState, duration=constants.START_PHASE_DURATION) {
-    gameState.startPhaseTimer = duration;
     gameState.gameEvents.push({
         type: "start_phase",
         time: gameState.gameTime,
@@ -351,7 +350,8 @@ function extractReplayGameState(gameState) {
         powerUpEvents: gameState.powerUpEvents,
         effectEvents: gameState.effectEvents,
         gameTime: gameState.gameTime,
-        map: gameState.map
+        map: gameState.map,
+        startPhaseTime: gameState.startPhaseTime
     };
 }
 
@@ -383,12 +383,16 @@ function addPlayAreaShape(gameState, shape, value) {
     return changedData;
 }
 
+function getStartPhaseTimeLeft(gameState) {
+    return gameState.startPhaseTime - gameState.gameTime;
+}
+
 function addPlayAreaObstacle(gameState, shape) {
     return addPlayAreaShape(gameState, shape, constants.PLAY_AREA_OBSTACLE);
 }
 
 function isInStartPhase(gameState) {
-    return gameState.gameActive && gameState.startPhaseTimer > 0;
+    return gameState.gameActive && gameState.gameTime < gameState.startPhaseTime;
 }
 
 function isInPlayPhase(gameState) {
@@ -409,7 +413,7 @@ function createGameState({
     effectEvents = [],
     gameTime = 0,
     gameActive = false,                                  // TODO: might get removed
-    startPhaseTimer = 0,
+    startPhaseTime = 3,
     nextId = 0
     } = {}) {
     function createPlayArea(width, height) {
@@ -517,7 +521,7 @@ function createGameState({
         playArea: map ? createPlayArea(map.width, map.height) : null,
         gameTime,
         gameActive, // TODO: might get removed
-        startPhaseTimer, // Time left until start phase ends
+        startPhaseTime, // How long the start phase lasts
         seed,
         nextId
     }
@@ -555,6 +559,7 @@ export {
     getNextId,
     getPowerUp,
     getPlayer,
+    getStartPhaseTimeLeft,
     getWorm,
     getWormEffect,
     getWormEffects,
