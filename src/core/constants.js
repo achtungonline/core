@@ -84,26 +84,14 @@ powerUpDefinitions["drunk"] = {
     effectType: "drunk",
     effectDuration: 5,
     effectStrength: 1,
-    weightedSpawnChance: 5,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["clear_all"] = {
     name: "clear",
     effectType: "clear",
-    weightedSpawnChance: 0.25,
+    weightedSpawnChance: 0.75,
     affects: "all"
-};
-powerUpDefinitions["clear_self"] = {
-    name: "clear",
-    effectType: "clear",
-    weightedSpawnChance: 0.25,
-    affects: "self"
-};
-powerUpDefinitions["clear_others"] = {
-    name: "clear",
-    effectType: "clear",
-    weightedSpawnChance: 0.25,
-    affects: "others"
 };
 powerUpDefinitions["super_jump"] = {
     name: "super_jump",
@@ -147,7 +135,7 @@ var START_PHASE_DURATION = 3;
 var START_DISTANCE_TO_MAP = 50;
 var START_DISTANCE_TO_WORMS = 70;
 
-var POWER_UP_SPAWN_CHANCE = 0.5; //0.12;            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds; average 5 seconds.
+var POWER_UP_SPAWN_CHANCE = 0.12; //0.12;            // Inverse of maximum time between power up spawns (seconds). 0.1 means max 10 seconds; average 5 seconds.
 var POWER_UP_SHAPE = shapeFactory.createCircle(25);
 
 var WORM_RADIUS = 4;
