@@ -10,7 +10,6 @@ import * as ShapeToGridConverter from "./geometry/shape-to-grid-converter.js";
 var shapeToGridConverter = ShapeToGridConverter.createShapeToGridConverter();
 import * as timeBasedChance from "./util/time-based-chance.js";
 var powerUpTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.LinearTimeBasedChanceCalculator(constants.POWER_UP_SPAWN_CHANCE));
-var jumpTimeBasedChanceTrigger = timeBasedChance.TimeBasedChanceTrigger(timeBasedChance.calculators.ExpoTimeBasedChanceCalculator(constants.JUMP_CHANCE));
 
 import * as speedEffectDefinition from "./power-up/effect-definitions/speed.js";
 import * as sizeEffectDefinition from "./power-up/effect-definitions/size.js";
@@ -363,14 +362,19 @@ function updateWormJumps(gameState, deltaTime) {
             if (worm.jump.timeSinceLastJump > constants.JUMP_COOLDOWN) {
                 function startJumping() {
                     if (worm.speed > 0) {
-                        worm.jump.remainingJumpTime = constants.JUMP_LENGTH / worm.speed;
+                        worm.jump.remainingJumpTime =  (2 * getWormRadius(gameState, worm.id) + 4 * worm.radius) / worm.speed;
                     } else {
                         worm.jump.remainingJumpTime = 0;
                     }
                     worm.jump.timeSinceLastJump = 0;
                 }
 
-                jumpTimeBasedChanceTrigger.update(gameState, deltaTime, startJumping);
+                var notJumpedElapsedTime = worm.jump.timeSinceLastJump - constants.JUMP_COOLDOWN;
+                var notJumpedMaxTime = 1 / constants.JUMP_CHANCE;
+                var jumpChance = deltaTime / (notJumpedMaxTime - (notJumpedElapsedTime - deltaTime));
+                if(jumpChance >= random.random(gameState)) {
+                    startJumping();
+                }
             }
         } else {
             worm.jump.remainingJumpTime -= deltaTime;

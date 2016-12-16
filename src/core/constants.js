@@ -38,7 +38,7 @@ powerUpDefinitions["fat"] = {
     effectType: "size",
     effectDuration: 5,
     effectStrength: 2,
-    weightedSpawnChance: 1,
+    weightedSpawnChance: 1000,
     affects: "others"
 };
 powerUpDefinitions["slim"] = {
@@ -46,7 +46,7 @@ powerUpDefinitions["slim"] = {
     effectType: "size",
     effectDuration: 5,
     effectStrength: 0.5,
-    weightedSpawnChance: 1,
+    weightedSpawnChance: 1000,
     affects: "self"
 };
 powerUpDefinitions["quick_turn"] = {
@@ -139,12 +139,11 @@ var POWER_UP_SPAWN_CHANCE = 0.12; //0.12;            // Inverse of maximum time 
 var POWER_UP_SHAPE = shapeFactory.createCircle(25);
 
 var WORM_RADIUS = 4;
-var WORM_SPEED = 90;
-var WORM_TURNING_SPEED = 3;
+var WORM_SPEED = 100;
+var WORM_TURNING_SPEED = 3.3;
 
 var JUMP_COOLDOWN = 1.5;                // After a jump; this is the minimum waiting time until another jump
-var JUMP_LENGTH = 30;                   // The length of a jump
-var JUMP_CHANCE = 0.4;                  // 0.5 means 50 % chance of jump after 1 second has passed (after the JUMP_COOLDOWN has passed).
+var JUMP_CHANCE = 0.5;                    // 0.5 means 50 % chance of jump after 1 second has passed (after the JUMP_COOLDOWN has passed).
 
 var IMMUNITY_DISTANCE_MULTIPLIER = 6;
 
@@ -170,7 +169,6 @@ export {
     WORM_TURNING_SPEED,
 
     JUMP_COOLDOWN,
-    JUMP_LENGTH,
     JUMP_CHANCE,
 
     IMMUNITY_DISTANCE_MULTIPLIER,
