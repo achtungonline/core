@@ -38,7 +38,7 @@ powerUpDefinitions["fat"] = {
     effectType: "size",
     effectDuration: 5,
     effectStrength: 2,
-    weightedSpawnChance: 1000,
+    weightedSpawnChance: 1,
     affects: "others"
 };
 powerUpDefinitions["slim"] = {
@@ -46,7 +46,7 @@ powerUpDefinitions["slim"] = {
     effectType: "size",
     effectDuration: 5,
     effectStrength: 0.5,
-    weightedSpawnChance: 1000,
+    weightedSpawnChance: 1,
     affects: "self"
 };
 powerUpDefinitions["quick_turn"] = {
