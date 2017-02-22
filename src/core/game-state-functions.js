@@ -243,6 +243,47 @@ function getAliveEnemyWorms(gamesState, wormId) {
     return getAliveWorms(gamesState).filter(w => w.playerId !== getWorm(gamesState, wormId).playerId);
 }
 
+function getGameStateChanges(gameState, startTime) {
+    var wormPathSegments = {};
+    forEach(gameState.wormPathSegments, function(segments, id) {
+        var i = segments.length;
+        while (i > 0 && segments[i - 1].endTime >= startTime) {
+            i--;
+        }
+        if (i < segments.length) {
+            wormPathSegments[id] = [];
+            while (i < segments.length) {
+                var segment = segments[i];
+                segment.index = i;
+                wormPathSegments[id].push(segment)
+                i++;
+            }
+        }
+    });
+    function getNewEvents(events) {
+        var newEvents = [];
+        var i = events.length;
+        while (i > 0 && events[i - 1].time >= startTime) {
+            i--;
+        }
+        while (i < events.length) {
+            newEvents.push(events[i]);
+            i++;
+        }
+        return newEvents;
+    }
+    var gameEvents = getNewEvents(gameState.gameEvents);
+    var powerUpEvents = getNewEvents(gameState.powerUpEvents);
+    var effectEvents = getNewEvents(gameState.effectEvents);
+    return {
+        gameTime: gameState.gameTime,
+        wormPathSegments,
+        gameEvents,
+        powerUpEvents,
+        effectEvents
+    }
+}
+
 function getWormPathSegmentAtTime(gameState, segmentId, time) {
     return gameState.wormPathSegments[segmentId].find(function(segment) {
         //TODO More optimized searching, could divide search by half all the time.
@@ -554,6 +595,7 @@ export {
     getAliveWorms,
     getEffect,
     getLatestWormPathSegment,
+    getGameStateChanges,
     getWormPathSegmentAtTime,
     getWormPathSegmentDataAtTime,
     getNextId,

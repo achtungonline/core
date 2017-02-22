@@ -100,6 +100,53 @@ describe("game-state-functions", function () {
         expect(gsf.getLatestWormPathSegment({wormPathSegments: {"1": [{id: "1"}, {id: "1", someVal: "someVal"}]}}, "1")).toEqual({id: "1", someVal: "someVal"});
     });
 
+    it("getGameStateChanges", function () {
+        var gameState = {
+            gameTime: 5,
+            wormPathSegments: {
+                "1": [{ endTime: 2 },{ endTime: 4}]
+            },
+            gameEvents: [{ time: 2.5 }, {time: 3.5}],
+            powerUpEvents: [{ time: 3 }, {time: 3}],
+            effectEvents: [{ time: 1 }, {time: 2}]
+        };
+
+        expect(gsf.getGameStateChanges(gameState, 2)).toEqual({
+            gameTime: 5,
+            wormPathSegments: {
+                "1": [{ endTime: 2, index: 0 },{ endTime: 4, index: 1}]
+            },
+            gameEvents: [{ time: 2.5 }, {time: 3.5}],
+            powerUpEvents: [{ time: 3 }, {time: 3}],
+            effectEvents: [{ time: 2 }]
+        });
+        expect(gsf.getGameStateChanges(gameState, 2.6)).toEqual({
+            gameTime: 5,
+            wormPathSegments: {
+                "1": [{ endTime: 4, index: 1}]
+            },
+            gameEvents: [{time: 3.5}],
+            powerUpEvents: [{ time: 3 }, {time: 3}],
+            effectEvents: []
+        });
+        expect(gsf.getGameStateChanges(gameState, 3.7)).toEqual({
+            gameTime: 5,
+            wormPathSegments: {
+                "1": [{ endTime: 4, index: 1}]
+            },
+            gameEvents: [],
+            powerUpEvents: [],
+            effectEvents: []
+        });
+        expect(gsf.getGameStateChanges(gameState, 4.01)).toEqual({
+            gameTime: 5,
+            wormPathSegments: {},
+            gameEvents: [],
+            powerUpEvents: [],
+            effectEvents: []
+        });
+    });
+
     it("addWormPathSegment", function () {
         var gameState = {wormPathSegments: {}};
         gsf.addWormPathSegment(gameState, {id: "1", wormId: "2", type: "arc", duration: 1});
