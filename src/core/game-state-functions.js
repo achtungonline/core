@@ -138,6 +138,7 @@ function createWormPathSegment(gameState, wormId, {playerId = getPlayer(gameStat
     return pathSegment;
 }
 
+
 function createMap({ name, shape, borderWidth=0, blockingShapes=[] }) {
     return {
         name,
@@ -175,6 +176,22 @@ function createMapSquare({ size, name="Square " + size, borderWidth=10, blocking
         borderWidth,
         blockingShapes
     });
+}
+
+function createMapFromString(mapString) {
+    var mapData = mapString.split(" ");
+    var mapType = mapData[0];
+    var mapWidth = Number(mapData[1]);
+    var mapHeight = Number(mapData[2]);
+    if (mapType === "Square") {
+        return createMapSquare({name: mapString, size: mapWidth});
+    } else if (mapType === "Rectangle") {
+        return createMapRectangle({name: mapString, width: mapWidth, height: mapHeight});
+    } else if (mapType === "Circle") {
+        return createMapCircle({name: mapString, radius: mapWidth / 2});
+    } else {
+        throw new Error("Invalid map string: " + mapString);
+    }
 }
 
 function enterStartPhase(gameState, duration=constants.START_PHASE_DURATION) {
@@ -583,6 +600,7 @@ export {
     createMapCircle,
     createMapRectangle,
     createMapSquare,
+    createMapFromString,
     createWorm,
     createWorms,
     enterStartPhase,
