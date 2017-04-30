@@ -1,20 +1,4 @@
 import * as shapeFactory from "./geometry/shape-factory.js";
-import forEach from "./util/for-each.js";
-
-var wormColors = {
-    blue: "#03A9F4",
-    pink: "#E91E63",
-    green: "#4CAF50",
-    purple: "#9C27B0",
-    orange: "#FF9800",
-    lime: "#CDDC39",
-    indigo: "#3F51B5",
-    teal: "#009688",
-    black: "#444",
-    bluegrey: "#607D8B"
-};
-var wormColorIds = [];
-forEach(wormColors, (color, id) => wormColorIds.push(id));
 
 var powerUpDefinitions = {};
 powerUpDefinitions["speed"] = {
